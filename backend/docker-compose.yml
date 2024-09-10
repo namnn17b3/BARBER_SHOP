@@ -1,0 +1,136 @@
+version: '3.9'
+
+services:
+  redis:
+    image: redis:6.0.7
+    container_name: redis
+    restart: always
+    volumes:
+      - ./redis_volume_data:/redis_data
+    command: "--requirepass 12345678 --user barbershop on >barbershop ~* allcommands --user default off nopass nocommands"
+    ports:
+      - 6389:6379
+    networks:
+      - kong-net
+
+  redis_insight:
+    image: redislabs/redisinsight:1.14.0
+    container_name: redis_insight
+    restart: always
+    ports:
+      - 7001:8001
+    networks:
+      - kong-net
+    volumes:
+      - ./redis_insight_volume_data:/redis_insight_db
+
+  # Kong getway
+  kong-database:
+    image: postgres:13
+    container_name: kong-database
+    environment:
+      POSTGRES_USER: kong
+      POSTGRES_DB: kong
+      POSTGRES_PASSWORD: kongpass
+    ports:
+      - "5453:5432"
+    networks:
+      - kong-net
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+
+  kong-migrations:
+    image: kong/kong-gateway:3.4.3.9
+    command: kong migrations bootstrap
+    depends_on:
+      - kong-database
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kongpass
+    networks:
+      - kong-net
+
+  kong-migrations-up:
+    image: kong/kong-gateway:3.4.3.9
+    command: kong migrations up && kong migrations finish
+    depends_on:
+      - kong-database
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kongpass
+    networks:
+      - kong-net
+
+  kong-gateway:
+    image: kong/kong-gateway:3.4.3.9
+    tty: true
+    container_name: kong-gateway
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kongpass
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: "0.0.0.0:6001"
+      KONG_ADMIN_GUI_URL: http://localhost:6002
+      # KONG_LICENSE_DATA: ${KONG_LICENSE_DATA}
+    ports:
+      - "8686:8000"
+      - "6443:8443"
+      - "6001:6001"
+      - "6444:8444"
+      - "6002:8002"
+      - "6445:8445"
+      - "6003:8003"
+      - "6004:8004"
+    networks:
+      - kong-net
+    depends_on:
+      - kong-database
+    command: kong start
+  
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.2
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - kong-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.3.2
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - kong-net
+
+  kafka_ui:
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      - kafka
+    ports:
+      - 8080:8080
+    environment:
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+    networks:
+      - kong-net
+
+networks:
+  kong-net:
+    driver: bridge

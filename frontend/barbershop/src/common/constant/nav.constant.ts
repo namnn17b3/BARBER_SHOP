@@ -1,0 +1,2 @@
+export const NAV_ACTIVE_CLASS = 'block py-1 px-2 text-emerald-300 rounded md:bg-transparent md:text-emerald-300 md:dark:text-blue-500';
+export const NAV_INACTIVE_CLASS = 'block py-1 px-2 text-white rounded hover:bg-orange-700 md:hover:bg-orange-700 md:hover:text-white md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700'
