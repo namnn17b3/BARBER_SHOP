@@ -23,4 +23,7 @@ export class Barber extends BaseEntity<Barber> {
 
   @Column({ name: 'img', type: 'varchar', length: 255 })
   img: string;
+
+  @Column({ name: 'active', type: 'boolean', default: true })
+  active: boolean;
 }

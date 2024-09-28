@@ -12,7 +12,7 @@ export default function Pagination(props: {
   const { page, totalRecords, items, nodes, handlePageChange, qsObject } = props;
 
   let totalPages = parseInt((totalRecords / items).toString());
-  if (totalRecords % items == 0) totalPages += 1;
+  if (totalRecords % items !== 0) totalPages += 1;
 
   const startPage = page - (page - 1) % nodes;
   const endPage = startPage + nodes - 1 > totalPages ? totalPages : startPage + nodes - 1;
@@ -44,7 +44,7 @@ export default function Pagination(props: {
       </Link>
     </li>);
   }
-  for (let i = startPage; i <= endPage; i++) {
+  for (let i = startPage; i <= endPage && startPage < endPage; i++) {
     if (i == page) {
       pagy.push(
         <li key={i}>

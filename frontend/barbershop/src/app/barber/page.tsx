@@ -8,14 +8,17 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Pagination from "@/components/Pagination";
 import { toQueryString } from "@/common/utils/utils";
 import NoResult from "@/components/NoResult";
+import AlertError from "@/components/alert/AlertError";
 
 export default function BarberPage() {
   const searchParams = useSearchParams();
 
   const router = useRouter();
 
-  const [barbers, setBarbers] = useState([]);
-  const [error, setError] = useState({});
+  const [response, setReponse] = useState({});
+  const [errors, setErrors] = useState([]);
+
+  const isValidErrorRef: any = useRef();
 
   const [filterValue, setFilterValue] = useState({
     name: searchParams.get('name'),
@@ -36,11 +39,21 @@ export default function BarberPage() {
     const url = `${ApiBarber.GET_ALL}?${toQueryString(filterValue)}`;
     fetch(url)
       .then((response) => {
-        
+        if ([404, 500].includes(response.status)) {
+          window.location.href = `/error/${response.status}`;
+          return;
+        }
         return response.json();
       })
       .then((json) => {
-        setBarbers(json.data);
+        if (json.data) {
+          setReponse(json);
+          isValidErrorRef.current = false;
+        }
+        else {
+          setErrors(json.errors);
+          isValidErrorRef.current = true;
+        }
       })
       .catch((error) => console.log(error));
   }, [filterValue]);
@@ -88,19 +101,24 @@ export default function BarberPage() {
             <i className="fa-solid fa-filter"></i>
           </button>
         </div>
-        <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
-          {barbers.map((barber: any) => <BarberItem key={barber.id} img={barber.img} name={barber.name} />)}
-        </div>
-        {!!barbers.length && <Pagination
-          page={+filterValue.page}
-          items={9}
-          nodes={5}
-          totalRecords={barbers.length}
-          handlePageChange={handlePageChange}
-          qsObject={filterValue}
-        />}
         {
-          barbers.length == 0 ? <NoResult /> : ''
+          isValidErrorRef.current ? <AlertError errors={errors} /> :
+          <>
+            <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
+              {(response as any)?.data?.map((barber: any) => <BarberItem key={barber.id} id={barber.id} img={barber.img} name={barber.name} />)}
+            </div>
+            {!!(response as any)?.data?.length && <Pagination
+              page={+filterValue.page}
+              items={9}
+              nodes={5}
+              totalRecords={(response as any).meta.totalRecords}
+              handlePageChange={handlePageChange}
+              qsObject={filterValue}
+            />}
+            {
+              (response as any)?.data?.length == 0 ? <NoResult /> : ''
+            }
+          </>
         }
       </div>
     </>

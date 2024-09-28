@@ -3,7 +3,7 @@ export function toQueryString(obj: any) {
   let first = true;
   for (const key in obj) {
     if (obj[key]) {
-      qs += `${first ? '' : '&'}${key}=${obj[key]}`;
+      qs += `${first ? '' : '&'}${key}=${encodeURIComponent(obj[key])}`;
       first = false;
     }
   }
@@ -11,5 +11,5 @@ export function toQueryString(obj: any) {
 }
 
 export function capitalize(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
+  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 }

@@ -1,4 +1,49 @@
+'use client';
+
+import { ApiUser } from "@/common/constant/api-url.constant";
+import { useAuthen } from "@/hooks/user.authen";
+import { useRef } from "react";
+import Swal from 'sweetalert2'
+
 export default function LoginPage() {
+  const emailInputRef: any = useRef();
+  const passwordInputRef: any = useRef();
+
+  const { authenDispatch } = useAuthen();
+
+  const handleLogin = () => {
+    const email = emailInputRef.current.value;
+    const password = passwordInputRef.current.value;
+    fetch(ApiUser.LOGIN, {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then((response) => {
+        if ([404, 500].includes(response.status)) {
+          window.location.href = `/error/${response.status}`;
+          return;
+        }
+        return response.json();
+      })
+      .then((json) => {
+        if (json.status === 401 || json.status === 400) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: json.message,
+          })
+          return;
+        }
+        authenDispatch({ type: 'LOGIN', payload: json.user });
+        window.localStorage.setItem('token', json.token);
+        window.location.href = window.sessionStorage.getItem('prePath') || '/';
+      })
+      .catch((error) => console.log(error));
+  }
+
   return (
     <section className="bg-gray-50 dark:bg-gray-900" style={{ backgroundImage: 'url("/img/bg-login.jpg")'}}>
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -7,7 +52,7 @@ export default function LoginPage() {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Sign in to your account
             </h1>
-            <form className="space-y-4 md:space-y-6" action="#">
+            <div className="space-y-4 md:space-y-6">
               <div>
                 <label
                   htmlFor="email"
@@ -22,6 +67,7 @@ export default function LoginPage() {
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="name@company.com"
                   required={true}
+                  ref={emailInputRef}
                 />
               </div>
               <div>
@@ -38,6 +84,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   required={true}
+                  ref={passwordInputRef}
                 />
               </div>
               <div className="flex items-center justify-between">
@@ -70,6 +117,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                onClick={handleLogin}
               >
                 Sign in
               </button>
@@ -82,7 +130,7 @@ export default function LoginPage() {
                   Sign up
                 </a>
               </p>
-            </form>
+            </div>
           </div>
         </div>
       </div>

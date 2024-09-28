@@ -11,6 +11,7 @@ export class BarberService {
   async getAll(getListBarberRequestDto: GetListBarberRequestDto) {
     this.barberRepository.resetQueryBuilder();
     const [barbers, totalRecords] = await this.barberRepository
+      .filterByField('active', true, Operators.Eq)
       .filterByField(
         'name',
         getListBarberRequestDto.name

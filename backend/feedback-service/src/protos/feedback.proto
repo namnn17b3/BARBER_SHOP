@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package feedback;
+
+message HairStyle {
+  int32 id = 1;
+  string rating = 2;
+}
+
+message GetListHairStyleRequest {
+  repeated int32 ids = 1;
+}
+
+message GetListHairStyleResponse {
+  repeated HairStyle hairStyles = 1;
+}
+
+service FeedbackService {
+  rpc GetListHairStyle(GetListHairStyleRequest) returns (GetListHairStyleResponse) {}
+}

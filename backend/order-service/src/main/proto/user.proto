@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package user;
+
+message GetListUserFeedbackByIdsRequest {
+  repeated int32 ids = 1;
+}
+
+message GetListUserFeedbackByIdsResponse {
+  repeated UserFeedback userFeedbacks = 1;
+}
+
+message UserFeedback {
+  int32 id = 1;
+  string username = 2;
+  string avatar = 3;
+}
+
+service UserService {
+  rpc getListUserFeedbackByIds(GetListUserFeedbackByIdsRequest) returns (GetListUserFeedbackByIdsResponse) {}
+}

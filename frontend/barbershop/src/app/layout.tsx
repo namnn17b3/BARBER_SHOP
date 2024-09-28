@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { AuthenrProvider } from "@/authen/Provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,14 +21,16 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossOrigin="anonymous" referrerPolicy="no-referrer" />
-        <script async defer src="/js/flowbite.min.js"></script>
       </head>
-      <body className={inter.className} style={{ width: 'auto' }}>
-        <Header />
-        <div style={{ minHeight: '80vh' }}>
-          {children}
-        </div>
-        <Footer />
+      <body className={inter.className} style={{ width: 'auto', backgroundColor: '#f9fafb' }}>
+        <AuthenrProvider>
+          <Header />
+          <div style={{ minHeight: '80vh' }}>
+            {children}
+          </div>
+          <Footer />
+        </AuthenrProvider>
+        <script src="/js/flowbite.min.js"></script>
       </body>
     </html>
   );
