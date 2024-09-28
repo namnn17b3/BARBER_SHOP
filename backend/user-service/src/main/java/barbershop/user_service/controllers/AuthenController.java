@@ -2,6 +2,7 @@ package barbershop.user_service.controllers;
 
 import barbershop.user_service.dtos.request.LoginRequest;
 import barbershop.user_service.dtos.request.RegisterRequest;
+import barbershop.user_service.dtos.response.AppBaseResponse;
 import barbershop.user_service.dtos.response.LoginResponse;
 import barbershop.user_service.dtos.response.ResponseSuccess;
 import barbershop.user_service.services.AuthenticationService;
@@ -15,7 +16,7 @@ import javax.validation.Valid;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class AuthenController {
     @Autowired
     private AuthenticationService authenticationService;
@@ -40,5 +41,10 @@ public class AuthenController {
     @GetMapping("/authen/test")
     public ResponseEntity<ResponseSuccess> test(@RequestParam("email") String email) throws Exception {
         return new ResponseEntity<>(this.authenticationService.test(email), HttpStatus.OK);
+    }
+
+    @GetMapping("/authen/me")
+    public ResponseEntity<AppBaseResponse> me(@RequestParam("token") String token) throws Exception {
+        return new ResponseEntity<>(this.authenticationService.me(token), HttpStatus.OK);
     }
 }
