@@ -9,7 +9,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { faker } from '@faker-js/faker';
 import { objectMapper, randomInteger } from '@common/utils/utils';
-import { GetListHairStyleRequestDto } from '@hair-style/hair-style.dto';
+import {
+  GetListHairStyleRequestDto,
+  GetListImageUrlRequestDto,
+} from '@hair-style/hair-style.dto';
 import { OrderGrpcClientService } from '@grpc/services/order/order.grpc-client.service';
 import { FeedbackGrpcClientService } from '@grpc/services/feedback/feedback.grpc-client.service';
 import {
@@ -225,6 +228,41 @@ export class HairStyleService {
         },
       },
     } as AppResponseSuccessDto;
+  }
+
+  async getListImageUrl(getListImageUrlRequestDto: GetListImageUrlRequestDto) {
+    const { name, page, items } = getListImageUrlRequestDto;
+    const query: any = { active: { $eq: true } };
+    // Thêm điều kiện lọc theo name nếu có
+    if (name) {
+      query.name = { $regex: name, $options: 'i' }; // Lọc theo tên không phân biệt hoa thường
+      // or query.name = { $regex: new RegExp(name, 'i') }; // Tìm kiếm tên không phân biệt hoa thường
+    }
+
+    const hairStyles: any[] = (await this.hairStyleModel.find(query)).map(
+      (item) => ({
+        ...objectMapper(['id', 'name', 'imgs'], item),
+        imgs: item.imgs
+          .map((img: any) => ({
+            ...objectMapper(['id', 'url'], img),
+          }))
+          .sort((o1: any, o2: any) => o1.id - o2.id),
+      }),
+    );
+
+    const data = hairStyles.slice(
+      (page - 1) * items,
+      (page - 1) * items + items,
+    );
+
+    return {
+      data,
+      meta: {
+        page,
+        items,
+        totalRecords: hairStyles.length,
+      },
+    } as PaginationResponseDto;
   }
 
   async seed(query: any) {

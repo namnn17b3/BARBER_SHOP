@@ -38,3 +38,9 @@ export class GetListHairStyleRequestDto extends PaginationDto {
   @Matches(HAIR_STYLE_SORTING)
   sorting?: string;
 }
+
+export class GetListImageUrlRequestDto extends PaginationDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+}
