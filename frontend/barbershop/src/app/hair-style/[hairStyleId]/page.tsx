@@ -1,5 +1,6 @@
 import Feedbacks from "@/components/feedback/Feedbacks";
 import HairStyleDetail from "@/components/hair-style/HairStyleDetail";
+import React from "react";
 
 export default function HairStyleDetailPage(props: any) {
   const { hairStyleId } = props.params;

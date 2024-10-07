@@ -9,6 +9,7 @@ import NoResult from "@/components/NoResult";
 import Pagination from "@/components/Pagination";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import React from "react";
 import { useEffect, useRef, useState } from "react";
 
 export default function HairStylePage() {
@@ -82,6 +83,7 @@ export default function HairStylePage() {
       minPrice,
       maxPrice,
       sorting,
+      page: 1,
     }
     router.push(`?${toQueryString(newFilterValue)}`);
     setFilterValue(newFilterValue);

@@ -19,5 +19,5 @@ public class PaginationResponse extends BaseResponse {
         private int totalRecords;
     }
 
-    Meta meta;
+    private Meta meta;
 }

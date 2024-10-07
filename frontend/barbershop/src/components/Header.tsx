@@ -5,6 +5,7 @@ import { NAV_ACTIVE_CLASS, NAV_INACTIVE_CLASS } from "@/common/constant/nav.cons
 import { AvatarShortOption } from "@/components/AvatarShortOption";
 import { useAuthen } from "@/hooks/user.authen";
 import { usePathname } from 'next/navigation'
+import React from "react";
 import { useEffect, useState } from "react";
 
 export default function Header() {
@@ -34,7 +35,10 @@ export default function Header() {
         authenDispatch({ type: 'LOGIN',  payload: json.data});
         setUser(json.data);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        setUser(1);
+        console.log(error);
+      });
   }, []);
 
   return (

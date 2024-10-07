@@ -1,7 +1,5 @@
 package barbershop.hair_color_service.dtos.validator;
 
-import barbershop.hair_color_service.enums.Color;
-
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;

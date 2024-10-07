@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import user.GetListUserFeedbackByIdsRequest;
 import user.GetListUserFeedbackByIdsResponse;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,11 +60,16 @@ public class OrderGrpcService extends OrderServiceGrpc.OrderServiceImplBase {
                 barbershop.order_service.entities.Order orderEntity = orders.get(i);
                 Map<String, Object> hairColorMap = (Map<String, Object>) objectMapper.readValue(orderEntity.getHairColor() == null ? "null" : orderEntity.getHairColor(), Map.class);
                 user.UserFeedback user = getUserById(getListUsersByIdsResponse.getUserFeedbacksList(), orderEntity.getUserId());
+                Map<String, Object> hairColorGrpcMap = new LinkedHashMap<>();
+                if (hairColorMap != null) {
+                    hairColorGrpcMap.put("color", hairColorMap.get("color").toString());
+                    hairColorGrpcMap.put("colorCode", hairColorMap.get("colorCode").toString());
+                }
                 order.UserFeedback userFeedback = order.UserFeedback.newBuilder()
                         .setId(user.getId())
                         .setAvatar(user.getAvatar())
                         .setUsername(user.getUsername())
-                        .setHairColor(hairColorMap == null ? "" : hairColorMap.get("color").toString())
+                        .setHairColor(hairColorMap == null ? "" : objectMapper.writeValueAsString(hairColorGrpcMap))
                         .setOrderId(orderEntity.getId())
                         .build();
                 getListUserFeedbackByOrderIdsResponseBuilder.addUserFeedbacks(i, userFeedback);

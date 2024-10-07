@@ -1,6 +1,7 @@
 package barbershop.hair_color_service.services.impl;
 
 import barbershop.hair_color_service.dtos.request.PaginationRequest;
+import barbershop.hair_color_service.dtos.response.BaseResponse;
 import barbershop.hair_color_service.dtos.response.PaginationResponse;
 import barbershop.hair_color_service.dtos.response.ResponseSuccess;
 import barbershop.hair_color_service.entities.ColorImage;
@@ -16,8 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class HairColorServiceImpl implements HairColorService {
@@ -74,6 +74,19 @@ public class HairColorServiceImpl implements HairColorService {
         jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS = 1");
 
         return new ResponseSuccess(HttpStatus.OK, "Seed data success");
+    }
+
+    @Override
+    public BaseResponse getColors() throws Exception {
+        List<HairColor> hairColors = hairColorRepository.findAll();
+        List<Map<String, Object>> ls = new ArrayList<>();
+        for (HairColor hairColor : hairColors) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("color", hairColor.getColor());
+            map.put("colorCode", hairColor.getColorCode());
+            ls.add(map);
+        }
+        return new BaseResponse(ls);
     }
 
     @Override

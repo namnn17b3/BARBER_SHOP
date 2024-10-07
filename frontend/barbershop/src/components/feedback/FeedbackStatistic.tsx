@@ -1,6 +1,7 @@
 'use client';
 
 import { ApiFeedback } from "@/common/constant/api-url.constant";
+import React from "react";
 import { useEffect, useState } from "react";
 
 export default function FeedbackStatistic(props: any) {

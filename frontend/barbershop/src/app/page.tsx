@@ -1,11 +1,9 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
     <section className="bg-center bg-no-repeat bg-cover bg-[url('/img/home_bg.jpg')] bg-gray-700 bg-blend-multiply">
       <div className="px-4 mx-auto max-w-screen-xl text-center pt-56 lg:pb-24">
         <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-white md:text-5xl lg:text-6xl">We provide the best hair cutting service</h1>
-        <p className="mb-8 text-lg font-normal text-gray-300 lg:text-xl sm:px-16 lg:px-48">With over 15 years of development in the field of hair cutting, we affirm to bring you beautiful hair, meeting the beauty needs of men.</p>
+        <p className="mb-8 text-lg font-normal text-gray-300 lg:text-xl sm:px-16 lg:px-48">With over 15 years of development in the field of hair cutting, we affirm to bring you beautiful hair, meeting the beauty needs of men. We offer an AI hair fast tester, which is a feature we really like</p>
         <div className="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0">
           <a href="/hair-style" className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
             Booking now
@@ -13,8 +11,8 @@ export default function Home() {
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
             </svg>
           </a>
-          <a href="#" className="inline-flex justify-center hover:text-gray-900 items-center py-3 px-5 sm:ms-4 text-base font-medium text-center text-white rounded-lg border border-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-400">
-            Learn more
+          <a href="/hair-fast-gan" className="inline-flex justify-center hover:text-gray-900 items-center py-3 px-5 sm:ms-4 text-base font-medium text-center text-white rounded-lg border border-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-400">
+            Try it AI now!
           </a>
         </div>
         <div className="pt-16">

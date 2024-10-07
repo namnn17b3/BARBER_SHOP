@@ -1,13 +1,10 @@
-import { Color } from "@/common/enums/color.enum";
+import React from "react";
 
 export default function FilterHairColorItem(props: any) {
   const {
     handleFilter,
-    redColorInputRef,
-    blueColorInputRef,
-    yellowColorInputRef,
-    greenColorInputRef,
-    purpleColorInputRef,
+    colorRef,
+    colors,
   } = props;
 
   return (
@@ -53,67 +50,20 @@ export default function FilterHairColorItem(props: any) {
               <h6 className="text-base font-medium text-black dark:text-white">
                 Color
               </h6>
-              <div className="flex items-center">
-                <input
-                  id="red-color-input"
-                  type="radio"
-                  name="color"
-                  className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  ref={redColorInputRef}
-                  defaultChecked
-                  onChange={() => {}}
-                  defaultValue={Color.RED}
-                />
-                <label htmlFor="red-color-input" className="flex items-center ml-2" style={{ color: '#dc3545' }}>Red</label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  id="yellow-color-input"
-                  type="radio"
-                  name="color"
-                  className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  ref={yellowColorInputRef}
-                  onChange={() => {}}
-                  defaultValue={Color.YELLOW}
-                />
-                <label htmlFor="yellow-color-input" className="flex items-center ml-2" style={{ color: '#ffc107' }}>Yellow</label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  id="blue-color-input"
-                  type="radio"
-                  name="color"
-                  className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  ref={blueColorInputRef}
-                  onChange={() => {}}
-                  defaultValue={Color.BLUE}
-                />
-                <label htmlFor="blue-color-input" className="flex items-center ml-2" style={{ color: '#007bff' }}>Blue</label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  id="green-color-input"
-                  type="radio"
-                  name="color"
-                  className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  ref={greenColorInputRef}
-                  onChange={() => {}}
-                  defaultValue={Color.GREEN}
-                />
-                <label htmlFor="green-color-input" className="flex items-center ml-2" style={{ color: '#28a745' }}>Green</label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  id="purple-color-input"
-                  type="radio"
-                  name="color"
-                  className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  ref={purpleColorInputRef}
-                  onChange={() => {}}
-                  defaultValue={Color.PURPLE}
-                />
-                <label htmlFor="purple-color-input" className="flex items-center ml-2" style={{ color: '#6f42c1' }}>Purple</label>
-              </div>
+              {colors.map((c: any, idx: number) => (
+                <div className="flex items-center">
+                  <input
+                    id="red-color-input"
+                    type="radio"
+                    name="color"
+                    className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    defaultChecked={idx === 0}
+                    onClick={() => { colorRef.current = c.color; }}
+                    defaultValue={c.color}
+                  />
+                  <label htmlFor="red-color-input" className="flex items-center ml-2" style={{ color: c.colorCode }}>{c.color}</label>
+                </div>
+              ))}
             </div>
           </div>
           <div className="bottom-0 left-0 flex justify-center w-full pb-4 mt-6 space-x-4 md:px-4 md:absolute">

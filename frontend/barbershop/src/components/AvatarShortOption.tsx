@@ -1,6 +1,7 @@
 import { ApiUser } from "@/common/constant/api-url.constant";
 import { Role } from "@/common/enums/role.enum";
 import { useAuthen } from "@/hooks/user.authen";
+import React from "react";
 
 export function AvatarShortOption(props: any) {
   const { user } = props;

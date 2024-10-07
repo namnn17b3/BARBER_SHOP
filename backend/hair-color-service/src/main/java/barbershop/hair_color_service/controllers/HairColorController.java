@@ -1,6 +1,7 @@
 package barbershop.hair_color_service.controllers;
 
 import barbershop.hair_color_service.dtos.request.PaginationRequest;
+import barbershop.hair_color_service.dtos.response.BaseResponse;
 import barbershop.hair_color_service.dtos.response.PaginationResponse;
 import barbershop.hair_color_service.dtos.response.ResponseSuccess;
 import barbershop.hair_color_service.services.HairColorService;
@@ -21,6 +22,11 @@ public class HairColorController {
     @GetMapping("")
     public ResponseEntity<PaginationResponse> getAll(@Valid @ModelAttribute PaginationRequest paginationRequest) throws Exception {
         return new ResponseEntity<>(hairColorService.getAll(paginationRequest), HttpStatus.OK);
+    }
+
+    @GetMapping("/color")
+    public ResponseEntity<BaseResponse> getColors() throws Exception {
+        return new ResponseEntity<>(hairColorService.getColors(), HttpStatus.OK);
     }
 
     @GetMapping("/seed")

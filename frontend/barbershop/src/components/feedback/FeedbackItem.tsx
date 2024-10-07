@@ -37,8 +37,8 @@ export default function FeedbackItem(props: any) {
               <p className="text-base font-semibold text-gray-900 dark:text-white">
                 {user?.username}
               </p>
-              <p className="text-sm font-normal dark:text-gray-400" style={{ color: ColorMaper[user.hairColor || 'NORMAL'] }}>
-                {user.hairColor ? capitalize(user.hairColor) : 'Normal'}
+              <p className="text-sm font-normal dark:text-gray-400" style={{ color: user?.hairColor?.colorCode ||  ColorMaper['NORMAL'] }}>
+                {user.hairColor ? capitalize(user.hairColor.color) : 'Normal'}
               </p>
               <p className="text-sm font-normal text-gray-500 dark:text-gray-400">
                 {time}

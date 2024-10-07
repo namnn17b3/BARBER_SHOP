@@ -10,11 +10,13 @@ export const ApiBarber = {
 
 export const ApiHairColor = {
   GET_ALL: `${BASE_URL}/hair-colors`,
+  GET_COLOR: `${BASE_URL}/hair-colors/color`,
 };
 
 export const ApiHairStyle = {
   GET_ALL: `${BASE_URL}/hair-styles`,
   GET_DETAIL: `${BASE_URL}/hair-styles`,
+  GET_IMAGE_URLS: `${BASE_URL}/hair-styles/image-url`,
 }
 
 export const ApiUser = {
@@ -26,4 +28,8 @@ export const ApiUser = {
 export const ApiFeedback = {
   STATISTICS: `${BASE_URL}/feedbacks/statistics`,
   GET_ALL: `${BASE_URL}/feedbacks`,
+}
+
+export const ApiHairFastGan = {
+  SWAP_HAIR: `${process.env.NEXT_PUBLIC_HAIR_FAST_GAN_API}/swap-hair`,
 }

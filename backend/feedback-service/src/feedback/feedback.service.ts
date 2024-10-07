@@ -120,16 +120,22 @@ export class FeedbackService {
       )?.userFeedbacks || [];
 
     return {
-      data: result.map((item) => ({
-        ...objectMapper(['star', 'comment'], item),
-        time: dayjs
-          .utc(item.time)
-          .tz(TimeZone.ASIA_HCM)
-          .format(DateFormatType.YYYY_MM_DD_HH_MM_SS),
-        user: userFeedbacks.find(
+      data: result.map((item) => {
+        const userFeedback = userFeedbacks.find(
           (user: UserFeedback) => user.orderId === item.orderId,
-        ),
-      })),
+        );
+        userFeedback.hairColor = userFeedback.hairColor
+          ? JSON.parse(userFeedback.hairColor)
+          : null;
+        return {
+          ...objectMapper(['star', 'comment'], item),
+          time: dayjs
+            .utc(item.time)
+            .tz(TimeZone.ASIA_HCM)
+            .format(DateFormatType.YYYY_MM_DD_HH_MM_SS),
+          user: userFeedback,
+        };
+      }),
       meta: {
         items,
         page,

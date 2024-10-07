@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function FilterHairStyleItem(props: any) {
   const {
     nameInputRef,

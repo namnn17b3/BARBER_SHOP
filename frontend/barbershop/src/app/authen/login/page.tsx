@@ -3,7 +3,7 @@
 import { ApiUser } from "@/common/constant/api-url.constant";
 import { useAuthen } from "@/hooks/user.authen";
 import { useRef } from "react";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2"
 
 export default function LoginPage() {
   const emailInputRef: any = useRef();

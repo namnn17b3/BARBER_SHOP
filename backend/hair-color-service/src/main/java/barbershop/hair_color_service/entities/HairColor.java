@@ -1,7 +1,6 @@
 package barbershop.hair_color_service.entities;
 
 
-import barbershop.hair_color_service.enums.Color;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
@@ -25,6 +24,9 @@ public class HairColor extends BaseEntity {
 
     @Column(name="active", nullable = false)
     private boolean active = true;
+
+    @Column(name="color_code", nullable = false)
+    private String colorCode;
 
     @OneToMany(cascade=CascadeType.ALL, fetch= FetchType.LAZY, mappedBy = "hairColor")
     @JsonManagedReference

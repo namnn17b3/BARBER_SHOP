@@ -9,6 +9,7 @@ import Pagination from "@/components/Pagination";
 import { toQueryString } from "@/common/utils/utils";
 import NoResult from "@/components/NoResult";
 import AlertError from "@/components/alert/AlertError";
+import React from "react";
 
 export default function BarberPage() {
   const searchParams = useSearchParams();
@@ -71,6 +72,7 @@ export default function BarberPage() {
       ageMin,
       ageMax,
       gender,
+      page: 1,
     }
     router.push(`?${toQueryString(newFilterValue)}`);
     setFilterValue(newFilterValue);
