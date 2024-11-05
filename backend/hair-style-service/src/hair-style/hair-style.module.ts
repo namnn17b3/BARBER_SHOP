@@ -2,6 +2,7 @@ import { GrpcModule } from '@grpc/grpc.module';
 import { FeedbackGrpcClientService } from '@grpc/services/feedback/feedback.grpc-client.service';
 import { OrderGrpcClientService } from '@grpc/services/order/order.grpc-client.service';
 import { HairStyleController } from '@hair-style/hair-style.controller';
+import { HairStyleGrpcController } from '@hair-style/hair-style.grpc.controller';
 import { HairStyleSchema } from '@hair-style/hair-style.model';
 import { HairStyleService } from '@hair-style/hair-style.service';
 import { Module } from '@nestjs/common';
@@ -10,7 +11,7 @@ import { Connection } from 'mongoose';
 import * as AutoIncrementFactory from 'mongoose-sequence';
 
 @Module({
-  controllers: [HairStyleController],
+  controllers: [HairStyleController, HairStyleGrpcController],
   providers: [
     HairStyleService,
     FeedbackGrpcClientService,

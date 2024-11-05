@@ -65,7 +65,7 @@ export default function Feedbacks(props: any) {
 
   useEffect(() => {
     const url = `${ApiFeedback.GET_ALL}?hairStyleId=${hairStyleId}&${toQueryString(filterValue)}`;
-    fetch(url, authenState && {
+    fetch(url, yourFeedbackInputRef?.current?.checked && {
       headers: {
         'authorization': `Bearer ${window.localStorage.getItem('token')}`,
       }

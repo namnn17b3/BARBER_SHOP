@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { Response } from 'express';
 
 @Catch()
@@ -14,6 +15,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const logger = new LoggerService();
     logger.error(exception.message, exception.stack, 'GLOBAL_EXCEPTION');
+
+    if (exception instanceof RpcException) {
+      console.error(exception);
+      return;
+    }
 
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();

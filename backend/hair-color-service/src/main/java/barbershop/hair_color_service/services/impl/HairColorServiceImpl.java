@@ -82,6 +82,7 @@ public class HairColorServiceImpl implements HairColorService {
         List<Map<String, Object>> ls = new ArrayList<>();
         for (HairColor hairColor : hairColors) {
             Map<String, Object> map = new LinkedHashMap<>();
+            map.put("id", hairColor.getId());
             map.put("color", hairColor.getColor());
             map.put("colorCode", hairColor.getColorCode());
             ls.add(map);

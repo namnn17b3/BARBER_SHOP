@@ -9,6 +9,10 @@
       {
         "include": "grpc/protos/**/*.proto",
         "watchAssets": true
+      },
+      {
+        "include": "protos/**/*.proto",
+        "watchAssets": true
       }
     ]
   }

@@ -96,7 +96,7 @@ export default function BarberPage() {
         genderMaleInputRef={genderMaleInputRef}
         gendeFemaleInputRef={gendeFemaleInputRef}
       />
-      <h1 className="text-4xl font-bold text-center text-gray-900 mb-10">Barber List</h1>
+      <h2 className="mb-4 text-3xl font-extrabold text-center leading-none tracking-tight text-gray-900 md:text-4xl dark:text-white">Barber List</h2>
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
         <div className="flex justify-end mb-6">
           <button className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800" type="button" data-drawer-target="drawer-example" data-drawer-show="drawer-example" aria-controls="drawer-example">

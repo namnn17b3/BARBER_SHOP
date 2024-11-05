@@ -65,7 +65,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({BindException.class})
     @ResponseStatus(BAD_REQUEST)
-    public FieldErrorsResponse handleBindExceptionException(Exception e, WebRequest request) {
+    public FieldErrorsResponse handleBindException(Exception e, WebRequest request) {
         List<FieldError> fieldErrors = ((BindException) e).getFieldErrors();
         List<FieldErrorsResponse.FieldError> errors = new ArrayList<>();
         for (FieldError fieldError : fieldErrors) {

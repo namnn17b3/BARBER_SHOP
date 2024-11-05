@@ -3,6 +3,7 @@ import { BarberRepository } from '@barber/barber.repository';
 import { PaginationResponseDto } from '@common/dto/response.dto';
 import { Operators } from '@common/enum/operators.enum';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { GetAllBarberRequest } from '@protos/barber';
 
 @Injectable()
 export class BarberService {
@@ -65,6 +66,18 @@ export class BarberService {
         updatedAt: undefined,
         createdAt: undefined,
       },
+    };
+  }
+
+  async getAllBarberNoPagination(request: GetAllBarberRequest) {
+    const barbers = await this.barberRepository.find();
+    return {
+      data: barbers.map((item) => ({
+        ...item,
+        createdAt: undefined,
+        updatedAt: undefined,
+        gender: item.gender.toString(),
+      })),
     };
   }
 }

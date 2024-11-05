@@ -2,14 +2,20 @@
 
 import { ApiUser } from "@/common/constant/api-url.constant";
 import { useAuthen } from "@/hooks/user.authen";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Swal from "sweetalert2"
 
 export default function LoginPage() {
   const emailInputRef: any = useRef();
   const passwordInputRef: any = useRef();
 
-  const { authenDispatch } = useAuthen();
+  const { authenState, authenDispatch } = useAuthen();
+
+  useEffect(() => {
+    if (authenState) {
+      window.location.href = window.sessionStorage.getItem('prePath') || '/';
+    }
+  }, [authenState]);
 
   const handleLogin = () => {
     const email = emailInputRef.current.value;

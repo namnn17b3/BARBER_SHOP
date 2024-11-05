@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -65,7 +63,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({BindException.class})
     @ResponseStatus(BAD_REQUEST)
-    public FieldErrorsResponse handleBindExceptionException(Exception e, WebRequest request) {
+    public FieldErrorsResponse handleBindException(Exception e, WebRequest request) {
         List<FieldError> fieldErrors = ((BindException) e).getFieldErrors();
         List<FieldErrorsResponse.FieldError> errors = new ArrayList<>();
         for (FieldError fieldError : fieldErrors) {
@@ -76,6 +74,22 @@ public class GlobalExceptionHandler {
             errors.add(fe);
         }
         return new FieldErrorsResponse(errors);
+    }
+
+    @ExceptionHandler({FieldErrorsResponse.class})
+    @ResponseStatus(BAD_REQUEST)
+    public Map handleFieldErrorsResponseException(Exception e, WebRequest request) {
+        List<FieldErrorsResponse.FieldError> fieldErrors = ((FieldErrorsResponse) e).getErrors();
+        List<FieldErrorsResponse.FieldError> errors = new ArrayList<>();
+        for (FieldErrorsResponse.FieldError fieldError : fieldErrors) {
+            FieldErrorsResponse.FieldError fe = new FieldErrorsResponse.FieldError();
+            fe.setField(fieldError.getField());
+            fe.setMessage(fieldError.getMessage());
+            fe.setResource(Utils.capitalize(fieldError.getResource()));
+            errors.add(fe);
+            System.out.println(fieldError.getField() + " " + fieldError.getMessage() + " " + Utils.capitalize(fieldError.getResource()));
+        }
+        return Map.of("errors", errors);
     }
 
     /**

@@ -1,26 +1,24 @@
+import { GlobalExceptionFilter } from '@common/exception-filter/global-exception.filter';
+import { ResponseLogger } from '@common/intercept/response-logger.intercept';
+import { TrimBodyPipe } from '@common/validate-pipe/trim-body.pipe';
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
+import {
+  APP_FILTER,
+  APP_INTERCEPTOR,
+  APP_PIPE,
+  RouterModule,
+} from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PaymentModule } from '@payment/payment.module';
+import { AppDataSource } from 'datasource';
 import {
   addTransactionalDataSource,
   initializeTransactionalContext,
   StorageDriver,
 } from 'typeorm-transactional';
-import { AppDataSource } from 'datasource';
-import {
-  APP_FILTER,
-  APP_GUARD,
-  APP_INTERCEPTOR,
-  APP_PIPE,
-  RouterModule,
-} from '@nestjs/core';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { TrimBodyPipe } from '@common/validate-pipe/trim-body.pipe';
-import { ResponseLogger } from '@common/intercept/response-logger.intercept';
-import { GlobalExceptionFilter } from '@common/exception-filter/global-exception.filter';
-import { PaymentModule } from '@payment/payment.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -39,12 +37,6 @@ import { PaymentModule } from '@payment/payment.module';
       },
     }),
     RouterModule.register([]),
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000,
-        limit: 50,
-      },
-    ]),
     PaymentModule,
   ],
   controllers: [AppController],
@@ -57,10 +49,6 @@ import { PaymentModule } from '@payment/payment.module';
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
     },
     {
       provide: APP_PIPE,

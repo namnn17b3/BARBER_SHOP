@@ -1,3 +1,4 @@
+import { capitalize } from "@/common/utils/utils";
 import React from "react";
 
 export default function FilterHairColorItem(props: any) {
@@ -51,7 +52,7 @@ export default function FilterHairColorItem(props: any) {
                 Color
               </h6>
               {colors.map((c: any, idx: number) => (
-                <div className="flex items-center">
+                <div key={idx} className="flex items-center">
                   <input
                     id="red-color-input"
                     type="radio"
@@ -61,7 +62,7 @@ export default function FilterHairColorItem(props: any) {
                     onClick={() => { colorRef.current = c.color; }}
                     defaultValue={c.color}
                   />
-                  <label htmlFor="red-color-input" className="flex items-center ml-2" style={{ color: c.colorCode }}>{c.color}</label>
+                  <label htmlFor="red-color-input" className="flex items-center ml-2" style={{ color: c.colorCode }}>{capitalize(c.color)}</label>
                 </div>
               ))}
             </div>

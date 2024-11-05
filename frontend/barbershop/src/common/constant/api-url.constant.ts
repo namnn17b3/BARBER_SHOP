@@ -33,3 +33,13 @@ export const ApiFeedback = {
 export const ApiHairFastGan = {
   SWAP_HAIR: `${process.env.NEXT_PUBLIC_HAIR_FAST_GAN_API}/swap-hair`,
 }
+
+export const ApiOrder = {
+  FIND_ORDER_INFO: `${BASE_URL}/orders/find-order-info`,
+  PAYMENT: `${BASE_URL}/orders/payment`,
+  GET_ORDER_BY_USER: `${BASE_URL}/orders`,
+}
+
+export const ApiPayment = {
+  VERIFY: `${BASE_URL}/payments/verify`,
+}

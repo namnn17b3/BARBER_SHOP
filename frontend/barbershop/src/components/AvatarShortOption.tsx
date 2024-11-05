@@ -74,10 +74,10 @@ export function AvatarShortOption(props: any) {
           </li>
           <li>
             <a
-              href="#"
+              href="/history-order"
               className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             >
-              Ordering
+              History order
             </a>
           </li>
         </ul>

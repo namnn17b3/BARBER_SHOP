@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f9fafb; color: #333333; margin: 0; padding: 0;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
+    <tr>
+      <td style="padding: 20px;">
+        <table role="presentation" width="600px" cellspacing="0" cellpadding="0" border="0" align="center" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e0e0e0;">
+          <tr>
+            <td style="padding: 20px;">
+              <h2 style="font-size: 20px; color: #111827; font-weight: bold; margin: 0;">Thanks for your order!</h2>
+              <p style="font-size: 16px; color: #6b7280; line-height: 1.5;">
+                We are sending you this email to inform you that you have successfully booked a haircut at BarberShop. Please arrive 30 minutes before your scheduled haircut so the barber can prepare and serve you.
+              </p>
+
+              <!-- Image Section -->
+              <div style="padding: 10px; background-color: #f3f4f6; border-radius: 8px; border: 1px solid #e5e7eb; text-align: center;">
+                <img src="<%= order.barber.avatar %>">
+              </div>
+
+              <!-- Barber Details -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 20px; background-color: #f9fafb; border-radius: 8px; border: 1px solid #e0e0e0;">
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Barber:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: #111827; text-align: right;"><%= order.barber.name %></td>
+                </tr>
+              </table>
+
+              <!-- User Details -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 20px; background-color: #f9fafb; border-radius: 8px; border: 1px solid #e0e0e0;">
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Username:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: #111827; text-align: right;"><%= order.user.username %></td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Email:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: #111827; text-align: right;"><%= order.user.email %></td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Phone number:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: #111827; text-align: right;"><%= order.user.phone %></td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Address:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: #111827; text-align: right;"><%= order.user.address %></td>
+                </tr>
+              </table>
+
+              <!-- Hair Style Details -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 20px; background-color: #f9fafb; border-radius: 8px; border: 1px solid #e0e0e0;">
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Hair style:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: #111827; text-align: right;"><%= order.hairStyle.name %></td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Price:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: #111827; text-align: right;"><%= Number(order.hairStyle.price).toLocaleString('vi') %> đ</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Discount:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: #111827; text-align: right;"><%= Number(order.hairStyle.discount.value).toLocaleString('vi') %> <%= order.hairStyle.discount.unit === '%' ? '%' : 'đ' %></td>
+                </tr>
+              </table>
+
+              <% if (order.hairColor) { %>
+              <!-- Hair Color Details -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 20px; background-color: #f9fafb; border-radius: 8px; border: 1px solid #e0e0e0;">
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Hair color:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: <%= order.hairColor.colorCode %>; text-align: right;"><%= order.hairColor.color %></td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Price:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: #111827; text-align: right;"><%= Number(order.hairColor.price).toLocaleString('vi') %> đ</td>
+                </tr>
+              </table>
+              <% } %>
+
+              <!-- Order Details -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 20px; background-color: #f9fafb; border-radius: 8px; border: 1px solid #e0e0e0;">
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Order code:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: #111827; text-align: right;">BBSOD<%= order.id %></td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Order time:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: #111827; text-align: right;"><%= order.orderTime %></td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Schedule:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: #111827; text-align: right;"><%= order.schedule %></td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Amount:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: #111827; text-align: right;"><%= Number(order.amount).toLocaleString('vi') %> đ</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Status:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: <%= order.statusColorCode %>; text-align: right;"><%= order.status %></td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; font-size: 16px; color: #6b7280;">Payment type:</td>
+                  <td style="padding: 8px; font-size: 16px; font-weight: bold; color: #111827; text-align: right;"><%= order.paymentType %></td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

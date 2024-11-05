@@ -24,14 +24,17 @@ export default function HairFastGanPage() {
 
   const resultImageElementRef = useRef<any>();
 
+  
   const handleYourFaceInputChange = (e: any) => {
+    const noneImageSource = `${window.location.origin}/img/fb-no-img.png`;
     URL.revokeObjectURL(preYourFaceImageFileRef.current || null);
     preYourFaceImageFileRef.current = e.target.files[0];
-    yourFaceImageRef.current.src = preYourFaceImageFileRef.current ? URL.createObjectURL(preYourFaceImageFileRef.current) : '/img/fb-no-img.png';
+    yourFaceImageRef.current.src = preYourFaceImageFileRef.current ? URL.createObjectURL(preYourFaceImageFileRef.current) : noneImageSource;
   }
-
+  
   const handleSwapHair = () => {
-    if (!preYourFaceImageFileRef.current || hairColorImageElementRef.current.src === '/img/fb-no-img.png' || hairStyleImageElementRef.current.src === '/img/fb-no-img.png') {
+    const noneImageSource = `${window.location.origin}/img/fb-no-img.png`;
+    if (!preYourFaceImageFileRef.current || hairColorImageElementRef.current.src === noneImageSource || hairStyleImageElementRef.current.src === noneImageSource) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -87,8 +90,9 @@ export default function HairFastGanPage() {
   }
 
   const handleDownloadResult = () => {
+    const noneImageSource = `${window.location.origin}/img/fb-no-img.png`;
     const downloadUrl = resultImageElementRef.current.src;
-    if (downloadUrl && downloadUrl !== '/img/fb-no-img.png') {
+    if (downloadUrl && downloadUrl !== noneImageSource) {
       const link = document.createElement('a');
       link.href = downloadUrl;
       

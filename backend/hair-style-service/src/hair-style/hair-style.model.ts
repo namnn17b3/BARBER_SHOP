@@ -31,6 +31,7 @@ export interface HairStyle extends Document {
   name: String;
   description: String;
   price: Number;
+  active: Boolean;
   imgs: [
     {
       id: Number;

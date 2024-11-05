@@ -5,6 +5,10 @@ import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module.js';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { join } from 'path';
+import { HAIR_STYLE_PACKAGE_NAME } from '@protos/hair-style';
+import { GrpcExceptionFilter } from '@common/exception-filter/grpc-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -16,6 +20,25 @@ async function bootstrap() {
   app.use(cookieParser());
   app.useBodyParser('json', { limit: configService.get('LIMIT_REQUEST_BODY') });
 
-  await app.listen(+configService.get('PORT'), configService.get('HOST'));
+  app.connectMicroservice<MicroserviceOptions>(
+    {
+      transport: Transport.GRPC,
+      options: {
+        url: configService.get('HAIRSTYLE_GRPC_URL'),
+        package: HAIR_STYLE_PACKAGE_NAME,
+        protoPath: join(__dirname, '.', 'protos/hair-style.proto'),
+      },
+    },
+    {
+      inheritAppConfig: true,
+    },
+  );
+
+  app.useGlobalFilters(new GrpcExceptionFilter());
+
+  await Promise.all([
+    app.startAllMicroservices(),
+    app.listen(+configService.get('PORT'), configService.get('HOST')),
+  ]);
 }
 bootstrap();

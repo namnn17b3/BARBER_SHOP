@@ -1,22 +1,20 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 
+import { GlobalExceptionFilter } from '@common/exception-filter/global-exception.filter';
+import { ResponseLogger } from '@common/intercept/response-logger.intercept';
+import { TrimBodyPipe } from '@common/validate-pipe/trim-body.pipe';
+import { GrpcModule } from '@grpc/grpc.module';
+import { HairStyleModule } from '@hair-style/hair-style.module';
 import {
   APP_FILTER,
-  APP_GUARD,
   APP_INTERCEPTOR,
   APP_PIPE,
   RouterModule,
 } from '@nestjs/core';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { TrimBodyPipe } from '@common/validate-pipe/trim-body.pipe';
-import { ResponseLogger } from '@common/intercept/response-logger.intercept';
-import { GlobalExceptionFilter } from '@common/exception-filter/global-exception.filter';
 import { MongooseModule } from '@nestjs/mongoose';
-import { HairStyleModule } from '@hair-style/hair-style.module';
-import { GrpcModule } from '@grpc/grpc.module';
 
 @Module({
   imports: [
@@ -33,12 +31,6 @@ import { GrpcModule } from '@grpc/grpc.module';
       inject: [ConfigService],
     }),
     RouterModule.register([]),
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000,
-        limit: 50,
-      },
-    ]),
     GrpcModule,
     HairStyleModule,
   ],
@@ -52,10 +44,6 @@ import { GrpcModule } from '@grpc/grpc.module';
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
     },
     {
       provide: APP_PIPE,

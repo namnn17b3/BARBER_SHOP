@@ -3,7 +3,9 @@ export interface AppResponseSuccessDto {
 }
 
 export interface AppResponseErrorDto {
-  error: any;
+  status: number;
+  message: string;
+  errors: any;
 }
 
 export interface PaginationMeta {
