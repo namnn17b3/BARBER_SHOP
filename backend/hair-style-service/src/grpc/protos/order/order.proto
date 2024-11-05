@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package order;
+
+message GetListHairStyleRequest {
+  repeated int32 ids = 1;
+}
+
+message HairStyle {
+  int32 id = 1;
+  int32 booking = 2;
+}
+
+message GetListHairStyleResponse {
+  repeated HairStyle hairStyles = 1;
+}
+
+service OrderService {
+  rpc getListHairStyle(GetListHairStyleRequest) returns (GetListHairStyleResponse) {}
+}

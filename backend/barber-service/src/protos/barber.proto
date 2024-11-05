@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package barber;
+
+message GetAllBarberRequest {
+
+}
+
+message Barber {
+  int32 id = 1;
+  string name = 2;
+  int32 age = 3;
+  string gender = 4;
+  string description = 5;
+  string img = 6;
+  bool active = 7;
+}
+
+message GetAllBarberResponse {
+  repeated Barber data = 1;
+}
+
+service BarberService {
+  rpc GetAllBarber(GetAllBarberRequest) returns (GetAllBarberResponse) {}
+}

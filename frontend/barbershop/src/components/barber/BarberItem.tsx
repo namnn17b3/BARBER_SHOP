@@ -1,8 +1,11 @@
-export default function BarberItem({ img, name }: { img: string, name: string }) {
+import Link from "next/link";
+
+export default function BarberItem(props: any) {
+  const { id, img, name } = props;
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <div className="h-56 w-full">
-        <a href="?x=1">
+        <Link href={`/barber/${id}`}>
           <img
             className="mx-auto h-full dark:hidden"
             src={img}
@@ -13,15 +16,15 @@ export default function BarberItem({ img, name }: { img: string, name: string })
             src={img}
             alt=""
           />
-        </a>
+        </Link>
       </div>
       <div className="pt-6 text-center">
-        <a
-          href="?x=1"
+        <Link 
+          href={`/barber/${id}`}
           className="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white"
         >
           {name}
-        </a>
+        </Link>
       </div>
     </div>
   );

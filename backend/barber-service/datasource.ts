@@ -5,14 +5,6 @@ dotenv.config();
 import { AppEnvironmentConfig } from '@common/enum/app-datasource.enum';
 import { Logger } from '@nestjs/common';
 
-console.log(
-  process.env.DB_HOST,
-  +process.env.DB_PORT,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  process.env.DB_NAME,
-);
-
 let dataBaseConfig: DataSourceOptions = {
   type: 'mysql',
   host: process.env.DB_HOST,

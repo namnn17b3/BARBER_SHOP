@@ -1,0 +1,65 @@
+spring:
+#  config:
+#    activate:
+#      on-profile: dev
+
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/barbershop_user_service}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:12345678}
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+
+  redis:
+    host: localhost
+    port: 6389
+    password: password
+
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2MB
+      max-file-size: 5MB
+      max-request-size: 10MB
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      retries: 1
+      acks: "-1"
+      properties:
+        request.timeout.ms: 1
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
+
+server:
+  address: 0.0.0.0
+  port: 8880
+
+jwt:
+  token:
+    secretKey: secret
+  expire: 86400000
+
+cloud:
+  aws:
+    credentials:
+      access-key: secret
+      secret-key: secret
+    region:
+      static: ap-southeast-1
+    stack:
+      auto: false
+
+application:
+  bucket:
+    name: abc
+  folder-name: user
+  base-url: secret

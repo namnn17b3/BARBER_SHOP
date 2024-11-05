@@ -19,6 +19,9 @@ async function bootstrap() {
     },
   });
 
-  await Promise.all([app.startAllMicroservices(), app.listen(8881)]);
+  await Promise.all([
+    app.startAllMicroservices(),
+    app.listen(+configService.get('PORT')),
+  ]);
 }
 bootstrap();

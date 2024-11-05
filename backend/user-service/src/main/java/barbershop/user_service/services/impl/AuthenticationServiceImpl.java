@@ -2,6 +2,7 @@ package barbershop.user_service.services.impl;
 
 import barbershop.user_service.dtos.request.LoginRequest;
 import barbershop.user_service.dtos.request.RegisterRequest;
+import barbershop.user_service.dtos.response.AppBaseResponse;
 import barbershop.user_service.dtos.response.LoginResponse;
 import barbershop.user_service.dtos.response.ResponseSuccess;
 import barbershop.user_service.dtos.response.UserDetailResponse;
@@ -54,7 +55,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public LoginResponse login(LoginRequest loginRequest) throws Exception {
         User user = userRepository.findByEmail(loginRequest.getEmail()).orElse(null);
         if (user == null) {
-            throw new ResourceNotFoundException("User not found");
+            throw new HttpException("Email is incorrect", HttpStatus.UNAUTHORIZED.value());
         }
         if (!Bcrypt.checkpw(loginRequest.getPassword(), user.getPassword())) {
             throw new HttpException("Password incorrect", HttpStatus.UNAUTHORIZED.value());
@@ -167,6 +168,39 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         } catch (Exception exception) {
             log.error("ERROR", exception);
             throw exception;
+        }
+    }
+
+    @Override
+    public AppBaseResponse me(String token) throws Exception {
+        try {
+            JwtService.PayLoad payLoad = this.jwtService.extractToken(token);
+            String validToken = this.redisService.getValue("u_"+payLoad.getId());
+            if (validToken == null || !validToken.equals(token)) {
+                throw new HttpException("Invalid token", HttpStatus.UNAUTHORIZED.value());
+            }
+            User user = this.userRepository.findById(payLoad.getId()).orElse(null);
+            if (user == null) {
+                throw new HttpException("Invalid token", HttpStatus.UNAUTHORIZED.value());
+            }
+
+            UserDetailResponse userDetailResponse = UserDetailResponse.builder()
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .address(user.getAddress())
+                    .phone(user.getPhone())
+                    .role(user.getRole())
+                    .gender(user.getGender())
+                    .avatar(user.getAvatar())
+                    .build();
+
+            return AppBaseResponse.builder()
+                    .data(userDetailResponse)
+                    .build();
+        } catch (Exception exception) {
+            log.error("ERROR", exception);
+            throw new HttpException("Invalid token", HttpStatus.UNAUTHORIZED.value());
         }
     }
 }

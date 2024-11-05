@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package order;
+
+message GetListHairStyleRequest {
+  repeated int32 ids = 1;
+}
+
+message HairStyle {
+  int32 id = 1;
+  int32 booking = 2;
+}
+
+message GetListHairStyleResponse {
+  repeated HairStyle hairStyles = 1;
+}
+
+message GetListUserFeedbackByOrderIdsRequest {
+  repeated int32 orderIds = 1;
+}
+
+message GetListUserFeedbackByOrderIdsResponse {
+  repeated UserFeedback userFeedbacks = 1;
+}
+
+message UserFeedback {
+  int32 id = 1;
+  string username = 2;
+  string avatar = 3;
+  int32 orderId = 4;
+  string hairColor = 5;
+}
+
+message GetListOrderIdByUserIdRequest {
+  int32 userId = 1;
+}
+
+message GetListOrderIdByUserIdResponse {
+  repeated int32 orderIds = 1;
+}
+
+service OrderService {
+  rpc getListHairStyle(GetListHairStyleRequest) returns (GetListHairStyleResponse) {}
+  rpc getListUserFeedbackByOrderIds(GetListUserFeedbackByOrderIdsRequest) returns (GetListUserFeedbackByOrderIdsResponse) {}
+  rpc getListOrderByUserId(GetListOrderIdByUserIdRequest) returns (GetListOrderIdByUserIdResponse) {}
+}

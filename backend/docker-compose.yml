@@ -79,7 +79,7 @@ services:
       KONG_PROXY_ERROR_LOG: /dev/stderr
       KONG_ADMIN_ERROR_LOG: /dev/stderr
       KONG_ADMIN_LISTEN: "0.0.0.0:6001"
-      KONG_ADMIN_GUI_URL: http://localhost:6002
+      KONG_ADMIN_GUI_URL: http://localhost:6002 # chorme call api to url
       # KONG_LICENSE_DATA: ${KONG_LICENSE_DATA}
     ports:
       - "8686:8000"
@@ -107,11 +107,11 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.3.2
     ports:
-      - "9092:9092"
+      - "9093:9093"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9093
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -123,7 +123,7 @@ services:
     depends_on:
       - kafka
     ports:
-      - 8080:8080
+      - 8081:8080
     environment:
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
       KAFKA_CLUSTERS_0_NAME: local

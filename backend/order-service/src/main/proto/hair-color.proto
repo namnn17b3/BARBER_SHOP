@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package hairColor;
+
+message GetDetailHairColorRequest {
+  int32 id = 1;
+}
+
+message HairColor {
+  int32 id = 1;
+  string color = 2;
+  int32 price = 3;
+  bool active = 4;
+  string colorCode = 5;
+}
+
+message GetDetailHairColorResponse {
+  HairColor hairColor = 1;
+}
+
+service HairColorService {
+  rpc getDetailHairColor(GetDetailHairColorRequest) returns (GetDetailHairColorResponse) {}
+}

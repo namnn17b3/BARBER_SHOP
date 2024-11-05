@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package payment;
+
+message TransactionRequest {
+  int32 amount = 1;
+  string orderUUID = 2;
+  string paymentType = 3;
+}
+
+message TransactionResponse {
+  string paymentUrl = 1;
+}
+
+message SaveNewPaymentRequest {
+  string externalRequest = 1;
+  int32 amount = 2;
+  int32 orderId = 3;
+  string orderUUID = 4;
+  string payOnlineType = 5;
+  string paymentStatus = 6;
+}
+
+message SaveNewPaymentResponse {
+  string message = 1;
+}
+
+message Payment {
+  int32 id = 1;
+  int32 orderId = 2;
+  string status = 3;
+  string type = 4;
+  string bankCode = 5;
+  string payTime = 6;
+  string bankTranNo = 7;
+  int32 amount = 8;
+}
+
+message GetListPaymentByOrderIdsRequest {
+  repeated int32 orderIds = 1;
+}
+
+message GetListPaymentByOrderIdsResponse {
+  repeated Payment payments = 1;
+}
+
+service PaymentService {
+  rpc transaction(TransactionRequest) returns (TransactionResponse) {}
+  rpc saveNewPayment(SaveNewPaymentRequest) returns (SaveNewPaymentResponse) {}
+  rpc getListPaymentByOrderIds(GetListPaymentByOrderIdsRequest) returns (GetListPaymentByOrderIdsResponse) {}
+}

@@ -16,7 +16,6 @@ import {
   APP_PIPE,
   RouterModule,
 } from '@nestjs/core';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { BarberModule } from '@barber/barber.module';
 import { TrimBodyPipe } from '@common/validate-pipe/trim-body.pipe';
 import { ResponseLogger } from '@common/intercept/response-logger.intercept';
@@ -39,12 +38,6 @@ import { GlobalExceptionFilter } from '@common/exception-filter/global-exception
       },
     }),
     RouterModule.register([]),
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000,
-        limit: 50,
-      },
-    ]),
     BarberModule,
   ],
   controllers: [AppController],
@@ -57,10 +50,6 @@ import { GlobalExceptionFilter } from '@common/exception-filter/global-exception
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
     },
     {
       provide: APP_PIPE,

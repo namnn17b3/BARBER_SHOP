@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package hairStyle;
+
+message GetDetailHairStyleRequest {
+  int32 id = 1;
+}
+
+message Discount {
+  string unit = 1;
+  int32 value = 2;
+}
+
+message HairStyle {
+  int32 id = 1;
+  string name = 2;
+  int32 price = 3;
+  bool active = 4;
+  optional Discount discount = 5;
+}
+
+message GetDetailHairStyleResponse {
+  HairStyle hairStyle = 1;
+}
+
+service HairStyleService {
+  rpc GetDetailHairStyle(GetDetailHairStyleRequest) returns (GetDetailHairStyleResponse);
+}

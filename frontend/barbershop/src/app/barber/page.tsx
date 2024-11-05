@@ -8,14 +8,18 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Pagination from "@/components/Pagination";
 import { toQueryString } from "@/common/utils/utils";
 import NoResult from "@/components/NoResult";
+import AlertError from "@/components/alert/AlertError";
+import React from "react";
 
 export default function BarberPage() {
   const searchParams = useSearchParams();
 
   const router = useRouter();
 
-  const [barbers, setBarbers] = useState([]);
-  const [error, setError] = useState({});
+  const [response, setReponse] = useState({});
+  const [errors, setErrors] = useState([]);
+
+  const isValidErrorRef: any = useRef();
 
   const [filterValue, setFilterValue] = useState({
     name: searchParams.get('name'),
@@ -36,11 +40,21 @@ export default function BarberPage() {
     const url = `${ApiBarber.GET_ALL}?${toQueryString(filterValue)}`;
     fetch(url)
       .then((response) => {
-        
+        if ([404, 500].includes(response.status)) {
+          window.location.href = `/error/${response.status}`;
+          return;
+        }
         return response.json();
       })
       .then((json) => {
-        setBarbers(json.data);
+        if (json.data) {
+          setReponse(json);
+          isValidErrorRef.current = false;
+        }
+        else {
+          setErrors(json.errors);
+          isValidErrorRef.current = true;
+        }
       })
       .catch((error) => console.log(error));
   }, [filterValue]);
@@ -58,6 +72,7 @@ export default function BarberPage() {
       ageMin,
       ageMax,
       gender,
+      page: 1,
     }
     router.push(`?${toQueryString(newFilterValue)}`);
     setFilterValue(newFilterValue);
@@ -81,26 +96,31 @@ export default function BarberPage() {
         genderMaleInputRef={genderMaleInputRef}
         gendeFemaleInputRef={gendeFemaleInputRef}
       />
-      <h1 className="text-4xl font-bold text-center text-gray-900 mb-10">Barber List</h1>
+      <h2 className="mb-4 text-3xl font-extrabold text-center leading-none tracking-tight text-gray-900 md:text-4xl dark:text-white">Barber List</h2>
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
         <div className="flex justify-end mb-6">
           <button className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800" type="button" data-drawer-target="drawer-example" data-drawer-show="drawer-example" aria-controls="drawer-example">
             <i className="fa-solid fa-filter"></i>
           </button>
         </div>
-        <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
-          {barbers.map((barber: any) => <BarberItem key={barber.id} img={barber.img} name={barber.name} />)}
-        </div>
-        {!!barbers.length && <Pagination
-          page={+filterValue.page}
-          items={9}
-          nodes={5}
-          totalRecords={barbers.length}
-          handlePageChange={handlePageChange}
-          qsObject={filterValue}
-        />}
         {
-          barbers.length == 0 ? <NoResult /> : ''
+          isValidErrorRef.current ? <AlertError errors={errors} /> :
+          <>
+            <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
+              {(response as any)?.data?.map((barber: any) => <BarberItem key={barber.id} id={barber.id} img={barber.img} name={barber.name} />)}
+            </div>
+            {!!(response as any)?.data?.length && <Pagination
+              page={+filterValue.page}
+              items={9}
+              nodes={5}
+              totalRecords={(response as any).meta.totalRecords}
+              handlePageChange={handlePageChange}
+              qsObject={filterValue}
+            />}
+            {
+              (response as any)?.data?.length == 0 ? <NoResult /> : ''
+            }
+          </>
         }
       </div>
     </>

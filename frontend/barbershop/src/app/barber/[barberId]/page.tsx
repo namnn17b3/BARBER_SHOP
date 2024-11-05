@@ -8,12 +8,22 @@ export default function BarberDetailPage(props: any) {
   const [barber, setBarber] = useState({});
   useEffect(() => {
     fetch(`${ApiBarber.GET_DETAIL}/${props.params.barberId}`)
-      .then((res) => res.json())
-      .then((json) => setBarber(json.data));
+      .then((response) => {
+        if ([404, 500].includes(response.status)) {
+          window.location.href = `/error/${response.status}`;
+          return;
+        }
+        return response.json();
+      })
+      .then((json) => {
+        setBarber(json.data);
+      })
+      .catch((error) => console.log(error));
   }, []);
 
   return (
     <section className="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
+      <h1 className="text-4xl font-bold text-center text-gray-900 mb-10">Barber Detail</h1>
       <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0">
         <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16 p-10 rounded border-4 border-red-400">
           <div className="shrink-0 max-w-md lg:max-w-lg mx-auto">

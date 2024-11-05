@@ -2,6 +2,8 @@ import { AppService } from '@app.service';
 import {
   REGISTER_PROCESS,
   SEND_EMAIL_REGISTER,
+  SEND_EMAIL_THANK_FOR_ORDER,
+  SEND_EMAIL_THANK_FOR_ORDER_PROCESS,
 } from '@common/constants/kafka-topic.constant';
 import { LoggerService } from '@logger/logger.service';
 import { Controller, Get, Query } from '@nestjs/common';
@@ -27,7 +29,21 @@ export class AppController {
       console.log('>>> sendEmailRegister kafka:', user);
       await this.appService.sendMailJob(REGISTER_PROCESS, user);
     } catch (error) {
-      this.logger.error('AppController', error.stack);
+      this.logger.error('AppController.sendEmailRegister', error.stack);
+    }
+  }
+
+  @EventPattern(SEND_EMAIL_THANK_FOR_ORDER)
+  async sendEmailThankForOrder(@Payload() message: any) {
+    try {
+      const order = JSON.parse(JSON.parse(message));
+      console.log('>>> sendEmailThankForOrder kafka:', order);
+      await this.appService.sendMailJob(
+        SEND_EMAIL_THANK_FOR_ORDER_PROCESS,
+        order,
+      );
+    } catch (error) {
+      this.logger.error('AppController.sendEmailThankForOrder', error.stack);
     }
   }
 
