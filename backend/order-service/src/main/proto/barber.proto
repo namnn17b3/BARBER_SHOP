@@ -22,6 +22,15 @@ message GetAllBarberResponse {
   repeated Barber data = 1;
 }
 
+message GetDetailBarberRequest {
+  int32 id = 1;
+}
+
+message GetDetailBarberResponse {
+  Barber barber = 1;
+}
+
 service BarberService {
   rpc GetAllBarber(GetAllBarberRequest) returns (GetAllBarberResponse) {}
+  rpc GetDetailBarber(GetDetailBarberRequest) returns (GetDetailBarberResponse) {}
 }

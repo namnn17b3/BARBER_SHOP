@@ -4,6 +4,7 @@ import {
   BarberServiceController,
   BarberServiceControllerMethods,
   GetAllBarberRequest,
+  GetDetailBarberRequest,
 } from '@protos/barber';
 
 @BarberServiceControllerMethods()
@@ -13,5 +14,9 @@ export class BarberGrpcController implements BarberServiceController {
 
   getAllBarber(request: GetAllBarberRequest) {
     return this.barberService.getAllBarberNoPagination(request);
+  }
+
+  getDetailBarber(request: GetDetailBarberRequest) {
+    return this.barberService.getDetailGrpc(request);
   }
 }

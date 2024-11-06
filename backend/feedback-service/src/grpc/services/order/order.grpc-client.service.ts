@@ -1,7 +1,9 @@
 import {
+  CheckOrderMatchWithUserRequest,
   GetListHairStyleRequest,
   GetListOrderIdByUserIdRequest,
   GetListUserFeedbackByOrderIdsRequest,
+  GetOrderByIdRequest,
   ORDER_PACKAGE_NAME,
   ORDER_SERVICE_NAME,
   OrderServiceClient,
@@ -44,6 +46,22 @@ export class OrderGrpcClientService implements OnModuleInit {
     return firstValueFrom(
       this.client
         .getListOrderByUserId(request)
+        .pipe(catchError((error) => throwError(() => new RpcException(error)))),
+    );
+  }
+
+  checkOrderMatchWithUser(request: CheckOrderMatchWithUserRequest) {
+    return firstValueFrom(
+      this.client
+        .checkOrderMatchWithUser(request)
+        .pipe(catchError((error) => throwError(() => new RpcException(error)))),
+    );
+  }
+
+  getOrderById(request: GetOrderByIdRequest) {
+    return firstValueFrom(
+      this.client
+        .getOrderById(request)
         .pipe(catchError((error) => throwError(() => new RpcException(error)))),
     );
   }

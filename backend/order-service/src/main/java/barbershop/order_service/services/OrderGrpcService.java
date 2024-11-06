@@ -1,5 +1,7 @@
 package barbershop.order_service.services;
 
+import barbershop.order_service.Utils.Utils;
+import barbershop.order_service.enums.TimeZone;
 import barbershop.order_service.repositories.OrderRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.Status;
@@ -107,5 +109,44 @@ public class OrderGrpcService extends OrderServiceGrpc.OrderServiceImplBase {
             if (u.getId() == userId) return u;
         }
         return null;
+    }
+
+    @Override
+    public void checkOrderMatchWithUser(
+            CheckOrderMatchWithUserRequest request,
+            StreamObserver<CheckOrderMatchWithUserResponse> responseObserver) {
+        int userId = request.getUserId();
+        int orderId = request.getOrderId();
+
+        barbershop.order_service.entities.Order order = orderRepository.findByUserIdAndId(userId, orderId);
+
+        responseObserver.onNext(
+                CheckOrderMatchWithUserResponse.newBuilder()
+                        .setIsMatch(order != null)
+                        .build()
+        );
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getOrderById(GetOrderByIdRequest request, StreamObserver<GetOrderByIdResponse> responseObserver) {
+        barbershop.order_service.entities.Order order = orderRepository.findById(request.getId()).orElse(null);
+        if (order == null) {
+            responseObserver.onError(Status.NOT_FOUND.withDescription("Order not found").asRuntimeException());
+            return;
+        }
+        responseObserver.onNext(
+                GetOrderByIdResponse.newBuilder()
+                        .setId(order.getId())
+                        .setHairStyle(order.getHairStyle())
+                        .setHairColor(order.getHairColor())
+                        .setBarber(order.getBarber())
+                        .setUserId(order.getUserId())
+                        .setCutted(order.isCutted())
+                        .setOrderTime(Utils.toDateStringWithFormatAndTimezone(order.getOrderTime(), "yyyy-MM-dd HH:mm:ss", TimeZone.ASIA_HCM.value()))
+                        .setSchedule(Utils.toDateStringWithFormatAndTimezone(order.getSchedule(), "yyyy-MM-dd HH:mm", TimeZone.ASIA_HCM.value()))
+                        .build()
+        );
+        responseObserver.onCompleted();
     }
 }
