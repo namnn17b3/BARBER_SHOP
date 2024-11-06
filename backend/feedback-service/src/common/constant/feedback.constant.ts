@@ -4,3 +4,4 @@ export const FEED_BACK_SORTING =
 export const MIN_ID_VALUE = 1;
 export const MIN_STAR_RATING = 1;
 export const MAX_STAR_RATING = 5;
+export const FEED_BACK_DURATION = 259200000;

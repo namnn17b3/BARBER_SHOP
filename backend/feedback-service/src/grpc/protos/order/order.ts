@@ -47,6 +47,30 @@ export interface GetListOrderIdByUserIdResponse {
   orderIds: number[];
 }
 
+export interface CheckOrderMatchWithUserRequest {
+  userId: number;
+  orderId: number;
+}
+
+export interface CheckOrderMatchWithUserResponse {
+  isMatch: boolean;
+}
+
+export interface GetOrderByIdRequest {
+  id: number;
+}
+
+export interface GetOrderByIdResponse {
+  id: number;
+  hairStyle: string;
+  hairColor: string;
+  barber: string;
+  userId: number;
+  orderTime: string;
+  cutted: boolean;
+  schedule: string;
+}
+
 export const ORDER_PACKAGE_NAME = "order";
 
 export interface OrderServiceClient {
@@ -57,6 +81,10 @@ export interface OrderServiceClient {
   ): Observable<GetListUserFeedbackByOrderIdsResponse>;
 
   getListOrderByUserId(request: GetListOrderIdByUserIdRequest): Observable<GetListOrderIdByUserIdResponse>;
+
+  checkOrderMatchWithUser(request: CheckOrderMatchWithUserRequest): Observable<CheckOrderMatchWithUserResponse>;
+
+  getOrderById(request: GetOrderByIdRequest): Observable<GetOrderByIdResponse>;
 }
 
 export interface OrderServiceController {
@@ -77,11 +105,28 @@ export interface OrderServiceController {
     | Promise<GetListOrderIdByUserIdResponse>
     | Observable<GetListOrderIdByUserIdResponse>
     | GetListOrderIdByUserIdResponse;
+
+  checkOrderMatchWithUser(
+    request: CheckOrderMatchWithUserRequest,
+  ):
+    | Promise<CheckOrderMatchWithUserResponse>
+    | Observable<CheckOrderMatchWithUserResponse>
+    | CheckOrderMatchWithUserResponse;
+
+  getOrderById(
+    request: GetOrderByIdRequest,
+  ): Promise<GetOrderByIdResponse> | Observable<GetOrderByIdResponse> | GetOrderByIdResponse;
 }
 
 export function OrderServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getListHairStyle", "getListUserFeedbackByOrderIds", "getListOrderByUserId"];
+    const grpcMethods: string[] = [
+      "getListHairStyle",
+      "getListUserFeedbackByOrderIds",
+      "getListOrderByUserId",
+      "checkOrderMatchWithUser",
+      "getOrderById",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("OrderService", method)(constructor.prototype[method], method, descriptor);

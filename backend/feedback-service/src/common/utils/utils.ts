@@ -5,7 +5,7 @@ export function randomInteger(min: number, max: number) {
 export function objectMapper(properties: string[], obj: any) {
   const newObj = {};
   for (const property of properties) {
-    if (obj[property]) newObj[property] = obj[property];
+    if (obj?.[property]) newObj[property] = obj?.[property];
   }
   if (Object.keys(newObj).length === 0) return null;
   return newObj;

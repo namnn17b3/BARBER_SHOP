@@ -27,21 +27,35 @@ export interface GetAllBarberResponse {
   data: Barber[];
 }
 
+export interface GetDetailBarberRequest {
+  id: number;
+}
+
+export interface GetDetailBarberResponse {
+  barber: Barber | undefined;
+}
+
 export const BARBER_PACKAGE_NAME = "barber";
 
 export interface BarberServiceClient {
   getAllBarber(request: GetAllBarberRequest): Observable<GetAllBarberResponse>;
+
+  getDetailBarber(request: GetDetailBarberRequest): Observable<GetDetailBarberResponse>;
 }
 
 export interface BarberServiceController {
   getAllBarber(
     request: GetAllBarberRequest,
   ): Promise<GetAllBarberResponse> | Observable<GetAllBarberResponse> | GetAllBarberResponse;
+
+  getDetailBarber(
+    request: GetDetailBarberRequest,
+  ): Promise<GetDetailBarberResponse> | Observable<GetDetailBarberResponse> | GetDetailBarberResponse;
 }
 
 export function BarberServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getAllBarber"];
+    const grpcMethods: string[] = ["getAllBarber", "getDetailBarber"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("BarberService", method)(constructor.prototype[method], method, descriptor);

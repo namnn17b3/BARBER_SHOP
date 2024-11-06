@@ -41,8 +41,34 @@ message GetListOrderIdByUserIdResponse {
   repeated int32 orderIds = 1;
 }
 
+message CheckOrderMatchWithUserRequest {
+  int32 userId = 1;
+  int32 orderId = 2;
+}
+
+message CheckOrderMatchWithUserResponse {
+  bool isMatch = 1;
+}
+
+message GetOrderByIdRequest {
+  int32 id = 1;
+}
+
+message GetOrderByIdResponse {
+  int32 id = 1;
+  string hairStyle = 2;
+  string hairColor = 3;
+  string barber = 4;
+  int32 userId = 5;
+  string orderTime = 6;
+  bool cutted = 7;
+  string schedule = 8;
+}
+
 service OrderService {
   rpc getListHairStyle(GetListHairStyleRequest) returns (GetListHairStyleResponse) {}
   rpc getListUserFeedbackByOrderIds(GetListUserFeedbackByOrderIdsRequest) returns (GetListUserFeedbackByOrderIdsResponse) {}
   rpc getListOrderByUserId(GetListOrderIdByUserIdRequest) returns (GetListOrderIdByUserIdResponse) {}
+  rpc checkOrderMatchWithUser(CheckOrderMatchWithUserRequest) returns (CheckOrderMatchWithUserResponse) {}
+  rpc getOrderById(GetOrderByIdRequest) returns (GetOrderByIdResponse) {}
 }

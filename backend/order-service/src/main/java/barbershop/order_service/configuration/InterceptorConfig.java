@@ -15,7 +15,12 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // first interceptor
         registry.addInterceptor(authenticationInterceptor)
-                .addPathPatterns("/api/orders/payment", "/api/orders", "/api/orders/find-order-info")  // Áp dụng cho tất cả các endpoint bắt đầu bằng /api
+                .addPathPatterns(
+                        "/api/orders/payment",
+                        "/api/orders",
+                        "/api/orders/find-order-info",
+                        "/api/orders/{orderId}"
+                )  // Áp dụng cho tất cả các endpoint bắt đầu bằng /api
                 .excludePathPatterns("/api/public/**");  // Bỏ qua các endpoint công khai
 
         // Second interceptor

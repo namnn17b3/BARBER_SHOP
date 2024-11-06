@@ -9,6 +9,7 @@ import barbershop.order_service.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/orders")
+@Validated // Bắt buộc để kích hoạt tính năng validate trên method parameter
 public class OrderController {
     @Autowired
     private OrderService orderService;
@@ -40,5 +42,13 @@ public class OrderController {
             HttpServletRequest request) throws Exception {
         getListOrderByUserRequest.setUser((Map<String, Object>) request.getAttribute("user"));
         return new ResponseEntity<>(orderService.getListOrderByUser(getListOrderByUserRequest), HttpStatus.OK);
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<BaseResponse> getOrderById(
+            @PathVariable(value = "orderId", required = true) String orderId,
+            HttpServletRequest request) throws Exception {
+        Map<String, Object> user = (Map<String, Object>) request.getAttribute("user");
+        return new ResponseEntity<>(orderService.getOrderById(orderId, user), HttpStatus.OK);
     }
 }

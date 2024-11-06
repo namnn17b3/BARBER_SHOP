@@ -28,6 +28,10 @@ export const ApiUser = {
 export const ApiFeedback = {
   STATISTICS: `${BASE_URL}/feedbacks/statistics`,
   GET_ALL: `${BASE_URL}/feedbacks`,
+  GET_FEEDBACK_BY_ORDER: `${BASE_URL}/feedbacks/order`,
+  CREATE_NEW_FEEDBACK: `${BASE_URL}/feedbacks`,
+  UPDATE_FEEDBACK: `${BASE_URL}/feedbacks`,
+  DELETE_FEEDBACK: `${BASE_URL}/feedbacks`,
 }
 
 export const ApiHairFastGan = {
@@ -38,6 +42,7 @@ export const ApiOrder = {
   FIND_ORDER_INFO: `${BASE_URL}/orders/find-order-info`,
   PAYMENT: `${BASE_URL}/orders/payment`,
   GET_ORDER_BY_USER: `${BASE_URL}/orders`,
+  GET_ORDER_DETAIL: `${BASE_URL}/orders`,
 }
 
 export const ApiPayment = {

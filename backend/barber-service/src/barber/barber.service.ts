@@ -3,7 +3,13 @@ import { BarberRepository } from '@barber/barber.repository';
 import { PaginationResponseDto } from '@common/dto/response.dto';
 import { Operators } from '@common/enum/operators.enum';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { GetAllBarberRequest } from '@protos/barber';
+import { RpcException } from '@nestjs/microservices';
+import {
+  GetAllBarberRequest,
+  GetDetailBarberRequest,
+  GetDetailBarberResponse,
+} from '@protos/barber';
+import * as grpc from '@grpc/grpc-js';
 
 @Injectable()
 export class BarberService {
@@ -79,5 +85,19 @@ export class BarberService {
         gender: item.gender.toString(),
       })),
     };
+  }
+
+  async getDetailGrpc(request: GetDetailBarberRequest) {
+    const barber = await this.barberRepository.findOneBy({ id: request.id });
+    if (!barber) {
+      throw new RpcException({
+        code: grpc.status.NOT_FOUND,
+        message: 'Barber not found',
+      });
+    }
+
+    return {
+      barber: barber,
+    } as GetDetailBarberResponse;
   }
 }

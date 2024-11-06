@@ -1,4 +1,5 @@
 import { DateFormatType } from '@common/constant/date-format.constant';
+import { FEED_BACK_DURATION } from '@common/constant/feedback.constant';
 import { TimeZone } from '@common/constant/timezone.constant';
 import {
   AppResponseSuccessDto,
@@ -6,11 +7,18 @@ import {
 } from '@common/dto/response.dto';
 import { Operators } from '@common/enum/operators.enum';
 import { objectMapper } from '@common/utils/utils';
-import { GetListFeedbackRequestByHairStyleDto } from '@feedback/feedback.dto';
+import {
+  GetListFeedbackRequestByHairStyleDto,
+  SaveFeedbackRequestDto,
+} from '@feedback/feedback.dto';
 import { FeedbackRepository } from '@feedback/feedback.repository';
 import { UserFeedback } from '@grpc/protos/order/order';
 import { OrderGrpcClientService } from '@grpc/services/order/order.grpc-client.service';
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   GetListHairStyleRequest,
   GetListHairStyleResponse,
@@ -172,5 +180,156 @@ export class FeedbackService {
       obj[p3[0]] = p3[1];
     }
     return obj;
+  }
+
+  async getFeedbackByOrderId(orderId: number, user: any) {
+    const [feedback, isMatchWithUser] = await Promise.all([
+      this.feedbackRepository.findOne({
+        where: { orderId },
+      }),
+      this.orderGrpcClientService.checkOrderMatchWithUser({
+        orderId,
+        userId: user.id,
+      }),
+    ]);
+
+    if (!isMatchWithUser.isMatch) {
+      throw new NotFoundException('Order does not match with user');
+    }
+
+    return {
+      data: feedback
+        ? {
+            ...objectMapper(['id', 'star', 'comment'], feedback),
+            time: dayjs
+              .utc(feedback.time)
+              .tz(TimeZone.ASIA_HCM)
+              .format(DateFormatType.YYYY_MM_DD_HH_MM_SS),
+          }
+        : null,
+    } as AppResponseSuccessDto;
+  }
+
+  private async checkOrderMatchWithUser(orderId: number, user: any) {
+    const order = await this.orderGrpcClientService.getOrderById({
+      id: orderId,
+    });
+    if (order.userId !== user.id) {
+      throw new ForbiddenException('Order does not match with user');
+    }
+    return order;
+  }
+
+  private async checkValidSaveFeedbackRequestValid(orderId: number, user: any) {
+    const order = await this.checkOrderMatchWithUser(orderId, user);
+
+    if (!order?.cutted) {
+      throw new ForbiddenException('Cannot review order before using service');
+    }
+
+    const now = Date.now();
+    const schedule = new Date(order?.schedule).getTime();
+    if (now < schedule || now > schedule + FEED_BACK_DURATION) {
+      throw new ForbiddenException(
+        'Can only review the service within 3 days of your using service',
+      );
+    }
+
+    return order;
+  }
+
+  private async checkFeedbackExist(id: number) {
+    const feedback = await this.feedbackRepository.findOne({
+      where: { id },
+    });
+    if (!feedback) {
+      throw new NotFoundException('Feedback not found');
+    }
+    return feedback;
+  }
+
+  private async saveFeedback(saveFeedbackRequestDto: SaveFeedbackRequestDto) {
+    return await this.feedbackRepository.save(saveFeedbackRequestDto);
+  }
+
+  async createNewFeedback(saveFeedbackRequestDto: SaveFeedbackRequestDto) {
+    const order = await this.checkValidSaveFeedbackRequestValid(
+      saveFeedbackRequestDto.orderId,
+      saveFeedbackRequestDto.user,
+    );
+    let feedback = await this.feedbackRepository.findOne({
+      where: {
+        orderId: saveFeedbackRequestDto.orderId,
+      },
+    });
+    if (feedback) {
+      throw new ForbiddenException(
+        'Cannot review order because feedback already exists',
+      );
+    }
+
+    const time = dayjs(new Date())
+      .utc()
+      .tz(TimeZone.ASIA_HCM)
+      .format(DateFormatType.YYYY_MM_DD_HH_MM_SS);
+
+    feedback = await this.saveFeedback({
+      ...saveFeedbackRequestDto,
+      hairStyleId: JSON.parse(order.hairStyle).id,
+      time,
+    });
+
+    return {
+      data: {
+        message: 'Create feedback successfully',
+        feedback: {
+          id: feedback?.id,
+          star: feedback?.star,
+          comment: feedback?.comment,
+          time,
+        },
+      },
+    } as AppResponseSuccessDto;
+  }
+
+  async updateFeedback(saveFeedbackRequestDto: SaveFeedbackRequestDto) {
+    let feedback = await this.checkFeedbackExist(saveFeedbackRequestDto.id);
+    const order = await this.checkValidSaveFeedbackRequestValid(
+      feedback.orderId,
+      saveFeedbackRequestDto.user,
+    );
+
+    const time = dayjs(new Date())
+      .utc()
+      .tz(TimeZone.ASIA_HCM)
+      .format(DateFormatType.YYYY_MM_DD_HH_MM_SS);
+
+    feedback = await this.saveFeedback({
+      ...saveFeedbackRequestDto,
+      hairStyleId: JSON.parse(order.hairStyle).id,
+      time,
+    });
+
+    return {
+      data: {
+        message: 'Update feedback successfully',
+        feedback: {
+          id: feedback?.id,
+          star: feedback?.star,
+          comment: feedback?.comment,
+          time,
+        },
+      },
+    } as AppResponseSuccessDto;
+  }
+
+  async deleteFeedback(id: number, user: any) {
+    const feedback = await this.checkFeedbackExist(id);
+    await this.checkOrderMatchWithUser(feedback.orderId, user);
+    await this.feedbackRepository.delete(id);
+
+    return {
+      data: 'Delete feedback successfully',
+    } as AppResponseSuccessDto;
   }
 }

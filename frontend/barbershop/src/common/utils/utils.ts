@@ -26,3 +26,7 @@ export function generateTimeSlots() {
   }
   return times;
 };
+
+export function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

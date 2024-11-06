@@ -3,6 +3,7 @@ package barbershop.order_service.services.impl;
 import barber.Barber;
 import barber.BarberServiceGrpc;
 import barber.GetAllBarberRequest;
+import barber.GetDetailBarberRequest;
 import barbershop.order_service.Utils.Utils;
 import barbershop.order_service.dtos.request.FindOrderInfoRequest;
 import barbershop.order_service.dtos.request.GetListOrderByUserRequest;
@@ -12,6 +13,7 @@ import barbershop.order_service.dtos.response.FieldErrorsResponse;
 import barbershop.order_service.dtos.response.PaginationResponse;
 import barbershop.order_service.entities.Order;
 import barbershop.order_service.enums.TimeZone;
+import barbershop.order_service.exception.ResourceNotFoundException;
 import barbershop.order_service.repositories.OrderRepository;
 import barbershop.order_service.services.OrderService;
 import barbershop.order_service.services.RedisService;
@@ -376,5 +378,82 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return null;
+    }
+
+    @Override
+    public BaseResponse getOrderById(String orderIdString, Map<String, Object> user) throws Exception {
+        List<FieldErrorsResponse.FieldError> listFieldErrors = new ArrayList<>();
+
+        int orderId = 0;
+        try {
+            orderId = Integer.parseInt(orderIdString);
+        } catch (Exception exception) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("Order id")
+                            .message("Order id must be integer")
+                            .resource("Path Variable")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        if (orderId < 1) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("Order id")
+                            .message("Order id must be greater than 0")
+                            .resource("Path Variable")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if (order == null) {
+            throw new ResourceNotFoundException("Order not found");
+        }
+
+        Payment payment = findPaymentGrpcByOrderId(
+                paymentServiceBlockingStub.getListPaymentByOrderIds(
+                        GetListPaymentByOrderIdsRequest.newBuilder()
+                                .addAllOrderIds(List.of(order.getId()))
+                                .build()
+                ).getPaymentsList(),
+                order.getId()
+        );
+
+        Map<String, Object> orderMap = new LinkedHashMap<>();
+        Map<String, Object> hairStyleMap = objectMapper.readValue(order.getHairStyle(), LinkedHashMap.class);
+        Map<String, Object> hairColorMap = objectMapper.readValue(order.getHairColor(), LinkedHashMap.class);
+        Map<String, Object> barberMap = objectMapper.readValue(order.getBarber(), LinkedHashMap.class);
+
+        Barber barber = barberServiceBlockingStub.getDetailBarber(
+                GetDetailBarberRequest.newBuilder()
+                        .setId((int) barberMap.get("id"))
+                        .build()
+        ).getBarber();
+
+        barberMap.put("avatar", barber.getImg());
+
+        orderMap.put("id", order.getId());
+        orderMap.put("amount", payment.getAmount());
+        orderMap.put("status", payment.getStatus());
+        orderMap.put("paymentType", payment.getType());
+        orderMap.put("cutted", order.isCutted());
+        orderMap.put("schedule", Utils.toDateStringWithFormatAndTimezone(order.getSchedule(), "yyyy-MM-dd HH:mm", TimeZone.ASIA_HCM.value()));
+        orderMap.put("orderTime", Utils.toDateStringWithFormatAndTimezone(order.getOrderTime(), "yyyy-MM-dd HH:mm:ss", TimeZone.ASIA_HCM.value()));
+        orderMap.put("user", user);
+        orderMap.put("barber", barberMap);
+        orderMap.put("hairStyle", hairStyleMap);
+        orderMap.put("hairColor", hairColorMap);
+
+        return new BaseResponse(orderMap);
     }
 }

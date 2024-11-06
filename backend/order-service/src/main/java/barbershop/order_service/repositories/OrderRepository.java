@@ -17,4 +17,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, OrderRep
 //    Cach 2: Named Parameters
     @Query("select order from Order order where order.userId = :userId")
     List<Order> findAllByUserId(@Param("userId") Integer userId);
+
+    @Query("select order from Order order where order.id = :orderId and order.userId = :userId")
+    Order findByUserIdAndId(@Param("userId") Integer userId, @Param("orderId") Integer orderId);
 }

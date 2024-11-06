@@ -1,3 +1,4 @@
+import { AuthenGuard } from '@common/guards/authen.guard';
 import { UserFeedbackGuard } from '@common/guards/user-feedback.guard';
 import { FeedbackController } from '@feedback/feedback.controller';
 import { FeedbackGrpcController } from '@feedback/feedback.grpc.controller';
@@ -17,6 +18,7 @@ import { Module } from '@nestjs/common';
     OrderGrpcClientService,
     UserGrpcClientService,
     UserFeedbackGuard,
+    AuthenGuard,
   ],
   exports: [FeedbackService, FeedbackRepository],
 })
