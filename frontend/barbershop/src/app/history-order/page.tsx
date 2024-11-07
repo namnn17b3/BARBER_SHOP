@@ -26,8 +26,27 @@ export default function HistoryOrderPage() {
   const [filterValue, setFilterValue] = useState({
     sortBy: searchParams.get('sortBy') || 'desc',
     page: searchParams.get('page') || 1,
+    codeOrHairStyle: searchParams.get('codeOrHairStyle') || undefined,
     items: 9,
   });
+
+  const bindingSortbyAndKeyword = () => {
+    const sortByElement: any = document.querySelector('#dropdownRadioButton span');
+    const sortByInputs: any = document.querySelectorAll('input[name="sort-by"]');
+    sortByInputs.forEach((item: any) => {
+      if (item.value === filterValue.sortBy) {
+        item.checked = true;
+        sortByElement.innerText = item.nextSibling.innerText;
+      }
+      item.addEventListener('click', () => {
+        if (item.checked) {
+          sortByElement.innerText = item.nextSibling.innerText;
+        }
+      });
+    });
+
+    (document.querySelector('#code-or-hair-style') as any).value = filterValue.codeOrHairStyle || '';
+  }
 
   useEffect(() => {
     const url = `${ApiOrder.GET_ORDER_BY_USER}?${toQueryString(filterValue)}`;
@@ -147,6 +166,7 @@ export default function HistoryOrderPage() {
       .then((json) => {
         if (json.data || json.data === null) {
           setFeedback(json.data);
+          (document.querySelector('#comment') as any).value = json.data.comment;
         } else {
           Swal.fire({
             icon: 'error',
@@ -190,15 +210,7 @@ export default function HistoryOrderPage() {
   }
 
   useEffect(() => {
-    const sortByElement: any = document.querySelector('#dropdownRadioButton span');
-    (document.querySelectorAll('input[name="sort-by"]') as any).forEach((item: any) => {
-      item.addEventListener('click', () => {
-        if (item.checked) {
-          sortByElement.innerText = item.nextSibling.innerText;
-        }
-      });
-    });
-
+    bindingSortbyAndKeyword();
     handleClickStarVote();
   }, []);
 
