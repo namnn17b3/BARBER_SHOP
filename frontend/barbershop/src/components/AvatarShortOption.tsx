@@ -47,7 +47,7 @@ export function AvatarShortOption(props: any) {
         data-popper-escaped=""
       >
         <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-          <div>{user?.username}</div>
+          <div id="username-dropdown-avatar-option">{user?.username}</div>
           <div className="font-medium truncate">{user?.email}</div>
         </div>
         <ul
@@ -66,7 +66,7 @@ export function AvatarShortOption(props: any) {
           }
           <li>
             <a
-              href="#"
+              href="/user-profile"
               className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             >
               Profile

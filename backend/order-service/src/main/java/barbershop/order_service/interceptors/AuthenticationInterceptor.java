@@ -28,7 +28,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     private UserServiceGrpc.UserServiceBlockingStub userServiceBlockingStub;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

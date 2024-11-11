@@ -1,5 +1,7 @@
 package barbershop.order_service.wrappers;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.ReadListener;
@@ -10,6 +12,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
+@Setter
+@Getter
 @Slf4j
 public class ChangeHttpServletRequestJsonBodyWrapper extends HttpServletRequestWrapper {
     private String requestBody;
@@ -50,14 +54,6 @@ public class ChangeHttpServletRequestJsonBodyWrapper extends HttpServletRequestW
     @Override
     public BufferedReader getReader() throws IOException {
         return new BufferedReader(new InputStreamReader(this.getInputStream(), StandardCharsets.UTF_8));
-    }
-
-    public String getRequestBody() {
-        return this.requestBody;
-    }
-
-    public void setRequestBody(String body) {
-        this.requestBody = body;
     }
 
     private String getBodyFromRequest(HttpServletRequest request) throws IOException {

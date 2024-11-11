@@ -114,7 +114,7 @@ export default function LoginPage() {
                   </div>
                 </div>
                 <a
-                  href="#"
+                  href="/authen/forgot-password"
                   className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Forgot password?
@@ -130,7 +130,7 @@ export default function LoginPage() {
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}
                 <a
-                  href="#"
+                  href="/authen/register"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Sign up

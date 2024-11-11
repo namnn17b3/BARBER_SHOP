@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({FieldErrorsResponse.class})
     @ResponseStatus(BAD_REQUEST)
-    public Map handleFieldErrorsResponseException(Exception e, WebRequest request) {
+    public Map<String, Object> handleFieldErrorsResponseException(Exception e, WebRequest request) {
         List<FieldErrorsResponse.FieldError> fieldErrors = ((FieldErrorsResponse) e).getErrors();
         List<FieldErrorsResponse.FieldError> errors = new ArrayList<>();
         for (FieldErrorsResponse.FieldError fieldError : fieldErrors) {

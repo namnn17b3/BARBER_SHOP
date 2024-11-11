@@ -70,8 +70,8 @@ public class OrderServiceImpl implements OrderService {
     private ObjectMapper objectMapper;
 
     private void checkValidDateAndTimeRequest(FindOrderInfoRequest findOrderInfoRequest) throws Exception {
-        Date correctDate = Utils.parseDate(findOrderInfoRequest.getDate()+" "+ findOrderInfoRequest.getTime(), "yyyy-MM-dd HH:mm", TimeZone.ASIA_HCM.value());
         List<FieldErrorsResponse.FieldError> listFieldErrors = new ArrayList<>();
+        Date correctDate = Utils.parseDate(findOrderInfoRequest.getDate()+" "+ findOrderInfoRequest.getTime(), "yyyy-MM-dd HH:mm", TimeZone.ASIA_HCM.value());
         if (correctDate == null) {
             listFieldErrors.add(
                     FieldErrorsResponse.FieldError.builder()

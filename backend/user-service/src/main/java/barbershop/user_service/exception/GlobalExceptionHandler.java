@@ -2,8 +2,11 @@ package barbershop.user_service.exception;
 
 import javax.validation.ConstraintViolationException;
 
+import barbershop.user_service.dtos.request.FieldErrorsResponse;
+import barbershop.user_service.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,10 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -31,7 +31,6 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({ConstraintViolationException.class,
             MissingServletRequestParameterException.class, MethodArgumentNotValidException.class,
-            BindException.class
     })
     @ResponseStatus(BAD_REQUEST)
     public ErrorResponse handleValidationException(Exception e, WebRequest request) {
@@ -75,6 +74,36 @@ public class GlobalExceptionHandler {
         return errorResponse;
     }
 
+    @ExceptionHandler({BindException.class})
+    @ResponseStatus(BAD_REQUEST)
+    public Map<String, Object> handleBindException(Exception e, WebRequest request) {
+        List<FieldError> fieldErrors = ((BindException) e).getFieldErrors();
+        List<FieldErrorsResponse.FieldError> errors = new ArrayList<>();
+        for (FieldError fieldError : fieldErrors) {
+            FieldErrorsResponse.FieldError fe = new FieldErrorsResponse.FieldError();
+            fe.setField(fieldError.getField());
+            fe.setMessage(fieldError.getDefaultMessage());
+            fe.setResource(Utils.camelToPascal(fieldError.getObjectName()));
+            errors.add(fe);
+        }
+        return Map.of("errors", errors);
+    }
+
+    @ExceptionHandler({FieldErrorsResponse.class})
+    @ResponseStatus(BAD_REQUEST)
+    public Map<String, Object> handleFieldErrorsResponseException(Exception e, WebRequest request) {
+        List<FieldErrorsResponse.FieldError> fieldErrors = ((FieldErrorsResponse) e).getErrors();
+        List<FieldErrorsResponse.FieldError> errors = new ArrayList<>();
+        for (FieldErrorsResponse.FieldError fieldError : fieldErrors) {
+            FieldErrorsResponse.FieldError fe = new FieldErrorsResponse.FieldError();
+            fe.setField(fieldError.getField());
+            fe.setMessage(fieldError.getMessage());
+            fe.setResource(Utils.capitalize(fieldError.getResource()));
+            errors.add(fe);
+            System.out.println(fieldError.getField() + " " + fieldError.getMessage() + " " + Utils.capitalize(fieldError.getResource()));
+        }
+        return Map.of("errors", errors);
+    }
 
     /**
      * Handle exception when the request not found data

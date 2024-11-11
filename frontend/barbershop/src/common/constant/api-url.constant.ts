@@ -21,8 +21,14 @@ export const ApiHairStyle = {
 
 export const ApiUser = {
   LOGIN: `${BASE_URL}/users/authen/login`,
+  REGISTER: `${BASE_URL}/users/authen/register`,
   ME: `${BASE_URL}/users/authen/me`,
   LOGOUT: `${BASE_URL}/users/authen/logout`,
+  UPDATE_PROFILE: `${BASE_URL}/users`,
+  CHANGE_PASSWORD: `${BASE_URL}/users/change-password`,
+  FORGOT_PASSWORD: `${BASE_URL}/users/authen/forgot-password`,
+  VERIFY_RESET_PASSWORD_TOKEN: `${BASE_URL}/users/authen/verify-reset-password-token`,
+  RESET_PASSWORD: `${BASE_URL}/users/authen/reset-password`,
 }
 
 export const ApiFeedback = {

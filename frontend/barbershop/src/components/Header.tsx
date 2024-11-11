@@ -1,5 +1,8 @@
 'use client';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { ApiUser } from "@/common/constant/api-url.constant";
 import { NAV_ACTIVE_CLASS, NAV_INACTIVE_CLASS } from "@/common/constant/nav.constant";
 import { AvatarShortOption } from "@/components/AvatarShortOption";
@@ -13,6 +16,7 @@ export default function Header() {
   const [user, setUser] = useState(0);
 
   const { authenDispatch } = useAuthen();
+  const pathForUserLogin = (process.env.NEXT_PUBLIC_URL_FOR_USER_LOGIN as any).split(',');
 
   const savePrePath = () => {
     window.sessionStorage.setItem('prePath', window.location.pathname);
@@ -30,6 +34,14 @@ export default function Header() {
       .then((json) => {
         if (json.status === 401) {
           setUser(1);
+          if (![
+              '/authen/login',
+              '/authen/register',
+              '/authen/forgot-password'
+            ].includes(pathname) &&
+            pathForUserLogin.includes(pathname)) {
+            window.location.href = `/authen/login`;
+          }
           return;
         }
         authenDispatch({ type: 'LOGIN',  payload: json.data});

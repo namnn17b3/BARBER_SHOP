@@ -217,14 +217,6 @@ export class HairStyleService {
         ),
         discount: hairStyleFromObjectMapper?.discount && {
           ...objectMapper(['value', 'unit'], hairStyle.discount),
-          effectDate: dayjs
-            .utc(hairStyle?.discount?.effectDate)
-            .tz(TimeZone.ASIA_HCM)
-            .format(DateFormatType.YYYYMMDD),
-          expireDate: dayjs
-            .utc(hairStyle?.discount?.expireDate)
-            .tz(TimeZone.ASIA_HCM)
-            .format(DateFormatType.YYYYMMDD),
         },
       },
     } as AppResponseSuccessDto;
@@ -300,10 +292,6 @@ export class HairStyleService {
     const units = ['VNĐ', '%', null];
     const valueVND = [10000, 20000, 30000, 40000, 50000];
     const valuePercent = [10, 20, 30, 40, 50];
-    const effectDate = new Date();
-    const expireDate = new Date(
-      new Date().getTime() + 30 * 24 * 60 * 60 * 1000,
-    );
     const prices = [100000, 150000, 200000, 250000, 300000];
 
     await this.hairStyleModel.db.dropCollection('hair_style');
@@ -329,8 +317,6 @@ export class HairStyleService {
           imgs,
           discount: {
             value,
-            effectDate,
-            expireDate,
             unit,
           },
         });
@@ -344,8 +330,6 @@ export class HairStyleService {
           imgs,
           discount: {
             value,
-            effectDate,
-            expireDate,
             unit,
           },
         });
