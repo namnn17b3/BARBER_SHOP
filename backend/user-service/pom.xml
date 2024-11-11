@@ -90,6 +90,14 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- js engine -->
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js</artifactId>
+			<version>22.3.0</version>
+		</dependency>
+
+
 		<!-- Hibernate Validator (implementation of the Bean Validation) -->
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>

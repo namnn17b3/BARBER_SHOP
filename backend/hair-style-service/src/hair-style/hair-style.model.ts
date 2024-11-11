@@ -15,8 +15,6 @@ export const HairStyleSchema = new Schema(
     ],
     discount: {
       value: Number,
-      effectDate: Date,
-      expireDate: Date,
       unit: String,
     },
   },
@@ -40,8 +38,6 @@ export interface HairStyle extends Document {
   ];
   discount: {
     value: Number;
-    effectDate: Date;
-    expireDate: Date;
     unit: String;
   };
 }

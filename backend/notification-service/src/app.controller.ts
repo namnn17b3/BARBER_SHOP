@@ -1,6 +1,8 @@
 import { AppService } from '@app.service';
 import {
   REGISTER_PROCESS,
+  SEND_EMAIL_RESET_PASSWORD,
+  SEND_EMAIL_RESET_PASSWORD_PROCESS,
   SEND_EMAIL_REGISTER,
   SEND_EMAIL_THANK_FOR_ORDER,
   SEND_EMAIL_THANK_FOR_ORDER_PROCESS,
@@ -44,6 +46,20 @@ export class AppController {
       );
     } catch (error) {
       this.logger.error('AppController.sendEmailThankForOrder', error.stack);
+    }
+  }
+
+  @EventPattern(SEND_EMAIL_RESET_PASSWORD)
+  async sendEmailResetPassword(@Payload() message: any) {
+    try {
+      const order = JSON.parse(JSON.parse(message));
+      console.log('>>> sendEmailResetPassword kafka:', order);
+      await this.appService.sendMailJob(
+        SEND_EMAIL_RESET_PASSWORD_PROCESS,
+        order,
+      );
+    } catch (error) {
+      this.logger.error('AppController.sendEmailResetPassword', error.stack);
     }
   }
 

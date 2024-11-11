@@ -1,6 +1,8 @@
-package barbershop.order_service.Utils;
+package barbershop.user_service.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Value;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -25,10 +27,18 @@ public class Utils {
         return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
     }
 
+    public static String camelToPascal(String camelCase) {
+        if (camelCase == null || camelCase.isEmpty()) {
+            return camelCase;
+        }
+        // Chuyển ký tự đầu tiên thành chữ hoa và nối với phần còn lại của chuỗi
+        return camelCase.substring(0, 1).toUpperCase() + camelCase.substring(1);
+    }
+
     public static String readJsonBody(HttpServletRequest request) throws IOException {
         try (
-            InputStream inputStream = request.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
+                InputStream inputStream = request.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
         ) {
             return reader.lines().collect(java.util.stream.Collectors.joining(System.lineSeparator()));
         }
@@ -36,12 +46,6 @@ public class Utils {
 
     public static Date parseDate(String input, String format, String timezone) {
         try {
-            // Định dạng ngày tháng theo chuỗi nhập vào
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
-
-            // Chuyển chuỗi thành LocalDateTime
-            LocalDateTime.parse(input, formatter);
-
             // Khởi tạo SimpleDateFormat với định dạng truyền vào
             SimpleDateFormat sdf = new SimpleDateFormat(format);
 
@@ -104,5 +108,24 @@ public class Utils {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         sdf.setTimeZone(TimeZone.getTimeZone(timezone));
         return sdf.format(date);
+    }
+
+    // For java 8, 11
+//    public static String encodeURIComponent(String s) throws Exception {
+//        ScriptEngineManager factory = new ScriptEngineManager();
+//        ScriptEngine engine = factory.getEngineByName("js");
+//
+//        String script = "encodeURIComponent('"+s+"')";
+//        Object result = engine.eval(script);
+//        return result.toString();
+//    }
+
+    public static String encodeURIComponent(String s) throws Exception {
+        Context context = Context
+                .newBuilder("js")
+                .option("engine.WarnInterpreterOnly", "false")
+                .build();
+        Value result = context.eval("js", "encodeURIComponent('"+s+"')");
+        return result.toString();
     }
 }

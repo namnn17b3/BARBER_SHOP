@@ -8,6 +8,8 @@ const initialState = null;
 export const authenReducer = (state: any, action: any) => {
   switch (action.type) {
     case "LOGIN":
+    case "REGISTER":
+    case "UPDATE_PROFILE":
       return action.payload;
     case "LOGOUT":
       return action.payload;

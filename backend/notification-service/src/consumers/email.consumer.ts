@@ -5,6 +5,7 @@ import {
   REGISTER_PROCESS,
   SEND_EMAIL_PROCESSOR,
   SEND_EMAIL_THANK_FOR_ORDER_PROCESS,
+  SEND_EMAIL_RESET_PASSWORD_PROCESS,
 } from '@common/constants/kafka-topic.constant';
 import { capitalize } from '@common/utils/utils';
 
@@ -48,6 +49,20 @@ export class EmailConsumer {
             job.data.status === 'Success' ? '#28a745' : '#dc3545',
         },
       },
+    });
+    const time2 = new Date();
+    console.log('Send Success: ', time2.getTime() - time1.getTime(), 'ms');
+  }
+
+  @Process(SEND_EMAIL_RESET_PASSWORD_PROCESS)
+  async resetPasswordEmail(job: Job<any>) {
+    console.log('data confirm registerEmail', job.data);
+    const time1 = new Date();
+    await this.mailerService.sendMail({
+      to: job.data.email,
+      subject: 'Reset your password',
+      template: './forgot-password',
+      context: job.data,
     });
     const time2 = new Date();
     console.log('Send Success: ', time2.getTime() - time1.getTime(), 'ms');
