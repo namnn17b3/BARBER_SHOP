@@ -9,6 +9,7 @@ export const authenReducer = (state: any, action: any) => {
   switch (action.type) {
     case "LOGIN":
     case "REGISTER":
+    case "ME":
     case "UPDATE_PROFILE":
       return action.payload;
     case "LOGOUT":

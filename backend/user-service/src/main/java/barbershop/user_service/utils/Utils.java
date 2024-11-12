@@ -128,4 +128,11 @@ public class Utils {
         Value result = context.eval("js", "encodeURIComponent('"+s+"')");
         return result.toString();
     }
+
+    public static String getExtendFile(String fileName) {
+        if (fileName == null || !fileName.contains(".")) {
+            return ""; // Trả về chuỗi rỗng nếu không có phần mở rộng
+        }
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
 }

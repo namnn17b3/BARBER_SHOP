@@ -1,6 +1,7 @@
 'use client';
 
 import { ApiUser } from "@/common/constant/api-url.constant";
+import { setCookie } from "@/common/utils/utils";
 import AlertError from "@/components/alert/AlertError";
 import { useAuthen } from "@/hooks/user.authen";
 import { useEffect, useRef, useState } from "react";
@@ -64,6 +65,7 @@ export default function RegisterPage() {
           }).then((result) => {
             window.localStorage.setItem('token', json.token);
             authenDispatch({ type: 'REGISTER', payload: json.user });
+            setCookie('token', json.token);
           });
           isValidErrorRef.current = false;
         } else if (json.status === 401) {

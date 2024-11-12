@@ -1,6 +1,7 @@
 'use client';
 
 import { ApiUser } from "@/common/constant/api-url.constant";
+import { setCookie } from "@/common/utils/utils";
 import { useAuthen } from "@/hooks/user.authen";
 import { useEffect, useRef } from "react";
 import Swal from "sweetalert2"
@@ -44,6 +45,7 @@ export default function LoginPage() {
           return;
         }
         authenDispatch({ type: 'LOGIN', payload: json.user });
+        setCookie('token', json.token);
         window.localStorage.setItem('token', json.token);
         window.location.href = window.sessionStorage.getItem('prePath') || '/';
       })
