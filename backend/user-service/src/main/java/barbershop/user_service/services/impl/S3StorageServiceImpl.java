@@ -1,6 +1,7 @@
 package barbershop.user_service.services.impl;
 
 import barbershop.user_service.services.S3StorageService;
+import barbershop.user_service.utils.Utils;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.UUID;
 
 @Slf4j
@@ -32,12 +34,12 @@ public class S3StorageServiceImpl implements S3StorageService {
     private AmazonS3 s3Client;
 
     @Override
-    public String uploadFile(MultipartFile file) {
+    public String uploadFile(MultipartFile file) throws Exception {
         if (file == null || file.isEmpty()) {
             return null;
         }
         File fileObj = convertMultiPartFileToFile(file);
-        String fileName = folderName + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+        String fileName = folderName+"/"+UUID.randomUUID()+"."+Utils.getExtendFile(file.getOriginalFilename());
         s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
         fileObj.delete();
         return baseUrl + fileName;

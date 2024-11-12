@@ -1,5 +1,6 @@
 import { ApiUser } from "@/common/constant/api-url.constant";
 import { Role } from "@/common/enums/role.enum";
+import { deleteCookie } from "@/common/utils/utils";
 import { useAuthen } from "@/hooks/user.authen";
 import React from "react";
 
@@ -19,6 +20,7 @@ export function AvatarShortOption(props: any) {
       })
       .then(json => {
         authenDispatch({ type: 'LOGOUT', payload: null })
+        deleteCookie('token');
         window.localStorage.removeItem('token');
         window.location.href = '/';
       })

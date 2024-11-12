@@ -55,7 +55,7 @@ export default function UserProfilePage() {
           isValidErrorUserProfileRef.current = false;
 
           (document.querySelector('#username-dropdown-avatar-option') as HTMLInputElement).innerText = json.data.username;
-          (document.querySelector('#avatarButton') as HTMLInputElement).src = json.data.avatar;
+          (document.querySelector('#avatarButton') as HTMLInputElement).src = json.data.avatar || '/img/fb-no-img.png';
 
           Swal.fire({
             icon: 'success',

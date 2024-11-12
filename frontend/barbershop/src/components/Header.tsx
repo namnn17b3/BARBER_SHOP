@@ -35,16 +35,17 @@ export default function Header() {
         if (json.status === 401) {
           setUser(1);
           if (![
-              '/authen/login',
-              '/authen/register',
-              '/authen/forgot-password'
+            '/authen/login',
+            '/authen/register',
+            '/authen/forgot-password',
+            '/authen/reset-password',
             ].includes(pathname) &&
             pathForUserLogin.includes(pathname)) {
             window.location.href = `/authen/login`;
           }
           return;
         }
-        authenDispatch({ type: 'LOGIN',  payload: json.data});
+        authenDispatch({ type: 'ME',  payload: json.data});
         setUser(json.data);
       })
       .catch((error) => {

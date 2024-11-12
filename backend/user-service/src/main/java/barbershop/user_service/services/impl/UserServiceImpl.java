@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
         if (updateProfileRequest.getAvatar() != null && !updateProfileRequest.getAvatar().isEmpty()) {
             if (oldUser.getAvatar() != null) {
-                String fileName = oldUser.getAvatar().replaceAll(baseUrl + folderName + "/", "").trim();
+                String fileName = oldUser.getAvatar().replaceAll(baseUrl, "").trim();
                 System.out.println(">>>> fileName : " + fileName);
                 this.s3StorageService.deleteFile(fileName);
             }
@@ -69,6 +69,11 @@ public class UserServiceImpl implements UserService {
         }
 
         if (updateProfileRequest.getAvatar() != null && updateProfileRequest.getAvatar().isEmpty()) {
+            if (oldUser.getAvatar() != null) {
+                String fileName = oldUser.getAvatar().replaceAll(baseUrl, "").trim();
+                System.out.println(">>>> fileName : " + fileName);
+                this.s3StorageService.deleteFile(fileName);
+            }
             user.setAvatar(null);
         }
 
