@@ -1,3 +1,5 @@
+'use client';
+
 import { ApiUser } from "@/common/constant/api-url.constant";
 import { Role } from "@/common/enums/role.enum";
 import { deleteCookie } from "@/common/utils/utils";
@@ -56,10 +58,10 @@ export function AvatarShortOption(props: any) {
           className="py-2 text-sm text-gray-700 dark:text-gray-200"
           aria-labelledby="avatarButton"
         >
-          {authenState?.role === Role.ADMIN &&
+          {authenState?.role.toUpperCase() === Role.ADMIN &&
             <li>
               <a
-                href="#"
+                href="/admin"
                 className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
               >
                 Dashboard
@@ -86,7 +88,7 @@ export function AvatarShortOption(props: any) {
         <div className="py-1">
           <div
             onClick={handleSignOut}
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+            className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
           >
             Sign out
           </div>

@@ -29,6 +29,7 @@ export const ApiUser = {
   FORGOT_PASSWORD: `${BASE_URL}/users/authen/forgot-password`,
   VERIFY_RESET_PASSWORD_TOKEN: `${BASE_URL}/users/authen/verify-reset-password-token`,
   RESET_PASSWORD: `${BASE_URL}/users/authen/reset-password`,
+  ADMIN_STATISTIC_QUANTITY: `${BASE_URL}/users/admin/statistic-quantity`,
 }
 
 export const ApiFeedback = {
@@ -49,8 +50,11 @@ export const ApiOrder = {
   PAYMENT: `${BASE_URL}/orders/payment`,
   GET_ORDER_BY_USER: `${BASE_URL}/orders`,
   GET_ORDER_DETAIL: `${BASE_URL}/orders`,
+  ADMIN_STATISTIC_QUANTITY: `${BASE_URL}/orders/admin/statistic-quantity`,
 }
 
 export const ApiPayment = {
   VERIFY: `${BASE_URL}/payments/verify`,
+  ADMIN_STATISTIC_TOP_ITEM: `${BASE_URL}/payments/admin/statistic-items`,
+  ADMIN_STATISTIC_REVENUES: `${BASE_URL}/payments/admin/statistic-revenues`,
 }

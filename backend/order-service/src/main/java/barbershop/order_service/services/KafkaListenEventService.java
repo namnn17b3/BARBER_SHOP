@@ -65,6 +65,8 @@ public class KafkaListenEventService {
                         .setExternalRequest(checksumEventRequest.getExternalRequest())
                         .setPayOnlineType(checksumEventRequest.getPayOnlineType())
                         .setPaymentStatus(checksumEventRequest.getPaymentStatus())
+                        .setHairStyleId((int) ((Map<String, Object>) orderMap.get("hairStyle")).get("id"))
+                        .setUserId((int) ((Map<String, Object>) orderMap.get("user")).get("id"))
                 .build());
 
         kafkaTemplate.send("send-email-thank-for-order", objectMapper.writeValueAsString(orderMap));

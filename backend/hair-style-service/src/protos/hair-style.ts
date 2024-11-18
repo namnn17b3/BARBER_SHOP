@@ -25,27 +25,42 @@ export interface HairStyle {
   price: number;
   active: boolean;
   discount?: Discount | undefined;
+  img?: string | undefined;
 }
 
 export interface GetDetailHairStyleResponse {
   hairStyle: HairStyle | undefined;
 }
 
+export interface GetListHairStyleByIdsRequest {
+  ids: number[];
+}
+
+export interface GetListHairStyleByIdsResponse {
+  hairStyles: HairStyle[];
+}
+
 export const HAIR_STYLE_PACKAGE_NAME = "hairStyle";
 
 export interface HairStyleServiceClient {
   getDetailHairStyle(request: GetDetailHairStyleRequest): Observable<GetDetailHairStyleResponse>;
+
+  getListHairStyleByIds(request: GetListHairStyleByIdsRequest): Observable<GetListHairStyleByIdsResponse>;
 }
 
 export interface HairStyleServiceController {
   getDetailHairStyle(
     request: GetDetailHairStyleRequest,
   ): Promise<GetDetailHairStyleResponse> | Observable<GetDetailHairStyleResponse> | GetDetailHairStyleResponse;
+
+  getListHairStyleByIds(
+    request: GetListHairStyleByIdsRequest,
+  ): Promise<GetListHairStyleByIdsResponse> | Observable<GetListHairStyleByIdsResponse> | GetListHairStyleByIdsResponse;
 }
 
 export function HairStyleServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getDetailHairStyle"];
+    const grpcMethods: string[] = ["getDetailHairStyle", "getListHairStyleByIds"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("HairStyleService", method)(constructor.prototype[method], method, descriptor);

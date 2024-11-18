@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -46,6 +47,12 @@ public class Utils {
 
     public static Date parseDate(String input, String format, String timezone) {
         try {
+            // Định dạng ngày tháng theo chuỗi nhập vào
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+
+            // Chuyển chuỗi thành LocalDateTime
+            LocalDateTime.parse(input, formatter);
+
             // Khởi tạo SimpleDateFormat với định dạng truyền vào
             SimpleDateFormat sdf = new SimpleDateFormat(format);
 
@@ -134,5 +141,21 @@ public class Utils {
             return ""; // Trả về chuỗi rỗng nếu không có phần mở rộng
         }
         return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
+    public static String getPreviousMonth(String yyyyMM, String format, String timezone) {
+        // Định dạng ngày theo định dạng yyyy-MM
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+
+        LocalDate ddMMYYYY = LocalDate.parse(yyyyMM + "-01", formatter);
+
+        // Chuyển đổi chuỗi thành ZonedDateTime với ngày đầu tiên của tháng và múi giờ
+        ZonedDateTime zonedDateTime = ddMMYYYY.atStartOfDay(ZoneId.of(timezone));
+
+        // Lấy tháng trước đó
+        ZonedDateTime monthPrevious = zonedDateTime.minusMonths(1);
+
+        // Trả về chuỗi định dạng yyyy-MM của tháng trước đó
+        return monthPrevious.format(formatter);
     }
 }

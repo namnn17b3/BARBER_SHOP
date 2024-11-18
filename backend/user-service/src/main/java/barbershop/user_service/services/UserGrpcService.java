@@ -9,6 +9,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import user.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @GrpcService
@@ -67,5 +68,33 @@ public class UserGrpcService extends UserServiceGrpc.UserServiceImplBase {
             exception.printStackTrace();
             responseObserver.onError(Status.INTERNAL.withDescription(exception.getMessage()).asException());
         }
+    }
+
+    @Override
+    public void getListUserByIds(
+            GetListUserByIdsRequest request,
+            StreamObserver<GetListUserByIdsResponse> responseObserver) {
+        List<barbershop.user_service.entities.User> users = userRepository.findAllById(request.getIdsList());
+        List<User> userGrpcs = new ArrayList<>();
+        for (barbershop.user_service.entities.User user : users) {
+            User userGrpc = User.newBuilder()
+                    .setId(user.getId())
+                    .setUsername(user.getUsername())
+                    .setAvatar(user.getAvatar() == null ? "" : user.getAvatar())
+                    .setEmail(user.getEmail())
+                    .setPhone(user.getPhone())
+                    .setAddress(user.getAddress())
+                    .setGender(user.getGender().name())
+                    .setRole(user.getRole().name())
+                    .build();
+            userGrpcs.add(userGrpc);
+        }
+
+        GetListUserByIdsResponse responsebuilder = GetListUserByIdsResponse.newBuilder()
+                .addAllUsers(userGrpcs)
+                .build();
+
+        responseObserver.onNext(responsebuilder);
+        responseObserver.onCompleted();
     }
 }

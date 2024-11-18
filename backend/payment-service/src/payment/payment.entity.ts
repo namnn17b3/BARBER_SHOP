@@ -24,4 +24,10 @@ export class Payment extends BaseEntity<Payment> {
 
   @Column({ name: 'amount', type: 'int' })
   amount: number;
+
+  @Column({ name: 'hair_style_id', type: 'int' })
+  hairStyleId: number;
+
+  @Column({ name: 'user_id', type: 'int' })
+  userId: number;
 }

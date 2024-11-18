@@ -90,4 +90,9 @@ public class UserController {
         changePasswordRequest.setUser((Map<String, Object>) request.getAttribute("user"));
         return new ResponseEntity<>(this.userService.changePassword(changePasswordRequest), HttpStatus.OK);
     }
+
+    @GetMapping("/admin/statistic-quantity")
+    public ResponseEntity<AppBaseResponse> statisticQuantity(@Valid @ModelAttribute StatisticQuantityRequest statisticQuantityRequest) throws Exception {
+        return new ResponseEntity<>(this.userService.statisticQuantity(statisticQuantityRequest), HttpStatus.OK);
+    }
 }

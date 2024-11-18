@@ -3,6 +3,7 @@ package barbershop.order_service.controllers;
 import barbershop.order_service.dtos.request.FindOrderInfoRequest;
 import barbershop.order_service.dtos.request.GetListOrderByUserRequest;
 import barbershop.order_service.dtos.request.PaymentRequest;
+import barbershop.order_service.dtos.request.StatisticQuantityRequest;
 import barbershop.order_service.dtos.response.BaseResponse;
 import barbershop.order_service.dtos.response.PaginationResponse;
 import barbershop.order_service.services.OrderService;
@@ -13,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -50,5 +52,11 @@ public class OrderController {
             HttpServletRequest request) throws Exception {
         Map<String, Object> user = (Map<String, Object>) request.getAttribute("user");
         return new ResponseEntity<>(orderService.getOrderById(orderId, user), HttpStatus.OK);
+    }
+
+    @GetMapping("/admin/statistic-quantity")
+    public ResponseEntity<BaseResponse> getStatisticQuantity(
+            @Valid @ModelAttribute StatisticQuantityRequest statisticQuantityRequest) throws Exception {
+        return new ResponseEntity<>(orderService.getStatisticQuantity(statisticQuantityRequest), HttpStatus.OK);
     }
 }

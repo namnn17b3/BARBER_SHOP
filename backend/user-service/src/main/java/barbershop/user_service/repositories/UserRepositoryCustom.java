@@ -4,4 +4,5 @@ import barbershop.user_service.entities.User;
 
 public interface UserRepositoryCustom {
     void updateUserProfile(User user);
+    int statisticQuantity(int month, int year);
 }

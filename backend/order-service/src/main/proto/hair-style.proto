@@ -19,6 +19,7 @@ message HairStyle {
   int32 price = 3;
   bool active = 4;
   optional Discount discount = 5;
+  optional string img = 6;
 }
 
 message GetDetailHairStyleResponse {

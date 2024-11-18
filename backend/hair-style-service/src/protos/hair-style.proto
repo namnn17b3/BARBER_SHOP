@@ -19,12 +19,22 @@ message HairStyle {
   int32 price = 3;
   bool active = 4;
   optional Discount discount = 5;
+  optional string img = 6;
 }
 
 message GetDetailHairStyleResponse {
   HairStyle hairStyle = 1;
 }
 
+message GetListHairStyleByIdsRequest {
+  repeated int32 ids = 1;
+}
+
+message GetListHairStyleByIdsResponse {
+  repeated HairStyle hairStyles = 1;
+}
+
 service HairStyleService {
   rpc GetDetailHairStyle(GetDetailHairStyleRequest) returns (GetDetailHairStyleResponse);
+  rpc GetListHairStyleByIds(GetListHairStyleByIdsRequest) returns (GetListHairStyleByIdsResponse);
 }

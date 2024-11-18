@@ -27,6 +27,8 @@ export interface SaveNewPaymentRequest {
   orderUUID: string;
   payOnlineType: string;
   paymentStatus: string;
+  hairStyleId: number;
+  userId: number;
 }
 
 export interface SaveNewPaymentResponse {

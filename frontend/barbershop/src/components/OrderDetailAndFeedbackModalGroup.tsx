@@ -202,7 +202,7 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
                 <dt className="font-normal mb-1 sm:mb-0 text-gray-500 dark:text-gray-400">
                   Status:
                 </dt>
-                <dd className="font-medium text-gray-900 dark:text-white sm:text-end">
+                <dd className="font-medium text-gray-900 dark:text-white sm:text-end" style={{ color: '#28a745'}}>
                   {order?.status}
                 </dd>
               </dl>
@@ -216,7 +216,7 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     disabled
                   >
-                    VNPAY
+                    {order?.paymentType}
                   </button>
                 </dd>
               </dl>
