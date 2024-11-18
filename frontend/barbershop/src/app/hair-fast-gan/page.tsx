@@ -1,6 +1,7 @@
 'use client';
 
 import { ApiHairFastGan } from "@/common/constant/api-url.constant";
+import { capitalize } from "@/common/utils/utils";
 import ListHairColorImageShow from "@/components/ListHairColorImageShow";
 import Modal from "@/components/modal/Modal";
 import ModalHairStyleImageGroup from "@/components/ModalHairStyleImageGroup";
@@ -127,7 +128,7 @@ export default function HairFastGanPage() {
           onClick={() => {
             hairColorImageElementRef.current.src = choosedHairColorImageUrlRef.current.url;
             hairColorNameElementRef.current.style.color = choosedHairColorImageUrlRef.current.color;
-            hairColorNameElementRef.current.innerText = choosedHairColorImageUrlRef.current.color;
+            hairColorNameElementRef.current.innerText = capitalize(choosedHairColorImageUrlRef.current.color);
           }}
         >
           OK

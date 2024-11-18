@@ -142,4 +142,21 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
 
         return Integer.parseInt(query.getResultList().get(0).toString());
     }
+
+    @Override
+    public int statisticQuantity(int month, int year) {
+        String sql = "select count(*) as quantity\n" +
+                "from orders\n" +
+                "where extract(month from orders.order_time) = :month and extract(year from orders.order_time) = :year";
+//        or
+//        String sql = "select count(*) as quantity\n" +
+//                "from orders\n" +
+//                "where month(orders.order_time) = :month and year(orders.order_time) = :year";
+
+        Query query = entityManager.createNativeQuery(sql);
+        query.setParameter("month", month);
+        query.setParameter("year", year);
+
+        return Integer.parseInt(query.getResultList().get(0).toString());
+    }
 }

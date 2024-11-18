@@ -37,7 +37,16 @@ message CheckAuthenResponse {
   User user = 1;
 }
 
+message GetListUserByIdsRequest {
+  repeated int32 ids = 1;
+}
+
+message GetListUserByIdsResponse {
+  repeated User users = 1;
+}
+
 service UserService {
   rpc getListUserFeedbackByIds(GetListUserFeedbackByIdsRequest) returns (GetListUserFeedbackByIdsResponse) {}
   rpc checkAuthen(CheckAuthenRequest) returns (CheckAuthenResponse) {}
+  rpc getListUserByIds(GetListUserByIdsRequest) returns (GetListUserByIdsResponse) {}
 }

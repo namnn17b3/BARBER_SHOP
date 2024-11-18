@@ -8,6 +8,7 @@ import { AppModule } from './app.module.js';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { PAYMENT_PACKAGE_NAME } from '@protos/payment';
+import { GrpcExceptionFilter } from '@common/exception-filter/grpc-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -32,6 +33,8 @@ async function bootstrap() {
       inheritAppConfig: true,
     },
   );
+
+  app.useGlobalFilters(new GrpcExceptionFilter());
 
   await Promise.all([
     app.listen(+configService.get('PORT'), configService.get('HOST')),

@@ -2,15 +2,18 @@ package barbershop.user_service.services.impl;
 
 import barbershop.user_service.dtos.request.ChangePasswordRequest;
 import barbershop.user_service.dtos.request.FieldErrorsResponse;
+import barbershop.user_service.dtos.request.StatisticQuantityRequest;
 import barbershop.user_service.dtos.request.UpdateProfileRequest;
 import barbershop.user_service.dtos.response.AppBaseResponse;
 import barbershop.user_service.dtos.response.UserDetailResponse;
 import barbershop.user_service.entities.User;
 import barbershop.user_service.enums.Gender;
+import barbershop.user_service.enums.TimeZone;
 import barbershop.user_service.repositories.UserRepository;
 import barbershop.user_service.securities.Bcrypt;
 import barbershop.user_service.services.S3StorageService;
 import barbershop.user_service.services.UserService;
+import barbershop.user_service.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -160,5 +163,46 @@ public class UserServiceImpl implements UserService {
 
         Map<String, Object> map = Map.of("message", "Change password successfully");
         return new AppBaseResponse(map);
+    }
+
+    @Override
+    public AppBaseResponse statisticQuantity(StatisticQuantityRequest statisticQuantityRequest) throws Exception {
+        List<FieldErrorsResponse.FieldError> listFieldErrors = new ArrayList<>();
+        if (Utils.parseDate(statisticQuantityRequest.getYear()+"-"+statisticQuantityRequest.getMonth()+"-01 00:00:00", "yyyy-MM-dd HH:mm:ss", TimeZone.ASIA_HCM.value()) == null) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("month and year")
+                            .message("Invalid date format")
+                            .resource("StatisticQuantityRequest")
+                            .build()
+            );
+
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        int quantityCurrent = this.userRepository.statisticQuantity(
+                Integer.parseInt(statisticQuantityRequest.getMonth()),
+                Integer.parseInt(statisticQuantityRequest.getYear())
+        );
+        String yyyyMMPrevious = Utils.getPreviousMonth(
+                statisticQuantityRequest.getYear()+"-"+statisticQuantityRequest.getMonth(),
+                "yyyy-MM-dd",
+                TimeZone.ASIA_HCM.value()
+        );
+        int yyyyPrevious = Integer.parseInt(yyyyMMPrevious.split("-")[0]);
+        int mmPrevious = Integer.parseInt(yyyyMMPrevious.split("-")[1]);
+        int quantityPrevious = this.userRepository.statisticQuantity(
+                mmPrevious,
+                yyyyPrevious
+        );
+
+        return new AppBaseResponse(Map.of(
+                "yyyyMM", statisticQuantityRequest.getYear()+"-"+statisticQuantityRequest.getMonth(),
+                "quantityCurrent", quantityCurrent,
+                "quantityPrevious", quantityPrevious
+        ));
     }
 }

@@ -9,19 +9,37 @@ export async function middleware(request: NextRequest) {
       '/authen/forgot-password',
       '/authen/reset-password',
     ];
+    const pageNeededAuthens = [
+      '/user-profile',
+      '/payment-result',
+      '/history-order',
+    ];
     const token = request.cookies.get('token')?.value || '';
     const prePath = request.cookies.get('prePath')?.value || '';
     const apiResponse = await fetch(`${BASE_API_URL}/users/authen/me?token=${encodeURIComponent(token)}`);
     const json = await apiResponse.json();
-  
+
     const pathname = request.nextUrl.pathname;
     if (json.status === 401 && !authenPages.includes(pathname)) {
-      return NextResponse.redirect(new URL('/authen/login', request.url));
+      if (pageNeededAuthens.includes(pathname) || pathname.includes('/admin')) {
+        return NextResponse.redirect(new URL('/authen/login', request.url));
+      }
+      return NextResponse.next();
     }
 
     if (json.data && authenPages.includes(pathname)) {
       return NextResponse.redirect(new URL(prePath, request.url));
     }
+
+    if (json.data && !authenPages.includes(pathname)) {
+      if (pathname.includes('/admin') && json.data.role.toLowerCase() === 'admin') {
+        return NextResponse.next();
+      }
+      if (pathname.includes('/admin') && json.data.role.toLowerCase() === 'user') {
+        return NextResponse.redirect(new URL('/', request.url));
+      }
+    }
+
   } catch (error) {
     console.log(error);
     return NextResponse.redirect(new URL('/error/500', request.url));
@@ -41,5 +59,6 @@ export const config = {
     '/history-order',
     '/user-profile',
     '/payment-result',
+    '/admin/:path*',
   ],
 };

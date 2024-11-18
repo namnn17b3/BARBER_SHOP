@@ -21,6 +21,8 @@ message SaveNewPaymentRequest {
   string orderUUID = 4;
   string payOnlineType = 5;
   string paymentStatus = 6;
+  int32 hairStyleId = 7;
+  int32 userId = 8;
 }
 
 message SaveNewPaymentResponse {

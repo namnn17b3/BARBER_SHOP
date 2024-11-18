@@ -4,8 +4,6 @@ import barbershop.user_service.dtos.response.AppBaseResponse;
 import barbershop.user_service.dtos.response.UserDetailResponse;
 import barbershop.user_service.exception.HttpException;
 import barbershop.user_service.services.AuthenticationService;
-import barbershop.user_service.utils.Utils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,9 +18,6 @@ import java.util.Map;
 @Slf4j
 @Component
 public class AuthenticationInterceptor implements HandlerInterceptor {
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Autowired
     private AuthenticationService authenticationService;
 

@@ -1,14 +1,22 @@
 import { PaymentRequestDto } from '@common/dto/payment-request.dto';
 import { AppResponseSuccessDto } from '@common/dto/response.dto';
+import { AdminGuard } from '@common/guards/admin.guards';
+import { FormattedValidationPipe } from '@common/validate-pipe/formatted-validation.pipe';
 import { MoMoService } from '@external/payment/momo.service';
 import { VNPAYService } from '@external/payment/vnpay.service';
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  StatisticItemsRequestDto,
+  StatisticRevenuesRequestDto,
+} from '@payment/payment.dto';
+import { PaymentService } from '@payment/payment.service';
 
 @Controller('/api/payments')
 export class PaymentController {
   constructor(
     private readonly vnpayService: VNPAYService,
     private readonly momoService: MoMoService,
+    private readonly paymentService: PaymentService,
   ) {}
 
   @Get('vnpay-ipn')
@@ -55,5 +63,23 @@ export class PaymentController {
         checksum,
       },
     } as AppResponseSuccessDto;
+  }
+
+  @UseGuards(AdminGuard)
+  @Get('/admin/statistic-items')
+  async statisticItems(
+    @Query(new FormattedValidationPipe('StatisticItemsRequestDto'))
+    statisticItemsDto: StatisticItemsRequestDto,
+  ) {
+    return this.paymentService.statisticItems(statisticItemsDto);
+  }
+
+  @UseGuards(AdminGuard)
+  @Get('/admin/statistic-revenues')
+  async statisticRevenues(
+    @Query(new FormattedValidationPipe('StatisticRevenuesRequestDto'))
+    statisticRevenuesRequestDto: StatisticRevenuesRequestDto,
+  ) {
+    return this.paymentService.statisticRevenues(statisticRevenuesRequestDto);
   }
 }

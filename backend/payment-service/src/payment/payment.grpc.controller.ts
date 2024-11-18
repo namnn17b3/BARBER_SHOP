@@ -59,6 +59,8 @@ export class PaymentGrpcController implements PaymentServiceController {
     const paymentRequestDto = {
       orderId: request.orderId,
       amount: request.amount,
+      hairStyleId: request.hairStyleId,
+      userId: request.userId,
     };
     const payOnlineType = request.payOnlineType;
     const paymentStatus = request.paymentStatus;

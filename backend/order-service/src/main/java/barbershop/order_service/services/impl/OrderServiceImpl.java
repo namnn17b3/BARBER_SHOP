@@ -8,6 +8,7 @@ import barbershop.order_service.Utils.Utils;
 import barbershop.order_service.dtos.request.FindOrderInfoRequest;
 import barbershop.order_service.dtos.request.GetListOrderByUserRequest;
 import barbershop.order_service.dtos.request.PaymentRequest;
+import barbershop.order_service.dtos.request.StatisticQuantityRequest;
 import barbershop.order_service.dtos.response.BaseResponse;
 import barbershop.order_service.dtos.response.FieldErrorsResponse;
 import barbershop.order_service.dtos.response.PaginationResponse;
@@ -320,8 +321,12 @@ public class OrderServiceImpl implements OrderService {
 
         int orderId = 0;
         try {
-            orderId = Integer.parseInt(getListOrderByUserRequest.getCodeOrHairStyle().split("BBSOD")[1]);
-        } catch (Exception exception) {}
+            orderId = Integer.parseInt(getListOrderByUserRequest.getCodeOrHairStyle().split("BBSOD")[1].trim());
+        } catch (Exception exception) {
+            try {
+                orderId = Integer.parseInt(getListOrderByUserRequest.getCodeOrHairStyle().trim());
+            } catch (Exception exception1) {}
+        }
 
         List<Order> orders = orderRepository.getListOrderByUser(
                 orderId,
@@ -455,5 +460,46 @@ public class OrderServiceImpl implements OrderService {
         orderMap.put("hairColor", hairColorMap);
 
         return new BaseResponse(orderMap);
+    }
+
+    @Override
+    public BaseResponse getStatisticQuantity(StatisticQuantityRequest statisticQuantityRequest) throws Exception {
+        List<FieldErrorsResponse.FieldError> listFieldErrors = new ArrayList<>();
+        if (Utils.parseDate(statisticQuantityRequest.getYear()+"-"+statisticQuantityRequest.getMonth()+"-01 00:00:00", "yyyy-MM-dd HH:mm:ss", TimeZone.ASIA_HCM.value()) == null) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("month and year")
+                            .message("Invalid date format")
+                            .resource("StatisticQuantityRequest")
+                            .build()
+            );
+
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        int quantityCurrent = this.orderRepository.statisticQuantity(
+                Integer.parseInt(statisticQuantityRequest.getMonth()),
+                Integer.parseInt(statisticQuantityRequest.getYear())
+        );
+        String yyyyMMPrevious = Utils.getPreviousMonth(
+                statisticQuantityRequest.getYear()+"-"+statisticQuantityRequest.getMonth(),
+                "yyyy-MM-dd",
+                TimeZone.ASIA_HCM.value()
+        );
+        int yyyyPrevious = Integer.parseInt(yyyyMMPrevious.split("-")[0]);
+        int mmPrevious = Integer.parseInt(yyyyMMPrevious.split("-")[1]);
+        int quantityPrevious = this.orderRepository.statisticQuantity(
+                mmPrevious,
+                yyyyPrevious
+        );
+
+        return new BaseResponse(Map.of(
+                "yyyyMM", statisticQuantityRequest.getYear()+"-"+statisticQuantityRequest.getMonth(),
+                "quantityCurrent", quantityCurrent,
+                "quantityPrevious", quantityPrevious
+        ));
     }
 }

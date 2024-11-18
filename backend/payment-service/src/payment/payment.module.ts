@@ -9,10 +9,22 @@ import { PaymentRepository } from '@payment/payment.repository';
 import { PaymentService } from '@payment/payment.service';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
+import { AdminGuard } from '@common/guards/admin.guards';
+import { UserGrpcClientService } from '@grpc/services/user/user.grpc-client.service';
+import { GrpcModule } from '@grpc/grpc.module';
+import { HairStyleGrpcClientService } from '@grpc/services/hair-style/hair-style.grpc-client.service';
 
 @Module({
   controllers: [PaymentController, PaymentGrpcController],
-  providers: [PaymentService, PaymentRepository, VNPAYService, MoMoService],
+  providers: [
+    PaymentService,
+    PaymentRepository,
+    VNPAYService,
+    MoMoService,
+    AdminGuard,
+    UserGrpcClientService,
+    HairStyleGrpcClientService,
+  ],
   exports: [PaymentService, PaymentRepository],
   imports: [
     ClientsModule.registerAsync([
@@ -46,6 +58,7 @@ import * as redisStore from 'cache-manager-redis-store';
         password: configService.get<string>('REDIS_PASSWORD'),
       }),
     }),
+    GrpcModule,
   ],
 })
 export class PaymentModule {}

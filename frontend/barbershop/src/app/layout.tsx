@@ -27,9 +27,13 @@ export default function RootLayout({
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
       </head>
       <AuthenrProvider>
-        {urlsWithoutRootLayour?.includes(pathname) ? (
+        {(urlsWithoutRootLayour?.includes(pathname) || pathname.includes('/admin')) ? (
           <body className={inter.className}>
             {children}
+            {
+              pathname.includes('/admin') &&
+              <script src="/js/flowbite.min.js"></script>
+            }
           </body>
         ) : (
           <body className={inter.className} style={{ width: 'auto', backgroundColor: '#f9fafb' }}>

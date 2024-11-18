@@ -9,7 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "apexcharts": "^4.0.0",
     "dayjs": "^1.11.13",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "flowbite": "^2.5.1",
     "flowbite-react": "^0.10.1",
     "next": "14.2.5",
@@ -17,6 +20,8 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@types/exceljs": "^1.3.2",
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

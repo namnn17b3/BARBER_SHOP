@@ -11,4 +11,5 @@ public interface OrderRepositoryCustom {
     List<Integer> findBarberIds(List<Integer> barberIds);
     List<Order> getListOrderByUser(int id, GetListOrderByUserRequest getListOrderByUserRequest);
     int countOrderByUser(int id, GetListOrderByUserRequest getListOrderByUserRequest);
+    int statisticQuantity(int month, int year);
 }
