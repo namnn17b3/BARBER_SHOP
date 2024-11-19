@@ -2,6 +2,7 @@
 
 import { ApiPayment } from "@/common/constant/api-url.constant";
 import { DateFormatType } from "@/common/constant/date-format.constant";
+import { MonthMeaning } from "@/common/constant/month-meaning.constant";
 import { TimeZone } from "@/common/constant/timezone.constant";
 import { setCookie } from "@/common/utils/utils";
 import FilterByDateDropdown from "@/components/FilterByDateDropdown";
@@ -41,18 +42,39 @@ export function StatisticRevenue(props: any) {
       })
       .then(async (json) => {
         if (json.data) {
+          const revenues = [];
           if (filter === 'month') {
             const dayStart = +json?.data?.revenues?.[json?.data?.revenues?.length - 1].date.split('-')?.[2] + 1;
             if (dayStart) {
               for (let i = dayStart; i <= 31; i++) {
                 if (new Date(`${year1}-${month}-${i > 9 ? i : `0${i}`}`).toString() !== 'Invalid Date') {
-                  json.data.revenues.push({
+                  revenues.push({
                     date: `${year1}-${month}-${i > 9 ? i : `0${i}`}`,
                     totalAmount: 0,
                   });
                 }
               }
             }
+            json.data.revenues = [...json.data.revenues, ...revenues];
+          } else if (filter === 'year') {
+            for (let i = 1; i <= 12; i++) {
+              // @ts-ignore
+              const value = json.data.revenues.find((item: any) => MonthMeaning[i] === item.month)?.totalAmount || null;
+              if (!value) {
+                revenues.push({
+                  // @ts-ignore
+                  month: MonthMeaning[i],
+                  totalAmount: 0,
+                });
+              } else {
+                revenues.push({
+                  // @ts-ignore
+                  month: MonthMeaning[i],
+                  totalAmount: value,
+                });
+              }
+            }
+            json.data.revenues = revenues;
           }
           (document.querySelector('#api-data-chart') as any).innerText = JSON.stringify(json.data.revenues);
           (document.querySelector('#revenue-chart-title') as any).innerText = 'Revenue chart ' +

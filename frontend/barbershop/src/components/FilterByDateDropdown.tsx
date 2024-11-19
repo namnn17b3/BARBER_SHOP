@@ -23,6 +23,7 @@ export default function FilterByDateDropdown(props: any) {
                 setDisplay(document.querySelector(`.month-input-group-${idToggle}`), "block");
                 setDisplay(document.querySelector(`.year-input-group-${idToggle}`), "hidden");
                 setDisplay(document.querySelector(`.range-input-group-${idToggle}`), "hidden");
+                setDisplay(document.querySelector(`#li-circle-chart-${idToggle}`), "hidden");
               }}
               id={`filter-by-month-${idToggle}`} defaultChecked type="radio" value="month" name={`filter-${idToggle}`} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
             <label htmlFor={`filter-by-month-${idToggle}`} className="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Month</label>
@@ -43,13 +44,14 @@ export default function FilterByDateDropdown(props: any) {
                 setDisplay(document.querySelector(`.month-input-group-${idToggle}`), "hidden");
                 setDisplay(document.querySelector(`.year-input-group-${idToggle}`), "block");
                 setDisplay(document.querySelector(`.range-input-group-${idToggle}`), "hidden");
+                setDisplay(document.querySelector(`#li-circle-chart-${idToggle}`), "block");
               }}
               id={`filter-by-year-${idToggle}`} type="radio" value="year" name={`filter-${idToggle}`} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
             <label htmlFor={`filter-by-year-${idToggle}`} className="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Year</label>
           </div>
           <div className={`year-input-group-${idToggle} hidden`}>
             <div className="mx-4 my-2 flex justify-center items-center">
-              <input type="number" id={`year2-${idToggle}`} aria-describedby="helper-text-explanation" className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-5/6 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter a year" required />
+              <input defaultValue={year} type="number" id={`year2-${idToggle}`} aria-describedby="helper-text-explanation" className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-5/6 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter a year" required />
             </div>
           </div>
         </li>
@@ -60,6 +62,7 @@ export default function FilterByDateDropdown(props: any) {
                 setDisplay(document.querySelector(`.month-input-group-${idToggle}`), "hidden");
                 setDisplay(document.querySelector(`.year-input-group-${idToggle}`), "hidden");
                 setDisplay(document.querySelector(`.range-input-group-${idToggle}`), "block");
+                setDisplay(document.querySelector(`#li-circle-chart-${idToggle}`), "hidden");
               }}
               id={`filter-by-range-${idToggle}`} type="radio" value="range" name={`filter-${idToggle}`} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
             <label htmlFor={`filter-by-range-${idToggle}`} className="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Range</label>
@@ -128,6 +131,13 @@ export default function FilterByDateDropdown(props: any) {
             </div>
           </li>
           <li>
+            <div className="flex items-center px-6 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white">
+              <input
+                id={`bar-chart-${idToggle}`} type="radio" value="bar" name={`chart-${idToggle}`} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+              <label htmlFor={`bar-chart-${idToggle}`} className="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Bar chart</label>
+            </div>
+          </li>
+          <li id={`li-circle-chart-${idToggle}`} className="hidden">
             <div className="flex items-center px-6 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white">
               <input
                 id={`circle-chart-${idToggle}`} type="radio" value="circle" name={`chart-${idToggle}`} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
