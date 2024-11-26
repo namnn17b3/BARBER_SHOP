@@ -97,4 +97,30 @@ public class UserGrpcService extends UserServiceGrpc.UserServiceImplBase {
         responseObserver.onNext(responsebuilder);
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void getListUserByIdsAndKeyWord(GetListUserByIdsAndKeyWordRequest request, StreamObserver<GetListUserByIdsAndKeyWordResponse> responseObserver) {
+        List<barbershop.user_service.entities.User> users = userRepository.getListUserByIdsAndKeyword(request.getIdsList(), request.getKeyword());
+        List<User> userGrpcs = new ArrayList<>();
+        for (barbershop.user_service.entities.User user : users) {
+            User userGrpc = User.newBuilder()
+                    .setId(user.getId())
+                    .setUsername(user.getUsername())
+                    .setAvatar(user.getAvatar() == null ? "" : user.getAvatar())
+                    .setEmail(user.getEmail())
+                    .setPhone(user.getPhone())
+                    .setAddress(user.getAddress())
+                    .setGender(user.getGender().name())
+                    .setRole(user.getRole().name())
+                    .build();
+            userGrpcs.add(userGrpc);
+        }
+
+        GetListUserByIdsAndKeyWordResponse responsebuilder = GetListUserByIdsAndKeyWordResponse.newBuilder()
+                .addAllUsers(userGrpcs)
+                .build();
+
+        responseObserver.onNext(responsebuilder);
+        responseObserver.onCompleted();
+    }
 }

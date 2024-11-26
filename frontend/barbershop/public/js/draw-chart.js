@@ -109,6 +109,7 @@ function drawCircleChart(chartElement, data, labels) {
 }
 
 function drawLineChart(chartElement, data, labels) {
+  const color = generateRandomColors(1)[0];
   const options = {
     chart: {
       height: "100%",
@@ -133,8 +134,10 @@ function drawLineChart(chartElement, data, labels) {
       gradient: {
         opacityFrom: 0.55,
         opacityTo: 0,
-        shade: "#1C64F2",
-        gradientToColors: ["#1C64F2"],
+        // shade: "#1C64F2",
+        // gradientToColors: ["#1C64F2"],
+        shade: color,
+        gradientToColors: [color],
       },
     },
     dataLabels: {
@@ -156,7 +159,8 @@ function drawLineChart(chartElement, data, labels) {
       {
         name: "Revenue",
         data: data,
-        color: "#1A56DB",
+        // color: "#1A56DB",
+        color: color,
       },
     ],
     xaxis: {

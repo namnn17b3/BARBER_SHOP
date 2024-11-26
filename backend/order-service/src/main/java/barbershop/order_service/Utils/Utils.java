@@ -78,7 +78,6 @@ public class Utils {
 
             // Kiểm tra xem số ngày có nằm trong khoảng từ 0 đến 6
             return daysDifference >= minUnit && daysDifference <= maxUnit;
-
         } catch (Exception e) {
             log.error("ERROR", e);
             return false;

@@ -1,4 +1,9 @@
+'use client';
+
+import { usePathname } from "next/navigation";
+
 export default function SidebarAdmin(props: any) {
+  const pathName = usePathname();
   return (
     <aside
       className="fixed top-0 left-0 z-40 w-64 h-screen pt-14 transition-transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
@@ -9,9 +14,8 @@ export default function SidebarAdmin(props: any) {
         <ul className="space-y-2">
           <li>
             <a
-              href="#"
+              href="/admin"
               className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              style={{ color: '#1a56db' }}
             >
               <svg
                 aria-hidden="true"
@@ -19,7 +23,7 @@ export default function SidebarAdmin(props: any) {
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
-                style={{ color: '#1a56db' }}
+                style={{ color: pathName === '/admin' ? '#1a56db' : '' }}
               >
                 <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
                 <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
@@ -33,6 +37,7 @@ export default function SidebarAdmin(props: any) {
               className="flex items-center p-2 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
               aria-controls="dropdown-pages"
               data-collapse-toggle="dropdown-pages"
+              aria-expanded="true"
             >
               <svg
                 aria-hidden="true"
@@ -64,11 +69,12 @@ export default function SidebarAdmin(props: any) {
                 />
               </svg>
             </button>
-            <ul id="dropdown-pages" className="hidden py-2 space-y-2">
+            <ul id="dropdown-pages" className="py-2 space-y-2">
               <li>
                 <a
                   href="#"
                   className="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  style={{ color: pathName === '/admin/hair-style' ? '#1a56db' : '' }}
                 >
                   Hair style
                 </a>
@@ -85,6 +91,7 @@ export default function SidebarAdmin(props: any) {
                 <a
                   href="#"
                   className="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  style={{ color: pathName === '/admin/barber' ? '#1a56db' : '' }}
                 >
                   Barber
                 </a>
@@ -93,14 +100,16 @@ export default function SidebarAdmin(props: any) {
                 <a
                   href="#"
                   className="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  style={{ color: pathName === '/admin/block-time' ? '#1a56db' : '' }}
                 >
                   Block time
                 </a>
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/admin/order-and-payment"
                   className="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  style={{ color: pathName === '/admin/order-and-payment' ? '#1a56db' : '' }}
                 >
                   Order and payment
                 </a>
@@ -109,6 +118,7 @@ export default function SidebarAdmin(props: any) {
                 <a
                   href="#"
                   className="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  style={{ color: pathName === '/admin/user' ? '#1a56db' : '' }}
                 >
                   User
                 </a>

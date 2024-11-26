@@ -8,8 +8,14 @@ export default function Pagination(props: {
   nodes: number;
   handlePageChange: Function;
   qsObject: any;
+  linkTag?: any;
 }) {
-  const { page, totalRecords, items, nodes, handlePageChange, qsObject } = props;
+  const { page, totalRecords, items, nodes, handlePageChange, qsObject, linkTag } = props;
+
+  let LinkTag = Link;
+  if (linkTag) {
+    LinkTag = linkTag;
+  }
 
   let totalPages = parseInt((totalRecords / items).toString());
   if (totalRecords % items !== 0) totalPages += 1;
@@ -20,7 +26,7 @@ export default function Pagination(props: {
   const pagy: any[] = [];
   if (page > 1) {
     pagy.push(<li key={-1}>
-      <Link
+      <LinkTag
         href={`?${toQueryString({ ...qsObject, page: page - 1 })}`}
         className="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
         onClick={() => handlePageChange(page - 1)}
@@ -41,38 +47,38 @@ export default function Pagination(props: {
             d="M5 1 1 5l4 4"
           />
         </svg>
-      </Link>
+      </LinkTag>
     </li>);
   }
   for (let i = startPage; i <= endPage && startPage < endPage; i++) {
     if (i == page) {
       pagy.push(
         <li key={i}>
-          <Link
+          <LinkTag
             href={`?${toQueryString({ ...qsObject, page: i })}`}
             aria-current="page" className="z-10 flex items-center justify-center px-4 h-10 leading-tight text-blue-600 border border-blue-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
             onClick={() => handlePageChange(page)}
           >
             {page}
-          </Link>
+          </LinkTag>
         </li>
       );
     }
     else {
       pagy.push(<li key={i}>
-        <Link
+        <LinkTag
           href={`?${toQueryString({ ...qsObject, page: i })}`}
           className="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
           onClick={() => handlePageChange(i)}
         >
           {i}
-        </Link>
+        </LinkTag>
       </li>);
     }
   }
   if (page < totalPages) {
     pagy.push(<li key={-2}>
-      <Link
+      <LinkTag
         href={`?${toQueryString({ ...qsObject, page: page + 1 })}`}
         className="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
         onClick={() => handlePageChange(page + 1)}
@@ -93,7 +99,7 @@ export default function Pagination(props: {
             d="m1 9 4-4-4-4"
           />
         </svg>
-      </Link>
+      </LinkTag>
     </li>);
   }
 

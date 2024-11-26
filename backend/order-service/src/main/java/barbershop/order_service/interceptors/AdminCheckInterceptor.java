@@ -56,6 +56,10 @@ public class AdminCheckInterceptor implements HandlerInterceptor {
             throw e;
         }
 
+        if (!checkAuthenResponse.getUser().getRole().equalsIgnoreCase("ADMIN")) {
+            throw new HttpException("Unauthorized", 401);
+        }
+
         Map<String, Object> userMap = new LinkedHashMap<>();
         userMap.put("id", checkAuthenResponse.getUser().getId());
         userMap.put("username", checkAuthenResponse.getUser().getUsername());

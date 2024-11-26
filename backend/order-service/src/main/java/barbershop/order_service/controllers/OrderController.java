@@ -4,6 +4,7 @@ import barbershop.order_service.dtos.request.FindOrderInfoRequest;
 import barbershop.order_service.dtos.request.GetListOrderByUserRequest;
 import barbershop.order_service.dtos.request.PaymentRequest;
 import barbershop.order_service.dtos.request.StatisticQuantityRequest;
+import barbershop.order_service.dtos.request.admin.GetListOrderForAdminRequest;
 import barbershop.order_service.dtos.response.BaseResponse;
 import barbershop.order_service.dtos.response.PaginationResponse;
 import barbershop.order_service.services.OrderService;
@@ -58,5 +59,18 @@ public class OrderController {
     public ResponseEntity<BaseResponse> getStatisticQuantity(
             @Valid @ModelAttribute StatisticQuantityRequest statisticQuantityRequest) throws Exception {
         return new ResponseEntity<>(orderService.getStatisticQuantity(statisticQuantityRequest), HttpStatus.OK);
+    }
+
+    @GetMapping("/admin/order-and-payment")
+    public ResponseEntity<BaseResponse> getListOrderForAdmin(
+            @Valid @ModelAttribute GetListOrderForAdminRequest getListOrderForAdminRequest,
+            HttpServletRequest request) throws Exception {
+        getListOrderForAdminRequest.setUser((Map<String, Object>) request.getAttribute("user"));
+        return new ResponseEntity<>(orderService.getListOrderForAdmin(getListOrderForAdminRequest), HttpStatus.OK);
+    }
+
+    @PutMapping("/admin/mark-cutted/{orderId}")
+    public ResponseEntity<BaseResponse> markCutted(@PathVariable(value="orderId") String orderId) throws Exception {
+        return new ResponseEntity<>(orderService.makeCutted(orderId), HttpStatus.OK);
     }
 }

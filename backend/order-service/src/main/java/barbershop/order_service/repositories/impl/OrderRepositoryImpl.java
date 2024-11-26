@@ -1,6 +1,7 @@
 package barbershop.order_service.repositories.impl;
 
 import barbershop.order_service.dtos.request.GetListOrderByUserRequest;
+import barbershop.order_service.dtos.request.admin.GetListOrderForAdminRequest;
 import barbershop.order_service.entities.Order;
 import barbershop.order_service.repositories.OrderRepositoryCustom;
 import order.HairStyle;
@@ -158,5 +159,24 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
         query.setParameter("year", year);
 
         return Integer.parseInt(query.getResultList().get(0).toString());
+    }
+
+    @Override
+    public List<Order> getListOrderForAdmin(GetListOrderForAdminRequest getListOrderForAdminRequest) {
+        String startDate = getListOrderForAdminRequest.getRange().split(",")[0].trim();
+        String endDate = getListOrderForAdminRequest.getRange().split(",")[1].trim();
+        String sql = "select * from orders\n" +
+                "where date(:startDate) <= date(order_time) and date(order_time) <= date(:endDate)\n" +
+                "order by order_time ";
+        if (getListOrderForAdminRequest.getSortBy() != null) {
+            sql += getListOrderForAdminRequest.getSortBy();
+        } else {
+            sql += "desc";
+        }
+        Query query = entityManager.createNativeQuery(sql, Order.class);
+        query.setParameter("startDate", startDate);
+        query.setParameter("endDate", endDate);
+
+        return query.getResultList();
     }
 }

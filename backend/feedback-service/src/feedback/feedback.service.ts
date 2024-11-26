@@ -193,7 +193,7 @@ export class FeedbackService {
       }),
     ]);
 
-    if (!isMatchWithUser.isMatch) {
+    if (!isMatchWithUser.isMatch && user.role.toLowerCase() === 'user') {
       throw new NotFoundException('Order does not match with user');
     }
 
@@ -249,6 +249,10 @@ export class FeedbackService {
   }
 
   private async saveFeedback(saveFeedbackRequestDto: SaveFeedbackRequestDto) {
+    if (saveFeedbackRequestDto.user.role.toLowerCase() === 'admin') {
+      throw new ForbiddenException('Cannot review by admin');
+    }
+
     return await this.feedbackRepository.save(saveFeedbackRequestDto);
   }
 

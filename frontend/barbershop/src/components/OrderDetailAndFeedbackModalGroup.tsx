@@ -11,6 +11,7 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
     hanldeClickReview,
     handleClickSubmit,
     hanleClickDelete,
+    isAdmin,
   } = props;
 
   let isDisplaySubmitButton = true;
@@ -208,6 +209,22 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
               </dl>
               <dl className="sm:flex items-center justify-between gap-4">
                 <dt className="font-normal mb-1 sm:mb-0 text-gray-500 dark:text-gray-400">
+                  Bank code:
+                </dt>
+                <dd className="font-medium text-gray-900 dark:text-white sm:text-end">
+                  {order?.bankCode}
+                </dd>
+              </dl>
+              <dl className="sm:flex items-center justify-between gap-4">
+                <dt className="font-normal mb-1 sm:mb-0 text-gray-500 dark:text-gray-400">
+                  Bank tran no:
+                </dt>
+                <dd className="font-medium text-gray-900 dark:text-white sm:text-end">
+                  {order?.bankTranNo}
+                </dd>
+              </dl>
+              <dl className="sm:flex items-center justify-between gap-4">
+                <dt className="font-normal mb-1 sm:mb-0 text-gray-500 dark:text-gray-400">
                   Payment type:
                 </dt>
                 <dd className="font-medium text-gray-900 dark:text-white sm:text-end">
@@ -250,13 +267,16 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
       <Modal title="Review" id="review-modal">
         <section className="bg-white dark:bg-gray-900 py-8 lg:py-8 antialiased">
           <div className="max-w-2xl mx-auto px-4">
-            <div className="p-4 mb-8 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
-              <span className="font-medium">Note!</span> You can only rate the service within 3 days of your use.
-            </div>
+            {
+              isAdmin ? '' : 
+              <div className="p-4 mb-8 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+                <span className="font-medium">Note!</span> You can only rate the service within 3 days of your use.
+              </div>
+            }
 
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">
-                Enter your comment
+                {isAdmin ? "Comment and rating" : "Enter your comment"}
               </h2>
             </div>
             
@@ -270,13 +290,13 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
                       className="hidden"
                       id={`star-${star}`}
                       defaultValue={star}
-                      defaultChecked={(feedback == null && star === 1) ||star <= feedback?.star}
+                      defaultChecked={(feedback == null && star === 1) || star <= feedback?.star}
                       onClick={handleClickStarVote}
-                      disabled={!isDisplaySubmitButton}
+                      disabled={isAdmin || !isDisplaySubmitButton}
                     />
-                    <label htmlFor={`star-${star}`} className={isDisplaySubmitButton ? `cursor-pointer` : ''}>
+                    <label htmlFor={`star-${star}`} className={!isAdmin && isDisplaySubmitButton ? `cursor-pointer` : ''}>
                       <svg
-                        className={(feedback == null && star === 1) ||star <= feedback?.star ? "w-8 h-8 ms-3 text-yellow-300" : "w-8 h-8 ms-3 text-gray-300 dark:text-gray-500"}
+                        className={(feedback == null && star === 1) || star <= feedback?.star ? "w-8 h-8 ms-3 text-yellow-300" : "w-8 h-8 ms-3 text-gray-300 dark:text-gray-500"}
                         // className="w-8 h-8 ms-3 text-gray-300 dark:text-gray-500"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
@@ -299,12 +319,11 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
                 id="comment"
                 rows={6}
                 className="py-2 w-full px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Write a comment..."
+                placeholder={isAdmin ? "No comment..." : "Write a comment..."}
                 required
-                disabled={!isDisplaySubmitButton}
+                disabled={isAdmin || !isDisplaySubmitButton}
                 defaultValue={feedback?.comment || ''}
               />
-            
             </div>
 
             <div className={`${feedback?.comment ? '' : 'hidden'} mb-5 text-sm text-gray-500 dark:text-gray-400`}>
@@ -325,7 +344,7 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
             Back
           </button>
           {
-            isDisplaySubmitButton &&
+            !isAdmin && isDisplaySubmitButton &&
             <button
               type="button"
               className="py-2.5 px-5 ms-3 focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
@@ -337,7 +356,7 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
             </button>
           }
           {
-            isDisplaySubmitButton && feedback &&
+            !isAdmin && isDisplaySubmitButton && feedback &&
             <button
               type="button"
               className="py-2.5 px-5 ms-3 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"

@@ -26,7 +26,8 @@ message SaveNewPaymentRequest {
 }
 
 message SaveNewPaymentResponse {
-  string message = 1;
+  string bankCode = 1;
+  string bankTranNo = 2;
 }
 
 message Payment {
