@@ -32,7 +32,8 @@ export interface SaveNewPaymentRequest {
 }
 
 export interface SaveNewPaymentResponse {
-  message: string;
+  bankCode: string;
+  bankTranNo: string;
 }
 
 export interface Payment {

@@ -9,6 +9,7 @@ import barbershop.order_service.dtos.request.FindOrderInfoRequest;
 import barbershop.order_service.dtos.request.GetListOrderByUserRequest;
 import barbershop.order_service.dtos.request.PaymentRequest;
 import barbershop.order_service.dtos.request.StatisticQuantityRequest;
+import barbershop.order_service.dtos.request.admin.GetListOrderForAdminRequest;
 import barbershop.order_service.dtos.response.BaseResponse;
 import barbershop.order_service.dtos.response.FieldErrorsResponse;
 import barbershop.order_service.dtos.response.PaginationResponse;
@@ -20,6 +21,7 @@ import barbershop.order_service.services.OrderService;
 import barbershop.order_service.services.RedisService;
 import block_time.BlockTimeServiceGrpc;
 import block_time.CheckBlockTimeRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hairColor.GetDetailHairColorRequest;
 import hairColor.HairColor;
@@ -33,12 +35,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import payment.*;
+import user.GetListUserByIdsAndKeyWordRequest;
+import user.User;
 import user.UserServiceGrpc;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -451,6 +456,8 @@ public class OrderServiceImpl implements OrderService {
         orderMap.put("amount", payment.getAmount());
         orderMap.put("status", payment.getStatus());
         orderMap.put("paymentType", payment.getType());
+        orderMap.put("bankCode", payment.getBankCode());
+        orderMap.put("bankTranNo", payment.getBankTranNo());
         orderMap.put("cutted", order.isCutted());
         orderMap.put("schedule", Utils.toDateStringWithFormatAndTimezone(order.getSchedule(), "yyyy-MM-dd HH:mm", TimeZone.ASIA_HCM.value()));
         orderMap.put("orderTime", Utils.toDateStringWithFormatAndTimezone(order.getOrderTime(), "yyyy-MM-dd HH:mm:ss", TimeZone.ASIA_HCM.value()));
@@ -501,5 +508,259 @@ public class OrderServiceImpl implements OrderService {
                 "quantityCurrent", quantityCurrent,
                 "quantityPrevious", quantityPrevious
         ));
+    }
+
+    @Override
+    public BaseResponse getListOrderForAdmin(GetListOrderForAdminRequest getListOrderForAdminRequest) throws Exception {
+        List<FieldErrorsResponse.FieldError> listFieldErrors = new ArrayList<>();
+
+        if (getListOrderForAdminRequest.getSortBy() != null) {
+            String regex = "^(asc|desc)$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(getListOrderForAdminRequest.getSortBy());
+            if (!matcher.matches()) {
+                listFieldErrors.add(
+                        FieldErrorsResponse.FieldError.builder()
+                                .field("sort by")
+                                .message("Sort by must be most recent or longest")
+                                .resource("GetListOrderForAdminRequest")
+                                .build()
+                );
+                throw FieldErrorsResponse
+                        .builder()
+                        .errors(listFieldErrors)
+                        .build();
+            }
+        }
+
+        if (getListOrderForAdminRequest.getRange() == null || getListOrderForAdminRequest.getRange().isEmpty()) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("range")
+                            .message("Range is not empty")
+                            .resource("GetListOrderForAdminRequest")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        if (getListOrderForAdminRequest.getRange().split(",").length != 2) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("range")
+                            .message("Invalid range format")
+                            .resource("GetListOrderForAdminRequest")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+        Date startDate = Utils.parseDate(getListOrderForAdminRequest.getRange().split(",")[0].trim()+" 00:00:00", "yyyy-MM-dd HH:mm:ss", TimeZone.ASIA_HCM.value());
+        Date endDate = Utils.parseDate(getListOrderForAdminRequest.getRange().split(",")[1].trim()+" 00:00:00", "yyyy-MM-dd HH:mm:ss", TimeZone.ASIA_HCM.value());
+        if (startDate == null) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("start date")
+                            .message("Invalid range: invalid start date")
+                            .resource("GetListOrderForAdminRequest")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+        if (endDate == null) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("end date")
+                            .message("Invalid range: invalid end date")
+                            .resource("GetListOrderForAdminRequest")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        if (startDate.getTime() > endDate.getTime()) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("start date")
+                            .message("Invalid range: start date must be less than or equals end date")
+                            .resource("GetListOrderForAdminRequest")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        if (endDate.getTime() - startDate.getTime() > 6 * 24 * 60 * 60 * 1000) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("start date")
+                            .message("Invalid range: range in [0;7] days")
+                            .resource("GetListOrderForAdminRequest")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        int orderId = 0;
+        try {
+            orderId = Integer.parseInt(getListOrderForAdminRequest.getKeyword().split("BBSOD")[1].trim());
+        } catch (Exception exception) {
+            try {
+                orderId = Integer.parseInt(getListOrderForAdminRequest.getKeyword().trim());
+            } catch (Exception exception1) {}
+        }
+
+        List<Order> orders = orderRepository.getListOrderForAdmin(getListOrderForAdminRequest);
+        List<User> users = new ArrayList<>();
+        orders = this.filterListOrderForAdminByKeyword(orders, users, orderId, getListOrderForAdminRequest.getKeyword());
+
+        int page = Integer.parseInt(getListOrderForAdminRequest.getPage());
+        int items = Integer.parseInt(getListOrderForAdminRequest.getItems());
+        int startIdx = (page - 1) * items;
+        int endIdx = Math.min(startIdx + items, orders.size());
+        List<Integer> orderIds = new ArrayList<>();
+        for (int i = startIdx; i < endIdx; i++) {
+            Order order = orders.get(i);
+            orderIds.add(order.getId());
+        }
+
+        List<Payment> paymentGrpcs = (paymentServiceBlockingStub.getListPaymentByOrderIds(
+                GetListPaymentByOrderIdsRequest.newBuilder()
+                        .addAllOrderIds(orderIds)
+                        .build()
+        )).getPaymentsList();
+
+        List<Map<String, Object>> orderMapList = new ArrayList<>();
+        for (int i = startIdx; i < endIdx; i++) {
+            Order order = orders.get(i);
+            Map<String, Object> orderMap = new LinkedHashMap<>();
+            orderMap.put("id", order.getId());
+            Map<String, Object> hairStyleMap = objectMapper.readValue(order.getHairStyle(), LinkedHashMap.class);
+            Map<String, Object> hairColorMap = objectMapper.readValue(order.getHairColor(), LinkedHashMap.class);
+            User user = users.stream().filter(u -> u.getId() == order.getUserId()).findFirst().orElse(null);
+            Map<String, Object> userMap = new LinkedHashMap<>();
+            userMap.put("username", user.getUsername());
+            userMap.put("email", user.getEmail());
+            orderMap.put("user", userMap);
+            orderMap.put("hairStyle", hairStyleMap.get("name"));
+            if (hairColorMap != null) {
+                orderMap.put("hairColor", Map.of("colorCode", hairColorMap.get("colorCode"), "color", hairColorMap.get("color")));
+            }
+            Payment paymentGrpc = findPaymentGrpcByOrderId(paymentGrpcs, order.getId());
+            orderMap.put("orderTime", Utils.toDateStringWithFormatAndTimezone(order.getOrderTime(), "yyyy-MM-dd HH:mm:ss", TimeZone.ASIA_HCM.value()));
+            orderMap.put("paymentType", paymentGrpc.getType());
+            orderMap.put("amount", paymentGrpc.getAmount());
+            orderMap.put("cutted", order.isCutted());
+
+            orderMapList.add(orderMap);
+        }
+
+        int totalRecords = orders.size();
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setData(orderMapList);
+        paginationResponse.setMeta(
+                PaginationResponse.Meta.builder()
+                        .items(Integer.parseInt(getListOrderForAdminRequest.getItems()))
+                        .page(Integer.parseInt(getListOrderForAdminRequest.getPage()))
+                        .totalRecords(totalRecords)
+                        .build()
+        );
+
+        return paginationResponse;
+    }
+
+    private List<Order> filterListOrderForAdminByKeyword(List<Order> orders, List<User> users, int orderId, String keyword) {
+        List<Integer> ids = new ArrayList<>();
+        for (Order order : orders) {
+            ids.add(order.getUserId());
+        }
+        GetListUserByIdsAndKeyWordRequest getListUserByIdsAndKeyWordRequest = GetListUserByIdsAndKeyWordRequest.newBuilder()
+                .addAllIds(ids)
+                .build();
+        List<User> userGrpcs = userServiceBlockingStub.getListUserByIdsAndKeyWord(getListUserByIdsAndKeyWordRequest).getUsersList();
+        for (User user : userGrpcs) {
+            users.add(user);
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            List<User> finalUsers = users;
+            orders = orders.stream().filter(order -> {
+                Map<String, Object> hairStyleMap = null;
+                try {
+                    User user = finalUsers.stream().filter(u -> u.getId() == order.getUserId()).findFirst().orElse(null);
+                    hairStyleMap = objectMapper.readValue(order.getHairStyle(), LinkedHashMap.class);
+                    return order.getId() == orderId ||
+                            hairStyleMap.get("name").toString().contains(keyword) ||
+                            user.getEmail().contains(keyword) ||
+                            user.getUsername().contains(keyword);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }).collect(Collectors.toList());
+        }
+
+        return orders;
+    }
+
+    @Override
+    public BaseResponse makeCutted(String orderId) throws Exception {
+        List<FieldErrorsResponse.FieldError> listFieldErrors = new ArrayList<>();
+
+        int id = 0;
+        try {
+            id = Integer.parseInt(orderId);
+        } catch (Exception exception) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("order id")
+                            .message("Invalid integer format")
+                            .resource("Path variable")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        Order order = orderRepository.findById(id).orElse(null);
+        if (order == null) {
+            throw new ResourceNotFoundException("Order not found");
+        }
+
+        if (order.isCutted()) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("order id")
+                            .message("Not mark cutted when order is marked cutted")
+                            .resource("Path variable")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        order.setCutted(true);
+        orderRepository.save(order);
+
+        return new BaseResponse(Map.of("message", "Mark cutted successfully"));
     }
 }

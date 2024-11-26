@@ -4,6 +4,7 @@ import barbershop.order_service.dtos.request.FindOrderInfoRequest;
 import barbershop.order_service.dtos.request.GetListOrderByUserRequest;
 import barbershop.order_service.dtos.request.PaymentRequest;
 import barbershop.order_service.dtos.request.StatisticQuantityRequest;
+import barbershop.order_service.dtos.request.admin.GetListOrderForAdminRequest;
 import barbershop.order_service.dtos.response.BaseResponse;
 import barbershop.order_service.dtos.response.PaginationResponse;
 
@@ -15,4 +16,6 @@ public interface OrderService {
     PaginationResponse getListOrderByUser(GetListOrderByUserRequest getListOrderByUserRequest) throws Exception;
     BaseResponse getOrderById(String orderIdString, Map<String, Object> user) throws Exception;
     BaseResponse getStatisticQuantity(StatisticQuantityRequest statisticQuantityRequest) throws Exception;
+    BaseResponse getListOrderForAdmin(GetListOrderForAdminRequest getListOrderForAdminRequest) throws Exception;
+    BaseResponse makeCutted(String orderId) throws Exception;
 }

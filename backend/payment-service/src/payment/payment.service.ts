@@ -75,9 +75,15 @@ export class PaymentService {
       type: payOnlineType,
       payTime,
     });
+
+    return {
+      bankCode,
+      bankTranNo,
+    };
   }
 
   async getListPaymentByOrderIds(orderIds: number[]) {
+    orderIds = orderIds || [];
     const payments = await this.paymentRepository.find({
       where: {
         orderId: In(orderIds),
@@ -90,7 +96,7 @@ export class PaymentService {
         orderId: payment.orderId,
         status: payment.status.toString(),
         type: payment.type.toString(),
-        bankCode: payment.bankTranNo,
+        bankCode: payment.bankCode,
         payTime: payment.payTime.toISOString(),
         bankTranNo: payment.bankTranNo,
         amount: payment.amount,

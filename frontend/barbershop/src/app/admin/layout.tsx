@@ -16,7 +16,9 @@ export default function HairColorLayout({
       <HeaderAdmin />
       <SidebarAdmin />
       <main>
-        {children}
+        <div className="p-4 md:ml-64 h-auto pt-20">
+          {children}
+        </div>
       </main>
     </div>
   );

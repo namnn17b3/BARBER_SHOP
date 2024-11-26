@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import payment.PaymentServiceGrpc;
 import payment.SaveNewPaymentRequest;
+import payment.SaveNewPaymentResponse;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class KafkaListenEventService {
         order = orderRepository.save(order);
         orderMap.put("id", order.getId());
 
-        paymentServiceBlockingStub.saveNewPayment(SaveNewPaymentRequest.newBuilder()
+        SaveNewPaymentResponse saveNewPaymentResponse = paymentServiceBlockingStub.saveNewPayment(SaveNewPaymentRequest.newBuilder()
                         .setAmount(checksumEventRequest.getAmount())
                         .setOrderId(order.getId())
                         .setOrderUUID(checksumEventRequest.getOrderUUID())
@@ -68,6 +69,9 @@ public class KafkaListenEventService {
                         .setHairStyleId((int) ((Map<String, Object>) orderMap.get("hairStyle")).get("id"))
                         .setUserId((int) ((Map<String, Object>) orderMap.get("user")).get("id"))
                 .build());
+
+        orderMap.put("bankCode", saveNewPaymentResponse.getBankCode());
+        orderMap.put("bankTranNo", saveNewPaymentResponse.getBankTranNo());
 
         kafkaTemplate.send("send-email-thank-for-order", objectMapper.writeValueAsString(orderMap));
     }

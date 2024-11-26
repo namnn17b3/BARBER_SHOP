@@ -1,8 +1,11 @@
 package barbershop.user_service.repositories.impl;
 
 import barbershop.user_service.entities.User;
+import barbershop.user_service.enums.Gender;
+import barbershop.user_service.enums.Role;
 import barbershop.user_service.repositories.UserRepositoryCustom;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -10,6 +13,12 @@ import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class UserRepositoryCustomImpl implements UserRepositoryCustom {
@@ -56,5 +65,33 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         query.setParameter("year", year);
 
         return Integer.parseInt(query.getResultList().get(0).toString());
+    }
+
+    @Override
+    public List<User> getListUserByIdsAndKeyword(List<Integer> ids, String keyword) {
+        String sql = "select * from users where id in (:ids)\n";
+        Map<String, Object> parameters = new LinkedHashMap<>();
+        parameters.put("ids", ids);
+        if (keyword != null && !keyword.isEmpty()) {
+            sql += "and (username ilike :keyword or email ilike :keyword)";
+            parameters.put("keyword", "%"+keyword+"%");
+        }
+
+        return namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<User>() {
+
+            @Override
+            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setUsername(rs.getString("username"));
+                user.setAvatar(rs.getString("avatar"));
+                user.setEmail(rs.getString("email"));
+                user.setPhone(rs.getString("phone"));
+                user.setAddress(rs.getString("address"));
+                user.setGender(Gender.valueOf(rs.getString("gender")));
+                user.setRole(Role.valueOf(rs.getString("role")));
+                return user;
+            }
+        });
     }
 }

@@ -51,6 +51,8 @@ export const ApiOrder = {
   GET_ORDER_BY_USER: `${BASE_URL}/orders`,
   GET_ORDER_DETAIL: `${BASE_URL}/orders`,
   ADMIN_STATISTIC_QUANTITY: `${BASE_URL}/orders/admin/statistic-quantity`,
+  GET_ORDER_AND_PAYMENT_FOR_ADMIN: `${BASE_URL}/orders/admin/order-and-payment`,
+  MARK_CUTTED: `${BASE_URL}/orders/admin/mark-cutted`,
 }
 
 export const ApiPayment = {

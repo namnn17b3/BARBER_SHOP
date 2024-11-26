@@ -2,11 +2,11 @@ import StatisticQuantityOrder from "@/components/admin/statistic/StatisticQuanti
 import StatisticQuantityUser from "@/components/admin/statistic/StatisticQuantityUser";
 import { StatisticRevenue } from "@/components/admin/statistic/StatisticRevenue";
 import StatisticTopItem from "@/components/admin/statistic/StatisticTopItem";
-
+import React from 'react';
 
 export default function AdminPage() {
   return (
-    <div className="p-4 md:ml-64 h-auto pt-20">
+    <>
       <div className="mb-4 col-span-full xl:mb-2">
         <nav className="flex mb-5" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 text-sm font-medium md:space-x-2">
@@ -28,6 +28,6 @@ export default function AdminPage() {
       <StatisticTopItem />
       <script src="/js/apexcharts.js" defer></script>
       <script src="/js/draw-chart.js" defer></script>
-    </div>
+    </>
   );
 }

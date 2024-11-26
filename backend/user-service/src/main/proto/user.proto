@@ -45,8 +45,18 @@ message GetListUserByIdsResponse {
   repeated User users = 1;
 }
 
+message GetListUserByIdsAndKeyWordRequest {
+  repeated int32 ids = 1;
+  optional string keyword = 2;
+}
+
+message GetListUserByIdsAndKeyWordResponse {
+  repeated User users = 1;
+}
+
 service UserService {
   rpc getListUserFeedbackByIds(GetListUserFeedbackByIdsRequest) returns (GetListUserFeedbackByIdsResponse) {}
   rpc checkAuthen(CheckAuthenRequest) returns (CheckAuthenResponse) {}
   rpc getListUserByIds(GetListUserByIdsRequest) returns (GetListUserByIdsResponse) {}
+  rpc getListUserByIdsAndKeyWord(GetListUserByIdsAndKeyWordRequest) returns (GetListUserByIdsAndKeyWordResponse) {}
 }

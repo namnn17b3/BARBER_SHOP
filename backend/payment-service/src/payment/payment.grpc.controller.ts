@@ -64,7 +64,7 @@ export class PaymentGrpcController implements PaymentServiceController {
     };
     const payOnlineType = request.payOnlineType;
     const paymentStatus = request.paymentStatus;
-    await this.paymentService.saveNewPayment(
+    const { bankCode, bankTranNo } = await this.paymentService.saveNewPayment(
       externalRequestDto,
       paymentRequestDto,
       payOnlineType === 'VNPAY' ? PayOnlineType.VNPAY : PayOnlineType.MOMO,
@@ -74,7 +74,8 @@ export class PaymentGrpcController implements PaymentServiceController {
     await this.cacheManager.del(request.orderUUID.toString());
 
     return {
-      message: 'Payment created successfully',
+      bankCode,
+      bankTranNo,
     } as SaveNewPaymentResponse;
   }
 
