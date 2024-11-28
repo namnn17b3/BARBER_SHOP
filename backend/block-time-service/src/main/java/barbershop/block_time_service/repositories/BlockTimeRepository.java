@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface BlockTimeRepository extends JpaRepository<BlockTime, Integer> {
+public interface BlockTimeRepository extends JpaRepository<BlockTime, Integer>, BlockTimeRepositoryCustom {
     @Query("select bt from BlockTime bt where bt.date = ?1 and bt.time = ?2")
     Optional<BlockTime> findByDateAndTime(String date, String time);
 }

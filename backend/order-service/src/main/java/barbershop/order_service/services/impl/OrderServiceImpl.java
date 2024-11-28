@@ -77,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
 
     private void checkValidDateAndTimeRequest(FindOrderInfoRequest findOrderInfoRequest) throws Exception {
         List<FieldErrorsResponse.FieldError> listFieldErrors = new ArrayList<>();
-        Date correctDate = Utils.parseDate(findOrderInfoRequest.getDate()+" "+ findOrderInfoRequest.getTime(), "yyyy-MM-dd HH:mm", TimeZone.ASIA_HCM.value());
+        Date correctDate = Utils.parseDate(findOrderInfoRequest.getDate()+" "+findOrderInfoRequest.getTime(), "yyyy-MM-dd HH:mm", TimeZone.ASIA_HCM.value());
         if (correctDate == null) {
             listFieldErrors.add(
                     FieldErrorsResponse.FieldError.builder()

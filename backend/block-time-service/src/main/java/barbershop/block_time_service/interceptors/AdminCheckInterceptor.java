@@ -1,6 +1,6 @@
-package barbershop.order_service.interceptors;
+package barbershop.block_time_service.interceptors;
 
-import barbershop.order_service.exception.HttpException;
+import barbershop.block_time_service.exception.HttpException;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import lombok.extern.slf4j.Slf4j;
@@ -74,3 +74,4 @@ public class AdminCheckInterceptor implements HandlerInterceptor {
         return true;
     }
 }
+

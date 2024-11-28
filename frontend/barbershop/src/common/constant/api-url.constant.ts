@@ -60,3 +60,9 @@ export const ApiPayment = {
   ADMIN_STATISTIC_TOP_ITEM: `${BASE_URL}/payments/admin/statistic-items`,
   ADMIN_STATISTIC_REVENUES: `${BASE_URL}/payments/admin/statistic-revenues`,
 }
+
+export const ApiBlockTime = {
+  ADMIN_GET_ALL: `${BASE_URL}/block-times/admin`,
+  ADMIN_SAVE_BLOCK_TIME: `${BASE_URL}/block-times/admin`,
+  ADMIN_GET_DETAIL_BLOCK_TIME: `${BASE_URL}/block-times/admin`,
+}
