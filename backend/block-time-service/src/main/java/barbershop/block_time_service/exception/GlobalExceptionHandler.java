@@ -2,6 +2,7 @@ package barbershop.block_time_service.exception;
 
 import javax.validation.ConstraintViolationException;
 
+//import barbershop.order_service.dtos.response.FieldErrorsResponse;
 import barbershop.block_time_service.Utils.Utils;
 import barbershop.block_time_service.dtos.response.FieldErrorsResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -76,6 +75,22 @@ public class GlobalExceptionHandler {
             errors.add(fe);
         }
         return new FieldErrorsResponse(errors);
+    }
+
+    @ExceptionHandler({FieldErrorsResponse.class})
+    @ResponseStatus(BAD_REQUEST)
+    public Map<String, Object> handleFieldErrorsResponseException(Exception e, WebRequest request) {
+        List<FieldErrorsResponse.FieldError> fieldErrors = ((FieldErrorsResponse) e).getErrors();
+        List<FieldErrorsResponse.FieldError> errors = new ArrayList<>();
+        for (FieldErrorsResponse.FieldError fieldError : fieldErrors) {
+            FieldErrorsResponse.FieldError fe = new FieldErrorsResponse.FieldError();
+            fe.setField(fieldError.getField());
+            fe.setMessage(fieldError.getMessage());
+            fe.setResource(Utils.capitalize(fieldError.getResource()));
+            errors.add(fe);
+            System.out.println(fieldError.getField() + " " + fieldError.getMessage() + " " + Utils.capitalize(fieldError.getResource()));
+        }
+        return Map.of("errors", errors);
     }
 
     /**

@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FieldErrorsResponse {
+public class FieldErrorsResponse extends Exception {
     @Builder
     @Getter
     @Setter
