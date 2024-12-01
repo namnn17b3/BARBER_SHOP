@@ -67,14 +67,21 @@ export abstract class BaseRepository<
   ) {
     if (value !== undefined) {
       parameterName = parameterName || `${field}_value`;
+      let expression = `${field} ${operator} :${parameterName}`;
+
+      if (operator === Operators.Like) {
+        // expression = `lower(${field}) ${operator} :${parameterName} utf8mb4_general_ci`;
+        expression = `lower(${field}) ${operator} :${parameterName} COLLATE utf8mb4_unicode_ci`;
+      }
+
       switch (whereOperator) {
         case WhereOperator.And:
-          this.queryBuilder.andWhere(`${field} ${operator} :${parameterName}`, {
+          this.queryBuilder.andWhere(expression, {
             [parameterName]: value,
           });
           break;
         case WhereOperator.Or:
-          this.queryBuilder.orWhere(`${field} ${operator} :${parameterName}`, {
+          this.queryBuilder.orWhere(expression, {
             [parameterName]: value,
           });
           break;
