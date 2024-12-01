@@ -1,5 +1,19 @@
 export const MAX_LENGTH_50 = 50;
 export const MAX_LENGTH_100 = 100;
+export const MAX_LENGTH_500 = 500;
+export const MAX_LENGTH_255 = 255;
+export const MIN_VALUE_ID = 1;
+export const MAX_FILE_SIZE = 10;
+
 export const MIN_LENGTH_1 = 1;
 export const MIN_VALUE_18 = 18;
 export const MAX_VALUE_40 = 40;
+export const IMAGE_FILE_TYPE_JPEG = 'image/jpeg';
+export const IMAGE_FILE_TYPE_PNG = 'image/png';
+export const IMAGE_FILE_TYPE_JPG = 'image/jpg';
+export const IMAGE_FILE_TYPE_GIF = 'image/gif';
+export const IMAGE_FILE_TYPE_BMP = 'image/bmp';
+export const IMAGE_FILE_TYPE_TIFF = 'image/tiff';
+export const IMAGE_FILE_TYPE_WEBP = 'image/webp';
+export const IMAGE_FILE_TYPE_SVG = 'image/svg+xml';
+export const IMAGE_FILE_TYPE_ICO = 'image/x-icon';

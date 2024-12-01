@@ -16,7 +16,7 @@ export class Barber extends BaseEntity<Barber> {
     enum: Gender,
     default: Gender.MALE,
   })
-  gender: Gender;
+  gender: string;
 
   @Column({ name: 'description', type: 'varchar', length: 500 })
   description: string;

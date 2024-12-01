@@ -21,7 +21,7 @@ dayjs.extend(customParseFormat as any);
 dayjs.extend(utc as any);
 dayjs.extend(timezone as any);
 
-export default function BlockTimePage() {
+export default function BlockTimeAdminPage() {
   const searchParams = useSearchParams();
 
   const router = useRouter();
@@ -238,7 +238,7 @@ export default function BlockTimePage() {
           Swal.fire({
             icon: 'success',
             title: 'Success',
-            text: 'Create block time successfully',
+            text: methodRef.current === 'PUT' ? 'Update block time successfully' : 'Create block time successfully',
           }).then((result) => {
             window.location.reload();
           });
