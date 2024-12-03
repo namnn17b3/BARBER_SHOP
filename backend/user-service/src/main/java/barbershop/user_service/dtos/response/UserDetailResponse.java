@@ -25,4 +25,6 @@ public class UserDetailResponse implements Serializable {
     private String avatar;
 
     private Role role;
+
+    private boolean active;
 }

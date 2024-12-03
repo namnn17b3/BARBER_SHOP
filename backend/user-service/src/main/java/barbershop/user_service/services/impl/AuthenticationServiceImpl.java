@@ -84,6 +84,9 @@ public class AuthenticationServiceImpl extends AuthenticationService {
         if (!Bcrypt.checkpw(loginRequest.getPassword(), user.getPassword())) {
             throw new HttpException("Password incorrect", HttpStatus.UNAUTHORIZED.value());
         }
+        if (!user.isActive()) {
+            throw new HttpException("Account is locked", HttpStatus.UNAUTHORIZED.value());
+        }
         if (this.redisService.getValue("u_"+user.getId()) != null) {
             throw new HttpException("Account access any where", HttpStatus.UNAUTHORIZED.value());
         }
@@ -133,6 +136,7 @@ public class AuthenticationServiceImpl extends AuthenticationService {
         user.setPhone(registerRequest.getPhone());
         user.setAddress(registerRequest.getAddress());
         user.setGender(Gender.valueOf(registerRequest.getGender()));
+        user.setActive(true);
 
         if (registerRequest.getAvatar() != null && !registerRequest.getAvatar().isEmpty()) {
             String avatar = this.s3StorageService.uploadFile(registerRequest.getAvatar());
@@ -152,6 +156,7 @@ public class AuthenticationServiceImpl extends AuthenticationService {
                 .role(user.getRole())
                 .gender(user.getGender())
                 .avatar(user.getAvatar())
+                .active(user.isActive())
                 .build();
 
         // Emit event send mail to notification-service by Kafka
@@ -207,6 +212,9 @@ public class AuthenticationServiceImpl extends AuthenticationService {
             if (user == null) {
                 throw new HttpException("Invalid token", HttpStatus.UNAUTHORIZED.value());
             }
+            if (!user.isActive()) {
+                throw new HttpException("Account is locked", HttpStatus.UNAUTHORIZED.value());
+            }
 
             UserDetailResponse userDetailResponse = UserDetailResponse.builder()
                     .id(user.getId())
@@ -246,6 +254,9 @@ public class AuthenticationServiceImpl extends AuthenticationService {
                     .builder()
                     .errors(listFieldErrors)
                     .build();
+        }
+        if (!user.isActive()) {
+            throw new HttpException("Account is locked", HttpStatus.UNAUTHORIZED.value());
         }
 
         if (this.redisService.getValue("fp_"+forgotPasswordRequest.getEmail()) != null) {
@@ -296,6 +307,13 @@ public class AuthenticationServiceImpl extends AuthenticationService {
 
                 AuthenticationService.PayLoad payLoad = this.objectMapper.readValue(payload, AuthenticationService.PayLoad.class);
                 String correctToken = this.redisService.getValue("fp_"+payLoad.getEmail());
+                User user = this.userRepository.findByEmail(payLoad.getEmail()).orElse(null);
+                if (user == null) {
+                    throw new HttpException("User not found", HttpStatus.UNAUTHORIZED.value());
+                }
+                if (!user.isActive()) {
+                    throw new HttpException("Account is locked", HttpStatus.UNAUTHORIZED.value());
+                }
                 if (correctToken == null) {
                     return new AppBaseResponse(Map.of(
                             "message", "Password reseted or token expired",
@@ -328,6 +346,14 @@ public class AuthenticationServiceImpl extends AuthenticationService {
         List<FieldErrorsResponse.FieldError> listFieldErrors = new ArrayList<>();
 
         Map<String, Object> verifyResetPasswordTokenResult = (Map<String, Object>) verifyResetPasswordToken(resetPasswordRequest.getToken()).getData();
+        String email = verifyResetPasswordTokenResult.get("email").toString();
+        User user = this.userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new HttpException("User not found", HttpStatus.UNAUTHORIZED.value());
+        }
+        if (!user.isActive()) {
+            throw new HttpException("Account is locked", HttpStatus.UNAUTHORIZED.value());
+        }
         if ((int) verifyResetPasswordTokenResult.get("code") != 0) {
             listFieldErrors.add(
                     FieldErrorsResponse.FieldError.builder()
@@ -378,7 +404,6 @@ public class AuthenticationServiceImpl extends AuthenticationService {
                     .build();
         }
 
-        String email = verifyResetPasswordTokenResult.get("email").toString();
         userRepository.changePasswordByEmail(Bcrypt.hashpw(resetPasswordRequest.getNewPassword()), email);
         entityManager.clear();
 

@@ -3,6 +3,7 @@ package barbershop.user_service.controllers;
 import barbershop.user_service.dtos.request.*;
 import barbershop.user_service.dtos.response.AppBaseResponse;
 import barbershop.user_service.dtos.response.LoginResponse;
+import barbershop.user_service.dtos.response.PaginationResponse;
 import barbershop.user_service.dtos.response.ResponseSuccess;
 import barbershop.user_service.services.AuthenticationService;
 import barbershop.user_service.services.UserService;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/users")
+@Validated // Bắt buộc để kích hoạt tính năng validate trên method parameter
 public class UserController {
     @Autowired
     private AuthenticationService authenticationService;
@@ -91,8 +94,26 @@ public class UserController {
         return new ResponseEntity<>(this.userService.changePassword(changePasswordRequest), HttpStatus.OK);
     }
 
+    @GetMapping("/admin")
+    public ResponseEntity<PaginationResponse> getListUserForAdmin(
+            @Valid @ModelAttribute GetListUserForAdminRequest getListUserForAdminRequest) throws Exception {
+        return new ResponseEntity<>(this.userService.getListUserForAdmin(getListUserForAdminRequest), HttpStatus.OK);
+    }
+
     @GetMapping("/admin/statistic-quantity")
     public ResponseEntity<AppBaseResponse> statisticQuantity(@Valid @ModelAttribute StatisticQuantityRequest statisticQuantityRequest) throws Exception {
         return new ResponseEntity<>(this.userService.statisticQuantity(statisticQuantityRequest), HttpStatus.OK);
+    }
+
+    @GetMapping("/admin/{userId}")
+    public ResponseEntity<AppBaseResponse> getDetailUserForAdmin(@PathVariable(value="userId") String userId) throws Exception {
+        return new ResponseEntity<>(this.userService.getDetailUserForAdmin(userId), HttpStatus.OK);
+    }
+
+    @PutMapping("/admin/{userId}")
+    public ResponseEntity<AppBaseResponse> updateStatusUserByAdmin(
+            @PathVariable(value="userId") String userId,
+            @Valid @RequestBody UpdateStatusUserRequest updateStatusUserRequest) throws Exception {
+        return new ResponseEntity<>(this.userService.updateStatusUserByAdmin(userId, updateStatusUserRequest), HttpStatus.OK);
     }
 }

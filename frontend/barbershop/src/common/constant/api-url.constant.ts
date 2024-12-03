@@ -31,6 +31,9 @@ export const ApiUser = {
   VERIFY_RESET_PASSWORD_TOKEN: `${BASE_URL}/users/authen/verify-reset-password-token`,
   RESET_PASSWORD: `${BASE_URL}/users/authen/reset-password`,
   ADMIN_STATISTIC_QUANTITY: `${BASE_URL}/users/admin/statistic-quantity`,
+  GET_LIST_USER_FOR_ADMIN: `${BASE_URL}/users/admin`,
+  GET_DETAIL_USER_FOR_ADMIN: `${BASE_URL}/users/admin`,
+  CHANGE_USER_STATUS: `${BASE_URL}/users/admin`,
 }
 
 export const ApiFeedback = {
