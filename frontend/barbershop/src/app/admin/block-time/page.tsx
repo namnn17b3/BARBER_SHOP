@@ -483,10 +483,10 @@ export default function BlockTimeAdminPage() {
             </li>
           </ol>
         </nav>
-        <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Block time</h1>
+        <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Manage block time</h1>
       </div>
 
-      <div className="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between py-4">
+      <div className="flex flex-col-reverse sm:flex-row-reverse flex-wrap space-y-4 sm:space-y-0 items-center justify-between py-4">
         <div>
           <button
             id="dropdownRadioButton"

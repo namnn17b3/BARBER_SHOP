@@ -1,14 +1,14 @@
 package barbershop.user_service.services.impl;
 
-import barbershop.user_service.dtos.request.ChangePasswordRequest;
-import barbershop.user_service.dtos.request.FieldErrorsResponse;
-import barbershop.user_service.dtos.request.StatisticQuantityRequest;
-import barbershop.user_service.dtos.request.UpdateProfileRequest;
+import barbershop.user_service.dtos.request.*;
 import barbershop.user_service.dtos.response.AppBaseResponse;
+import barbershop.user_service.dtos.response.PaginationResponse;
 import barbershop.user_service.dtos.response.UserDetailResponse;
 import barbershop.user_service.entities.User;
 import barbershop.user_service.enums.Gender;
+import barbershop.user_service.enums.Role;
 import barbershop.user_service.enums.TimeZone;
+import barbershop.user_service.exception.ResourceNotFoundException;
 import barbershop.user_service.repositories.UserRepository;
 import barbershop.user_service.securities.Bcrypt;
 import barbershop.user_service.services.S3StorageService;
@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -204,5 +205,126 @@ public class UserServiceImpl implements UserService {
                 "quantityCurrent", quantityCurrent,
                 "quantityPrevious", quantityPrevious
         ));
+    }
+
+    @Override
+    public PaginationResponse getListUserForAdmin(GetListUserForAdminRequest getListUserForAdminRequest) throws Exception{
+        List<User> users = userRepository.getListUserForAdmin(getListUserForAdminRequest);
+        List<Map<String, Object>> userMaps = new ArrayList<>();
+        for (User user : users) {
+            Map<String, Object> userMap = new LinkedHashMap<>();
+            userMap.put("id", user.getId());
+            userMap.put("username", user.getUsername());
+            userMap.put("email", user.getEmail());
+            userMap.put("gender", user.getGender());
+            userMap.put("avatar", user.getAvatar());
+            userMap.put("active", user.isActive());
+
+            userMaps.add(userMap);
+        }
+
+        int page = Integer.parseInt(getListUserForAdminRequest.getPage());
+        int items = Integer.parseInt(getListUserForAdminRequest.getItems());
+
+        int totalRecords = userRepository.countUserForAdmin(getListUserForAdminRequest);
+
+        PaginationResponse paginationResponse = new PaginationResponse();
+        paginationResponse.setMeta(
+                PaginationResponse.Meta.builder()
+                        .items(items)
+                        .page(page)
+                        .totalRecords(totalRecords)
+                        .build()
+        );
+
+        paginationResponse.setData(userMaps);
+
+        return paginationResponse;
+    }
+
+    @Override
+    public AppBaseResponse getDetailUserForAdmin(String userId) throws Exception {
+        List<FieldErrorsResponse.FieldError> listFieldErrors = new ArrayList<>();
+        int id = 0;
+        try {
+            id = Integer.parseInt(userId);
+        } catch (Exception exception) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("User id")
+                            .message("User id is invalid integer format")
+                            .resource("Path variable")
+                            .build()
+            );
+
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+        User user = userRepository.findByIdAndRole(id, Role.USER).orElse(null);
+
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found");
+        }
+
+        Map<String, Object> userMap = new LinkedHashMap<>();
+        userMap.put("id", user.getId());
+        userMap.put("username", user.getUsername());
+        userMap.put("email", user.getEmail());
+        userMap.put("gender", user.getGender());
+        userMap.put("avatar", user.getAvatar());
+        userMap.put("phone", user.getPhone());
+        userMap.put("address", user.getAddress());
+        userMap.put("active", user.isActive());
+
+        return new AppBaseResponse(userMap);
+    }
+
+    @Override
+    public AppBaseResponse updateStatusUserByAdmin(String userId, UpdateStatusUserRequest updateStatusUserRequest) throws Exception {
+        List<FieldErrorsResponse.FieldError> listFieldErrors = new ArrayList<>();
+        int id = 0;
+        try {
+            id = Integer.parseInt(userId);
+        } catch (Exception exception) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("User id")
+                            .message("User id is invalid integer format")
+                            .resource("Path variable")
+                            .build()
+            );
+
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+        User user = userRepository.findByIdAndRole(id, Role.USER).orElse(null);
+
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found");
+        }
+
+        if (updateStatusUserRequest.getActive() == null) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("Active")
+                            .message("Required active field is mandatory")
+                            .resource("Request body")
+                            .build()
+            );
+
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        user.setActive(updateStatusUserRequest.getActive());
+        userRepository.save(user);
+
+        return new AppBaseResponse(Map.of("message", "Change status successfully"));
     }
 }

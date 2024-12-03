@@ -546,7 +546,7 @@ export default function OrderAndPaymentPage() {
             </li>
           </ol>
         </nav>
-        <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Order and payment</h1>
+        <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Manage order and payment</h1>
       </div>
       <div className="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between py-4">
         <div>

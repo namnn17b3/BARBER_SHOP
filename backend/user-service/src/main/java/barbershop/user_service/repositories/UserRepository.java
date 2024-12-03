@@ -2,6 +2,7 @@ package barbershop.user_service.repositories;
 
 import barbershop.user_service.entities.User;
 import barbershop.user_service.enums.Gender;
+import barbershop.user_service.enums.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -45,4 +46,7 @@ public interface UserRepository extends JpaRepository<User, Integer>, UserReposi
     void changePasswordByEmail(
             @Param("newPassword") String newPassword,
             @Param("email") String email);
+
+    @Query("select u from User u where u.id = :id and u.role = :role")
+    Optional<User> findByIdAndRole(@Param("id") int id, @Param("role") Role role);
 }

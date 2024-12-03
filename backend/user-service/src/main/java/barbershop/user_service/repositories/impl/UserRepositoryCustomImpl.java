@@ -1,9 +1,11 @@
 package barbershop.user_service.repositories.impl;
 
+import barbershop.user_service.dtos.request.GetListUserForAdminRequest;
 import barbershop.user_service.entities.User;
 import barbershop.user_service.enums.Gender;
 import barbershop.user_service.enums.Role;
 import barbershop.user_service.repositories.UserRepositoryCustom;
+import barbershop.user_service.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -93,5 +95,76 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
                 return user;
             }
         });
+    }
+
+    @Override
+    public List<User> getListUserForAdmin(GetListUserForAdminRequest getListUserForAdminRequest) {
+        String sql = "select * from users where users.role = 'USER'\n";
+        if (getListUserForAdminRequest.getKeyword() != null && !getListUserForAdminRequest.getKeyword().isEmpty()) {
+            sql += "and unaccent(users.username) ilike :keyword\n";
+        }
+        if (getListUserForAdminRequest.getGender() != null && !getListUserForAdminRequest.getGender().isEmpty()) {
+            sql += "and users.gender = :gender\n";
+        }
+        if (getListUserForAdminRequest.getActive() != null && !getListUserForAdminRequest.getActive().isEmpty()) {
+            sql += "and users.active = :active\n";
+        }
+        sql += "order by users.id asc\n";
+        int page = Integer.parseInt(getListUserForAdminRequest.getPage());
+        int items = Integer.parseInt(getListUserForAdminRequest.getItems());
+        sql += "offset :x limit :len";
+
+        Query query = entityManager.createNativeQuery(sql, User.class);
+
+        if (getListUserForAdminRequest.getKeyword() != null && !getListUserForAdminRequest.getKeyword().isEmpty()) {
+            query.setParameter("keyword", "%"+ Utils.stripAccents(getListUserForAdminRequest.getKeyword())+"%");
+        }
+        if (getListUserForAdminRequest.getGender() != null && !getListUserForAdminRequest.getGender().isEmpty()) {
+            query.setParameter("gender", getListUserForAdminRequest.getGender());
+        }
+        if (getListUserForAdminRequest.getActive() != null && !getListUserForAdminRequest.getActive().isEmpty()) {
+            if (getListUserForAdminRequest.getActive().equals("true")) {
+                query.setParameter("active", true);
+            } else if (getListUserForAdminRequest.getActive().equals("false")) {
+                query.setParameter("active", false);
+            }
+        }
+
+        query.setParameter("x", page - 1);
+        query.setParameter("len", items);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public int countUserForAdmin(GetListUserForAdminRequest getListUserForAdminRequest) {
+        String sql = "select count(*) from users where users.role = 'USER'\n";
+        if (getListUserForAdminRequest.getKeyword() != null && !getListUserForAdminRequest.getKeyword().isEmpty()) {
+            sql += "and unaccent(users.username) ilike :keyword\n";
+        }
+        if (getListUserForAdminRequest.getGender() != null && !getListUserForAdminRequest.getGender().isEmpty()) {
+            sql += "and users.gender = :gender\n";
+        }
+        if (getListUserForAdminRequest.getActive() != null && !getListUserForAdminRequest.getActive().isEmpty()) {
+            sql += "and users.active = :active\n";
+        }
+
+        Query query = entityManager.createNativeQuery(sql);
+
+        if (getListUserForAdminRequest.getKeyword() != null && !getListUserForAdminRequest.getKeyword().isEmpty()) {
+            query.setParameter("keyword", "%"+ Utils.stripAccents(getListUserForAdminRequest.getKeyword())+"%");
+        }
+        if (getListUserForAdminRequest.getGender() != null && !getListUserForAdminRequest.getGender().isEmpty()) {
+            query.setParameter("gender", getListUserForAdminRequest.getGender());
+        }
+        if (getListUserForAdminRequest.getActive() != null && !getListUserForAdminRequest.getActive().isEmpty()) {
+            if (getListUserForAdminRequest.getActive().equals("true")) {
+                query.setParameter("active", true);
+            } else if (getListUserForAdminRequest.getActive().equals("false")) {
+                query.setParameter("active", false);
+            }
+        }
+
+        return Integer.parseInt(query.getResultList().get(0).toString());
     }
 }
