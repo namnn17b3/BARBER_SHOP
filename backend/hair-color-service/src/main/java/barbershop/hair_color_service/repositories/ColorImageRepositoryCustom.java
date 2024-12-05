@@ -6,6 +6,6 @@ import barbershop.hair_color_service.entities.ColorImage;
 import java.util.List;
 
 public interface ColorImageRepositoryCustom {
-    List<ColorImage> findByColor(PaginationRequest paginationRequest);
-    int countByColor(PaginationRequest paginationRequest);
+    List<ColorImage> findByColor(PaginationRequest paginationRequest, boolean forAdmin);
+    int countByColor(PaginationRequest paginationRequest, boolean forAdmin);
 }

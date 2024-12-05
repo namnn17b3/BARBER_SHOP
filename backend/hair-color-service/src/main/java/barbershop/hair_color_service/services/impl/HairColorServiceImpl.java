@@ -1,7 +1,9 @@
 package barbershop.hair_color_service.services.impl;
 
 import barbershop.hair_color_service.dtos.request.PaginationRequest;
+import barbershop.hair_color_service.dtos.request.SaveHairColorRequest;
 import barbershop.hair_color_service.dtos.response.BaseResponse;
+import barbershop.hair_color_service.dtos.response.FieldErrorsResponse;
 import barbershop.hair_color_service.dtos.response.PaginationResponse;
 import barbershop.hair_color_service.dtos.response.ResponseSuccess;
 import barbershop.hair_color_service.entities.ColorImage;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -77,7 +80,7 @@ public class HairColorServiceImpl implements HairColorService {
     }
 
     @Override
-    public BaseResponse getColors() throws Exception {
+    public BaseResponse getColors(boolean forAdmin) throws Exception {
         List<HairColor> hairColors = hairColorRepository.findAll();
         List<Map<String, Object>> ls = new ArrayList<>();
         for (HairColor hairColor : hairColors) {
@@ -85,15 +88,20 @@ public class HairColorServiceImpl implements HairColorService {
             map.put("id", hairColor.getId());
             map.put("color", hairColor.getColor());
             map.put("colorCode", hairColor.getColorCode());
-            ls.add(map);
+            if (!forAdmin && hairColor.isActive()) {
+                ls.add(map);
+            }
+            if (forAdmin) {
+                ls.add(map);
+            }
         }
         return new BaseResponse(ls);
     }
 
     @Override
-    public PaginationResponse getAll(PaginationRequest paginationRequest) throws Exception {
-        List<ColorImage> hairColors = colorImageRepository.findByColor(paginationRequest);
-        int totalRecords = colorImageRepository.countByColor(paginationRequest);
+    public PaginationResponse getAll(PaginationRequest paginationRequest, boolean forAdmin) throws Exception {
+        List<ColorImage> hairColors = colorImageRepository.findByColor(paginationRequest, forAdmin);
+        int totalRecords = colorImageRepository.countByColor(paginationRequest, forAdmin);
 
         PaginationResponse.Meta meta = PaginationResponse.Meta.builder()
                 .totalRecords(totalRecords)
@@ -104,5 +112,88 @@ public class HairColorServiceImpl implements HairColorService {
         paginationResponse.setData(hairColors);
 
         return paginationResponse;
+    }
+
+    private BaseResponse saveHairColor(SaveHairColorRequest saveHairColorRequest, int id) throws Exception {
+        HairColor hairColor = hairColorRepository.save(
+                HairColor.builder()
+                        .color(saveHairColorRequest.getColor())
+                        .colorCode(saveHairColorRequest.getColorCode())
+                .build()
+        );
+        if (id != 0) {
+            hairColor.setId(id);
+        }
+
+        return new BaseResponse(
+                Map.of(
+                        "id", hairColor.getId(),
+                        "color", hairColor.getColor(),
+                        "colorCode", hairColor.getColorCode()
+                )
+        );
+    }
+
+    @Transactional
+    @Override
+    public BaseResponse createHairColor(SaveHairColorRequest saveHairColorRequest) throws Exception {
+        List<FieldErrorsResponse.FieldError> listFieldErrors = new ArrayList<>();
+        HairColor hairColor = hairColorRepository.findByColorAndColorCode(saveHairColorRequest.getColor(), saveHairColorRequest.getColorCode())
+                .orElse(null);
+        if (hairColor != null) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("color, color code")
+                            .message("Color and color code already exists")
+                            .resource("SaveHairColorRequest")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+        return saveHairColor(saveHairColorRequest, 0);
+    }
+
+    @Transactional
+    @Override
+    public BaseResponse updateHairColor(SaveHairColorRequest saveHairColorRequest, String hairColorId) throws Exception {
+        List<FieldErrorsResponse.FieldError> listFieldErrors = new ArrayList<>();
+        int id = 0;
+        try {
+            id = Integer.parseInt(hairColorId);
+        } catch (Exception exception) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("id")
+                            .message("Hair color id is invalid integer format")
+                            .resource("SaveHairColorRequest")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        HairColor hairColor = hairColorRepository.findByColorAndColorCode(saveHairColorRequest.getColor(), saveHairColorRequest.getColorCode())
+                .orElse(null);
+
+        if (hairColor != null && hairColor.getId() != id) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("date; time")
+                            .message("Color and Color code is existed")
+                            .resource("SaveHairColorRequest")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        return saveHairColor(saveHairColorRequest, id);
     }
 }

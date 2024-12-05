@@ -139,6 +139,8 @@ export default function BarberAdminPage() {
       }
     });
 
+    if (active === 'all') active = '';
+
     const newFilterValue = {
       ...filterValue,
       page: 1,

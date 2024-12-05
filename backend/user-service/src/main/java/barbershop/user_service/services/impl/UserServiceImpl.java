@@ -63,20 +63,23 @@ public class UserServiceImpl implements UserService {
 
         if (updateProfileRequest.getAvatar() != null && !updateProfileRequest.getAvatar().isEmpty()) {
             if (oldUser.getAvatar() != null) {
-                String fileName = oldUser.getAvatar().replaceAll(baseUrl, "").trim();
-                System.out.println(">>>> fileName : " + fileName);
-                this.s3StorageService.deleteFile(fileName);
+//                String fileName = oldUser.getAvatar().replaceAll(baseUrl, "").trim();
+//                System.out.println(">>>> fileName : " + fileName);
+//                this.s3StorageService.deleteFile(fileName);
+                this.s3StorageService.deleteFileGrpc(oldUser.getAvatar());
             }
-            String avatar = this.s3StorageService.uploadFile(updateProfileRequest.getAvatar());
+//            String avatar = this.s3StorageService.uploadFile(updateProfileRequest.getAvatar());
+            String avatar = this.s3StorageService.uploadFileGrpc(updateProfileRequest.getAvatar());
             System.out.println(">>>>> avatar : " + avatar);
             user.setAvatar(avatar);
         }
 
         if (updateProfileRequest.getAvatar() != null && updateProfileRequest.getAvatar().isEmpty()) {
             if (oldUser.getAvatar() != null) {
-                String fileName = oldUser.getAvatar().replaceAll(baseUrl, "").trim();
-                System.out.println(">>>> fileName : " + fileName);
-                this.s3StorageService.deleteFile(fileName);
+//                String fileName = oldUser.getAvatar().replaceAll(baseUrl, "").trim();
+//                System.out.println(">>>> fileName : " + fileName);
+//                this.s3StorageService.deleteFile(fileName);
+                this.s3StorageService.deleteFileGrpc(oldUser.getAvatar());
             }
             user.setAvatar(null);
         }

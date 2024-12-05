@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -30,7 +31,7 @@ public class GlobalExceptionHandler {
      * @return errorResponse
      */
     @ExceptionHandler({ConstraintViolationException.class,
-            MissingServletRequestParameterException.class, MethodArgumentNotValidException.class,
+            MissingServletRequestParameterException.class
     })
     @ResponseStatus(BAD_REQUEST)
     public ErrorResponse handleValidationException(Exception e, WebRequest request) {
@@ -74,6 +75,22 @@ public class GlobalExceptionHandler {
         return errorResponse;
     }
 
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    @ResponseStatus(BAD_REQUEST)
+    public Map<String, Object> handleMethodArgumentNotValidException(Exception e, WebRequest request) {
+        List<FieldErrorsResponse.FieldError> errors = ((MethodArgumentNotValidException) e).getFieldErrors()
+                .stream()
+                .map(item ->
+                        FieldErrorsResponse.FieldError.builder()
+                                .field(item.getField())
+                                .resource(Utils.capitalize(item.getObjectName()))
+                                .message(item.getDefaultMessage())
+                                .build()
+                )
+                .collect(Collectors.toList());
+        return Map.of("errors", errors);
+    }
+
     @ExceptionHandler({BindException.class})
     @ResponseStatus(BAD_REQUEST)
     public Map<String, Object> handleBindException(Exception e, WebRequest request) {
@@ -83,7 +100,7 @@ public class GlobalExceptionHandler {
             FieldErrorsResponse.FieldError fe = new FieldErrorsResponse.FieldError();
             fe.setField(fieldError.getField());
             fe.setMessage(fieldError.getDefaultMessage());
-            fe.setResource(Utils.camelToPascal(fieldError.getObjectName()));
+            fe.setResource(Utils.capitalize(fieldError.getObjectName()));
             errors.add(fe);
         }
         return Map.of("errors", errors);
