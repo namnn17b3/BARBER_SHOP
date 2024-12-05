@@ -23,7 +23,7 @@ export default function HairColorPage() {
   const isValidErrorRef: any = useRef();
 
   const [filterValue, setFilterValue] = useState({
-    color: searchParams.get('color') || 'RED',
+    color: searchParams.get('color'),
     page: searchParams.get('page') || 1,
     items: 9,
   });
@@ -31,6 +31,8 @@ export default function HairColorPage() {
   const colorRef: any = useRef();
 
   useEffect(() => {
+    if (!filterValue.color) return;
+
     const url = `${ApiHairColor.GET_ALL}?${toQueryString(filterValue)}`;
     fetch(url)
       .then((response) => {
@@ -66,6 +68,10 @@ export default function HairColorPage() {
       .then((json) => {
         if (json.data) {
           setColors(json.data || []);
+          setFilterValue({
+            ...filterValue,
+            color: json?.data?.[0]?.color,
+          });
           isValidErrorRef.current = false;
         }
         else {

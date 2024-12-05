@@ -5,7 +5,9 @@ import {
 import { Direction } from '@common/enum/direction.enum';
 import { Operators } from '@common/enum/operators.enum';
 import { WhereOperator } from '@common/enum/where-operator.enum';
+import { toNonAccentVietnamese } from '@common/utils/utils';
 import {
+  Brackets,
   DataSource,
   EntityTarget,
   ObjectLiteral,
@@ -76,9 +78,33 @@ export abstract class BaseRepository<
 
       switch (whereOperator) {
         case WhereOperator.And:
-          this.queryBuilder.andWhere(expression, {
-            [parameterName]: value,
-          });
+          if (operator !== Operators.Like) {
+            this.queryBuilder.andWhere(expression, {
+              [parameterName]: value,
+            });
+            break;
+          }
+          this.queryBuilder.andWhere(
+            new Brackets((qb) => {
+              if (
+                !value.toLowerCase().includes('đ') &&
+                !value.toLowerCase().includes('d')
+              ) {
+                qb.where(expression, {
+                  [parameterName]: `%${toNonAccentVietnamese(value.toLowerCase())}%`,
+                });
+              } else {
+                const expression1 = `lower(${field}) ${operator} :${parameterName}_1 COLLATE utf8mb4_unicode_ci`;
+                const expression2 = `lower(${field}) ${operator} :${parameterName}_2 COLLATE utf8mb4_unicode_ci`;
+                qb.where(expression1, {
+                  [parameterName + '_1']: `%${toNonAccentVietnamese(value)}%`,
+                }).orWhere(expression2, {
+                  [parameterName + '_2']:
+                    `%${value.toLowerCase().replaceAll('d', 'đ')}%`,
+                });
+              }
+            }),
+          );
           break;
         case WhereOperator.Or:
           this.queryBuilder.orWhere(expression, {

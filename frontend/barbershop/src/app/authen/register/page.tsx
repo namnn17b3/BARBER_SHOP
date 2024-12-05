@@ -84,8 +84,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <section className="pb-40 bg-gray-50 dark:bg-gray-900" style={{ backgroundImage: 'url("/img/bg-login.jpg")', backgroundSize: 'cover' }}>
-      <div className="flex flex-col px-6 py-8 mx-auto md:h-screen lg:py-0">
+    <section className="pb-24 bg-gray-50 dark:bg-gray-900" style={{ backgroundImage: 'url("/img/bg-login.jpg")', backgroundSize: 'cover' }}>
+      <div className="flex flex-col px-6 py-8 mx-auto lg:py-0">
         <div className="mx-auto mt-32 p-8 md:p-8 bg-white rounded-lg shadow dark:bg-gray-700 w-1/2 md:inset-0 max-h-full">
           <h1 className="mb-6 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
             Register your account

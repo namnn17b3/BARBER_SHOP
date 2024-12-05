@@ -47,88 +47,89 @@ public class BlockTimeServiceImpl implements BlockTimeService {
             }
         }
 
-        if (getAllBlockTimesRequest.getRange() == null || getAllBlockTimesRequest.getRange().isEmpty()) {
-            listFieldErrors.add(
-                    FieldErrorsResponse.FieldError.builder()
-                            .field("range")
-                            .message("Range is not empty")
-                            .resource("GetAllBlockTimesRequest")
-                            .build()
-            );
-            throw FieldErrorsResponse
-                    .builder()
-                    .errors(listFieldErrors)
-                    .build();
-        }
+        if (getAllBlockTimesRequest.getRange() != null) {
+            if (getAllBlockTimesRequest.getRange().isEmpty()) {
+                listFieldErrors.add(
+                        FieldErrorsResponse.FieldError.builder()
+                                .field("range")
+                                .message("Range is not empty")
+                                .resource("GetAllBlockTimesRequest")
+                                .build()
+                );
+                throw FieldErrorsResponse
+                        .builder()
+                        .errors(listFieldErrors)
+                        .build();
+            }
+            if (getAllBlockTimesRequest.getRange().split(",").length != 2) {
+                listFieldErrors.add(
+                        FieldErrorsResponse.FieldError.builder()
+                                .field("range")
+                                .message("Invalid range format")
+                                .resource("GetAllBlockTimesRequest")
+                                .build()
+                );
+                throw FieldErrorsResponse
+                        .builder()
+                        .errors(listFieldErrors)
+                        .build();
+            }
+            Date startDate = Utils.parseDate(getAllBlockTimesRequest.getRange().split(",")[0].trim() + " 00:00:00", "yyyy-MM-dd HH:mm:ss", TimeZone.ASIA_HCM.value());
+            Date endDate = Utils.parseDate(getAllBlockTimesRequest.getRange().split(",")[1].trim() + " 00:00:00", "yyyy-MM-dd HH:mm:ss", TimeZone.ASIA_HCM.value());
+            if (startDate == null) {
+                listFieldErrors.add(
+                        FieldErrorsResponse.FieldError.builder()
+                                .field("start date")
+                                .message("Invalid range: invalid start date")
+                                .resource("GetAllBlockTimesRequest")
+                                .build()
+                );
+                throw FieldErrorsResponse
+                        .builder()
+                        .errors(listFieldErrors)
+                        .build();
+            }
+            if (endDate == null) {
+                listFieldErrors.add(
+                        FieldErrorsResponse.FieldError.builder()
+                                .field("end date")
+                                .message("Invalid range: invalid end date")
+                                .resource("GetAllBlockTimesRequest")
+                                .build()
+                );
+                throw FieldErrorsResponse
+                        .builder()
+                        .errors(listFieldErrors)
+                        .build();
+            }
 
-        if (getAllBlockTimesRequest.getRange().split(",").length != 2) {
-            listFieldErrors.add(
-                    FieldErrorsResponse.FieldError.builder()
-                            .field("range")
-                            .message("Invalid range format")
-                            .resource("GetAllBlockTimesRequest")
-                            .build()
-            );
-            throw FieldErrorsResponse
-                    .builder()
-                    .errors(listFieldErrors)
-                    .build();
-        }
-        Date startDate = Utils.parseDate(getAllBlockTimesRequest.getRange().split(",")[0].trim()+" 00:00:00", "yyyy-MM-dd HH:mm:ss", TimeZone.ASIA_HCM.value());
-        Date endDate = Utils.parseDate(getAllBlockTimesRequest.getRange().split(",")[1].trim()+" 00:00:00", "yyyy-MM-dd HH:mm:ss", TimeZone.ASIA_HCM.value());
-        if (startDate == null) {
-            listFieldErrors.add(
-                    FieldErrorsResponse.FieldError.builder()
-                            .field("start date")
-                            .message("Invalid range: invalid start date")
-                            .resource("GetAllBlockTimesRequest")
-                            .build()
-            );
-            throw FieldErrorsResponse
-                    .builder()
-                    .errors(listFieldErrors)
-                    .build();
-        }
-        if (endDate == null) {
-            listFieldErrors.add(
-                    FieldErrorsResponse.FieldError.builder()
-                            .field("end date")
-                            .message("Invalid range: invalid end date")
-                            .resource("GetAllBlockTimesRequest")
-                            .build()
-            );
-            throw FieldErrorsResponse
-                    .builder()
-                    .errors(listFieldErrors)
-                    .build();
-        }
+            if (startDate.getTime() > endDate.getTime()) {
+                listFieldErrors.add(
+                        FieldErrorsResponse.FieldError.builder()
+                                .field("start date")
+                                .message("Invalid range: start date must be less than or equals end date")
+                                .resource("GetAllBlockTimesRequest")
+                                .build()
+                );
+                throw FieldErrorsResponse
+                        .builder()
+                        .errors(listFieldErrors)
+                        .build();
+            }
 
-        if (startDate.getTime() > endDate.getTime()) {
-            listFieldErrors.add(
-                    FieldErrorsResponse.FieldError.builder()
-                            .field("start date")
-                            .message("Invalid range: start date must be less than or equals end date")
-                            .resource("GetAllBlockTimesRequest")
-                            .build()
-            );
-            throw FieldErrorsResponse
-                    .builder()
-                    .errors(listFieldErrors)
-                    .build();
-        }
-
-        if (endDate.getTime() - startDate.getTime() > 6 * 24 * 60 * 60 * 1000) {
-            listFieldErrors.add(
-                    FieldErrorsResponse.FieldError.builder()
-                            .field("start date")
-                            .message("Invalid range: range in [0;7] days")
-                            .resource("GetAllBlockTimesRequest")
-                            .build()
-            );
-            throw FieldErrorsResponse
-                    .builder()
-                    .errors(listFieldErrors)
-                    .build();
+            if (endDate.getTime() - startDate.getTime() > 6 * 24 * 60 * 60 * 1000) {
+                listFieldErrors.add(
+                        FieldErrorsResponse.FieldError.builder()
+                                .field("start date")
+                                .message("Invalid range: range in [0;7] days")
+                                .resource("GetAllBlockTimesRequest")
+                                .build()
+                );
+                throw FieldErrorsResponse
+                        .builder()
+                        .errors(listFieldErrors)
+                        .build();
+            }
         }
 
         List<BlockTime> blockTimes = blockTimeRepository.getAllBlockTime(getAllBlockTimesRequest);

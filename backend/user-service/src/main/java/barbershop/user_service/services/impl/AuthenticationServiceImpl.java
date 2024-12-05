@@ -139,7 +139,7 @@ public class AuthenticationServiceImpl extends AuthenticationService {
         user.setActive(true);
 
         if (registerRequest.getAvatar() != null && !registerRequest.getAvatar().isEmpty()) {
-            String avatar = this.s3StorageService.uploadFile(registerRequest.getAvatar());
+            String avatar = this.s3StorageService.uploadFileGrpc(registerRequest.getAvatar());
             user.setAvatar(avatar);
         }
 

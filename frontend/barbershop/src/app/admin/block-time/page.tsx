@@ -38,7 +38,7 @@ export default function BlockTimeAdminPage() {
   const [filterValue, setFilterValue] = useState({
     sortBy: searchParams.get('sortBy') || 'desc',
     page: searchParams.get('page') || 1,
-    range: searchParams.get('range') || `${defaultRange()},${defaultRange()}`,
+    // range: searchParams.get('range') || `${defaultRange()},${defaultRange()}`,
     items: 9,
   });
 
@@ -47,20 +47,31 @@ export default function BlockTimeAdminPage() {
     const sortByInputs: any = document.querySelectorAll('input[name="sort-by"]');
     const startDateInput: any = document.querySelector('#start-date');
     const endDateInput: any = document.querySelector('#end-date');
+    const rangeCheckboxInput: any = document.querySelector('#range-checkbox');
+
+    const startDateString = (filterValue as any)?.range?.split(',')[0];
+    const endDateString = (filterValue as any)?.range?.split(',')[1];
+
+    startDateInput.value = startDateString || defaultRange();
+    endDateInput.value = endDateString || defaultRange();
+    rangeCheckboxInput.checked = startDateString && endDateString ? true : false;
+    
+    if (!rangeCheckboxInput.checked) {
+      sortByElement.innerText = 'All';
+    }
 
     sortByInputs.forEach((item: any) => {
       if (item.value === filterValue.sortBy) {
         item.checked = true;
-        const startDateString = filterValue.range.split(',')[0];
-        const endDateString = filterValue.range.split(',')[1];
         if (new Date(startDateString).toString() === 'Invalid Date' || new Date(endDateString).toString() === 'Invalid Date') {
           return;
         }
-        startDateInput.value = startDateString;
-        endDateInput.value = endDateString;
-        sortByElement.innerText = startDateString !== endDateString
-          ? `from ${startDateString} to ${endDateString}: ${item.nextSibling.innerText}`
-          : `${startDateString}: ${item.nextSibling.innerText}`;
+
+        if (rangeCheckboxInput.checked) {
+          sortByElement.innerText = startDateString !== endDateString
+            ? `from ${startDateString} to ${endDateString}: ${item.nextSibling.innerText}`
+            : `${startDateString}: ${item.nextSibling.innerText}`;
+        }
       }
     });
   }
@@ -132,12 +143,17 @@ export default function BlockTimeAdminPage() {
     const sortByInputs: any = document.querySelectorAll('input[name="sort-by"]');
     const startDateInput: any = document.querySelector('#start-date');
     const endDateInput: any = document.querySelector('#end-date');
+    const rangeCheckboxInput: any = document.querySelector('#range-checkbox');
+
+    if (!rangeCheckboxInput.checked) {
+      sortByElement.innerText = 'All';
+    }
 
     let sortBy = 'desc';
     sortByInputs.forEach((item: any) => {
       if (item.checked) {
         sortBy = item.value;
-        if (startDateInput.value && endDateInput.value) {
+        if (startDateInput.value && endDateInput.value && rangeCheckboxInput.checked) {
           sortByElement.innerText = startDateInput.value !== endDateInput.value
             ? `from ${startDateInput.value} to ${endDateInput.value}: ${item.nextSibling.innerText}`
             : `${startDateInput.value}: ${item.nextSibling.innerText}`;
@@ -149,7 +165,7 @@ export default function BlockTimeAdminPage() {
       ...filterValue,
       page: 1,
       sortBy,
-      range: `${startDateInput.value},${endDateInput.value}`,
+      range: rangeCheckboxInput.checked ? `${startDateInput.value},${endDateInput.value}` : null,
     }
     router.push(`?${toQueryString(newFilterValue)}`);
     setFilterValue(newFilterValue as any);
@@ -503,7 +519,7 @@ export default function BlockTimeAdminPage() {
             >
               <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
             </svg>
-            <span>Most recent</span>
+            <span></span>
             <svg
               className="w-2.5 h-2.5 ms-2.5"
               aria-hidden="true"
@@ -532,8 +548,22 @@ export default function BlockTimeAdminPage() {
               className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
               aria-labelledby="dropdownRadioButton"
             >
-              <span className="text-gray-900 rounded dark:text-gray-300">Range:</span>
-              <li>
+              <input
+                className="mr-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                id="range-checkbox"
+                type="checkbox"
+                onClick={() => {
+                  const rangeCheckboxInput: any = document.querySelector('#range-checkbox');
+                  const rangeInputGroup: any = document.querySelector('#range-input-group');
+                  if (rangeCheckboxInput.checked) {
+                    rangeInputGroup.classList.remove('hidden');
+                  } else {
+                    rangeInputGroup.classList.add('hidden');
+                  }
+                }}
+              />
+              <label htmlFor="range-checkbox" className="text-gray-900 rounded dark:text-gray-300">Range:</label>
+              <li className="hidden" id="range-input-group">
                 <div className="my-3 flex justify-center items-center">
                   <div className="relative w-full">
                     <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -585,7 +615,7 @@ export default function BlockTimeAdminPage() {
                   </div>
                 </div>
               </li>
-              <span className="text-gray-900 rounded dark:text-gray-300">Sort by:</span>
+              <div className="text-gray-900 rounded dark:text-gray-300">Sort by:</div>
               <li>
                 <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
                   <input
