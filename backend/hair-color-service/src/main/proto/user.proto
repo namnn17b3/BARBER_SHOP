@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package user;
+
+message CheckAuthenRequest {
+  string token = 1;
+}
+
+message User {
+  int32 id = 1;
+  string username = 2;
+  string email = 3;
+  string phone = 4;
+  string address = 5;
+  string avatar = 6;
+  string role = 7;
+  string gender = 8;
+}
+
+message CheckAuthenResponse {
+  User user = 1;
+}
+
+service UserService {
+  rpc checkAuthen(CheckAuthenRequest) returns (CheckAuthenResponse) {}
+}
