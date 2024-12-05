@@ -17,6 +17,8 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -32,7 +34,7 @@ public class GlobalExceptionHandler {
      * @return errorResponse
      */
     @ExceptionHandler({ConstraintViolationException.class,
-            MissingServletRequestParameterException.class, MethodArgumentNotValidException.class,
+            MissingServletRequestParameterException.class
     })
     @ResponseStatus(BAD_REQUEST)
     public ErrorResponse handleValidationException(Exception e, WebRequest request) {
@@ -54,6 +56,19 @@ public class GlobalExceptionHandler {
         } else if (e instanceof ConstraintViolationException) {
             errorResponse.setError("Invalid Parameter");
             errorResponse.setMessage(message.substring(message.indexOf(" ") + 1));
+        } else if (e instanceof BindException) {
+            String[] messages = message.split("\n");
+            message = "";
+            for (int i = 1; i < messages.length; i++) {
+                int start = messages[i].lastIndexOf("default message [") + "default message [".length();
+                int end = messages[i].lastIndexOf("]");
+                message += messages[i].substring(start, end);
+                if (i < messages.length - 1) {
+                    message += "; ";
+                }
+            }
+            errorResponse.setError("Invalid Data");
+            errorResponse.setMessage(message);
         }
         else {
             errorResponse.setError("Invalid Data");
@@ -63,9 +78,25 @@ public class GlobalExceptionHandler {
         return errorResponse;
     }
 
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    @ResponseStatus(BAD_REQUEST)
+    public Map<String, Object> handleMethodArgumentNotValidException(Exception e, WebRequest request) {
+        List<FieldErrorsResponse.FieldError> errors = ((MethodArgumentNotValidException) e).getFieldErrors()
+                .stream()
+                .map(item ->
+                        FieldErrorsResponse.FieldError.builder()
+                                .field(item.getField())
+                                .resource(Utils.capitalize(item.getObjectName()))
+                                .message(item.getDefaultMessage())
+                                .build()
+                )
+                .collect(Collectors.toList());
+        return Map.of("errors", errors);
+    }
+
     @ExceptionHandler({BindException.class})
     @ResponseStatus(BAD_REQUEST)
-    public FieldErrorsResponse handleBindException(Exception e, WebRequest request) {
+    public Map<String, Object> handleBindException(Exception e, WebRequest request) {
         List<FieldError> fieldErrors = ((BindException) e).getFieldErrors();
         List<FieldErrorsResponse.FieldError> errors = new ArrayList<>();
         for (FieldError fieldError : fieldErrors) {
@@ -75,7 +106,23 @@ public class GlobalExceptionHandler {
             fe.setResource(Utils.capitalize(fieldError.getObjectName()));
             errors.add(fe);
         }
-        return new FieldErrorsResponse(errors);
+        return Map.of("errors", errors);
+    }
+
+    @ExceptionHandler({FieldErrorsResponse.class})
+    @ResponseStatus(BAD_REQUEST)
+    public Map<String, Object> handleFieldErrorsResponseException(Exception e, WebRequest request) {
+        List<FieldErrorsResponse.FieldError> fieldErrors = ((FieldErrorsResponse) e).getErrors();
+        List<FieldErrorsResponse.FieldError> errors = new ArrayList<>();
+        for (FieldErrorsResponse.FieldError fieldError : fieldErrors) {
+            FieldErrorsResponse.FieldError fe = new FieldErrorsResponse.FieldError();
+            fe.setField(fieldError.getField());
+            fe.setMessage(fieldError.getMessage());
+            fe.setResource(Utils.capitalize(fieldError.getResource()));
+            errors.add(fe);
+            System.out.println(fieldError.getField() + " " + fieldError.getMessage() + " " + Utils.capitalize(fieldError.getResource()));
+        }
+        return Map.of("errors", errors);
     }
 
     /**
