@@ -27,7 +27,7 @@ export default function OrderAndPaymentPage() {
 
   const router = useRouter();
 
-  const [response, setReponse] = useState({});
+  const [response, setResponse] = useState({});
   const [errors, setErrors] = useState([]);
 
   const isValidErrorRef: any = useRef();
@@ -86,7 +86,7 @@ export default function OrderAndPaymentPage() {
       })
       .then((json) => {
         if (json.data) {
-          setReponse(json);
+          setResponse(json);
           isValidErrorRef.current = false;
         }
         else if (json.status === 401) {

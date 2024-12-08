@@ -129,6 +129,9 @@ public class AuthenticationServiceImpl extends AuthenticationService {
         if (this.userRepository.findByEmail(registerRequest.getEmail()).orElse(null) != null) {
             throw new HttpException("Email already in use", HttpStatus.UNAUTHORIZED.value());
         }
+
+        Utils.checkImageFileType(registerRequest.getAvatar(), "Avatar", "Request body");
+
         User user = new User();
         user.setUsername(registerRequest.getUsername());
         user.setPassword(Bcrypt.hashpw(registerRequest.getPassword()));

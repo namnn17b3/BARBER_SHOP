@@ -23,12 +23,17 @@ export default function SidebarAdmin(props: any) {
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
-                style={{ color: pathName === '/admin' ? '#1a56db' : '' }}
+                style={{ color: pathName === '/admin' ? '#1a56db' : '', textDecoration: pathName === '/admin' ? 'underline' : 'none' }}
               >
                 <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
                 <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
               </svg>
-              <span className="ml-3">Overview</span>
+              <span
+                className="ml-3"
+                style={{ color: pathName === '/admin' ? '#1a56db' : '', textDecoration: pathName === '/admin' ? 'underline' : 'none' }}
+              >
+                Overview
+              </span>
             </a>
           </li>
           <li>
@@ -72,17 +77,18 @@ export default function SidebarAdmin(props: any) {
             <ul id="dropdown-pages" className="py-2 space-y-2">
               <li>
                 <a
-                  href="#"
+                  href="/admin/hair-style"
                   className="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  style={{ color: pathName === '/admin/hair-style' ? '#1a56db' : '' }}
+                  style={{ color: pathName === '/admin/hair-style' ? '#1a56db' : '', textDecoration: pathName === '/admin/hair-style' ? 'underline' : 'none' }}
                 >
                   Hair style
                 </a>
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/admin/hair-color"
                   className="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  style={{ color: pathName === '/admin/hair-color' ? '#1a56db' : '', textDecoration: pathName === '/admin/hair-color' ? 'underline' : 'none' }}
                 >
                   Hair color
                 </a>
@@ -91,7 +97,7 @@ export default function SidebarAdmin(props: any) {
                 <a
                   href="/admin/barber"
                   className="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  style={{ color: pathName === '/admin/barber' ? '#1a56db' : '' }}
+                  style={{ color: pathName === '/admin/barber' ? '#1a56db' : '', textDecoration: pathName === '/admin/barber' ? 'underline' : 'none' }}
                 >
                   Barber
                 </a>
@@ -100,7 +106,7 @@ export default function SidebarAdmin(props: any) {
                 <a
                   href="/admin/block-time"
                   className="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  style={{ color: pathName === '/admin/block-time' ? '#1a56db' : '' }}
+                  style={{ color: pathName === '/admin/block-time' ? '#1a56db' : '', textDecoration: pathName === '/admin/block-time' ? 'underline' : 'none' }}
                 >
                   Block time
                 </a>
@@ -109,7 +115,7 @@ export default function SidebarAdmin(props: any) {
                 <a
                   href="/admin/order-and-payment"
                   className="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  style={{ color: pathName === '/admin/order-and-payment' ? '#1a56db' : '' }}
+                  style={{ color: pathName === '/admin/order-and-payment' ? '#1a56db' : '', textDecoration: pathName === '/admin/order-and-payment' ? 'underline' : 'none'  }}
                 >
                   Order and payment
                 </a>
@@ -118,7 +124,7 @@ export default function SidebarAdmin(props: any) {
                 <a
                   href="/admin/user"
                   className="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  style={{ color: pathName === '/admin/user' ? '#1a56db' : '' }}
+                  style={{ color: pathName === '/admin/user' ? '#1a56db' : '', textDecoration: pathName === '/admin/user' ? 'underline' : 'none' }}
                 >
                   User
                 </a>

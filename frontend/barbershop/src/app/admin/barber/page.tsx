@@ -15,7 +15,7 @@ export default function BarberAdminPage() {
 
   const router = useRouter();
 
-  const [response, setReponse] = useState({});
+  const [response, setResponse] = useState({});
   const [errors, setErrors] = useState([]);
   const [modalErrors, setModalErrors] = useState([]);
 
@@ -88,7 +88,7 @@ export default function BarberAdminPage() {
       })
       .then((json) => {
         if (json.data) {
-          setReponse(json);
+          setResponse(json);
           isValidErrorRef.current = false;
         }
         else if (json.status === 401) {
@@ -330,7 +330,7 @@ export default function BarberAdminPage() {
               </div>
               <div className="col-span-6 sm:col-span-3">
                 <label
-                  htmlFor="gender-input"
+                  htmlFor="status-input"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
                   Status

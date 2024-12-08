@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package s3;
+
+message UploadFileRequest {
+  bytes data = 1;
+  string folderName = 2;
+  string originalFileName = 3;
+}
+
+message UploadFileResponse {
+  string url = 1;
+}
+
+message DeleteFileRequest {
+  string url = 1;
+}
+
+message DeleteFileResponse {
+  string message = 2;
+}
+
+service S3Service {
+  rpc uploadFile(UploadFileRequest) returns (UploadFileResponse) {}
+  rpc deleteFile(DeleteFileRequest) returns (DeleteFileResponse) {}
+}

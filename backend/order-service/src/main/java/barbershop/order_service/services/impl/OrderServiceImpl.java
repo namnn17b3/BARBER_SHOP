@@ -227,6 +227,10 @@ public class OrderServiceImpl implements OrderService {
             amount = amount + hairColor.getPrice();
         }
 
+        if (amount < 0) {
+            amount = 0;
+        }
+
         Map<String, Object> barberMap = new LinkedHashMap<>();
         barberMap.put("id", barber.getId());
         barberMap.put("name", barber.getName());

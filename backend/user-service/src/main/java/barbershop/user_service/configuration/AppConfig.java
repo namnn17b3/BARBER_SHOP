@@ -43,4 +43,22 @@ public class AppConfig {
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
+
+//    @Bean
+//    public CommonsMultipartResolver multipartResolver() {
+//        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+//        resolver.setDefaultEncoding("UTF-8");
+//        resolver.setMaxUploadSize(10 * 1024 * 1024); // 10MB tổng kích thước request
+//        resolver.setMaxUploadSizePerFile(5 * 1024 * 1024); // 5MB mỗi file
+//        return resolver;
+//    }
+
+//    @Bean
+//    public FilterRegistrationBean<RequestMethodFilter> loggingFilter() {
+//        FilterRegistrationBean<RequestMethodFilter> registrationBean = new FilterRegistrationBean<>();
+//        registrationBean.setFilter(new RequestMethodFilter());
+//        registrationBean.addUrlPatterns("/*"); // Áp dụng cho các endpoint bắt đầu bằng /api/
+//        registrationBean.setOrder(1); // Ưu tiên thực thi (số nhỏ hơn được thực thi trước)
+//        return registrationBean;
+//    }
 }

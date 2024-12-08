@@ -31,7 +31,7 @@ export default function Feedbacks(props: any) {
 
   const router = useRouter();
 
-  const [response, setReponse] = useState({});
+  const [response, setResponse] = useState({});
   const [errors, setErrors] = useState([]);
 
   const { authenState } = useAuthen();
@@ -79,7 +79,7 @@ export default function Feedbacks(props: any) {
       })
       .then((json) => {
         if (json.data) {
-          setReponse(json);
+          setResponse(json);
           isValidErrorRef.current = false;
         }
         else {

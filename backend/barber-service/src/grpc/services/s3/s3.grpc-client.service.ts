@@ -5,7 +5,6 @@ import {
   S3ServiceClient,
   UploadFileRequest,
 } from '@grpc/protos/s3/s3';
-import { CheckAuthenRequest } from '@grpc/protos/user/user';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc, RpcException } from '@nestjs/microservices';
 import { catchError, firstValueFrom, throwError } from 'rxjs';

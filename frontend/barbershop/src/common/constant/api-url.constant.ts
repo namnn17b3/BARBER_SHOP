@@ -10,8 +10,15 @@ export const ApiBarber = {
 };
 
 export const ApiHairColor = {
-  GET_ALL: `${BASE_URL}/hair-colors`,
-  GET_COLOR: `${BASE_URL}/hair-colors/color`,
+  GET_ALL_COLOR: `${BASE_URL}/hair-colors`,
+  GET_LIST_COLOR_IMAGE: `${BASE_URL}/hair-colors/color-image`,
+  GET_ALL_COLOR_FOR_ADMIN: `${BASE_URL}/hair-colors/admin`,
+  GET_LIST_COLOR_IMAGE_FOR_ADMIN: `${BASE_URL}/hair-colors/admin/color-image`,
+  GET_DETAIL_COLOR_FOR_ADMIN: `${BASE_URL}/hair-colors/admin`,
+  GET_DETAIL_COLOR_IMAGE_FOR_ADMIN: `${BASE_URL}/hair-colors/admin/color-image`,
+  ADMIN_SAVE_COLOR: `${BASE_URL}/hair-colors/admin`,
+  ADMIN_SAVE_COLOR_IMAGE: `${BASE_URL}/hair-colors/admin/color-image`,
+  ADMIN_DELETE_COLOR_IMAGE: `${BASE_URL}/hair-colors/admin/color-image`,
 };
 
 export const ApiHairStyle = {

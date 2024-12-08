@@ -18,7 +18,7 @@ export default function ListHairStyleImageShow(props: any) {
     page: 1,
     items: 9,
   });
-  const [response, setReponse] = useState<any>({});
+  const [response, setResponse] = useState<any>({});
   const [errors, setErrors] = useState<any>([]);
 
   const handleFilter = () => {
@@ -51,7 +51,7 @@ export default function ListHairStyleImageShow(props: any) {
       })
       .then((json) => {
         if (json.data) {
-          setReponse(json);
+          setResponse(json);
           isValidErrorRef.current = false;
         }
         else {

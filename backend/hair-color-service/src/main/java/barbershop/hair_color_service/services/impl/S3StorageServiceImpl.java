@@ -7,10 +7,12 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import s3.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,6 +32,9 @@ public class S3StorageServiceImpl implements S3StorageService {
 
     @Autowired
     private AmazonS3 s3Client;
+
+    @GrpcClient("s3-grpc-server")
+    private S3ServiceGrpc.S3ServiceBlockingStub s3ServiceBlockingStub;
 
     @Override
     public String uploadFile(MultipartFile file) {
@@ -70,5 +75,25 @@ public class S3StorageServiceImpl implements S3StorageService {
             log.error("Error converting multipartFile to file", e);
         }
         return convertedFile;
+    }
+
+    @Override
+    public String uploadFileGrpc(MultipartFile file) throws Exception {
+        UploadFileRequest uploadFileRequest = UploadFileRequest.newBuilder()
+                .setData(com.google.protobuf.ByteString.copyFrom(file.getBytes()))
+                .setFolderName(folderName)
+                .setOriginalFileName(file.getOriginalFilename())
+                .build();
+        UploadFileResponse uploadFileResponse = s3ServiceBlockingStub.uploadFile(uploadFileRequest);
+        return uploadFileResponse.getUrl();
+    }
+
+    @Override
+    public String deleteFileGrpc(String url) {
+        DeleteFileRequest deleteFileRequest = DeleteFileRequest.newBuilder()
+                .setUrl(url)
+                .build();
+        DeleteFileResponse deleteFileResponse = s3ServiceBlockingStub.deleteFile(deleteFileRequest);
+        return deleteFileResponse.getMessage();
     }
 }

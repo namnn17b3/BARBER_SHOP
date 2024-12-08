@@ -144,7 +144,7 @@ export default function HairStyleDetail(props: any) {
     // Default date (today)
     (document.querySelector('.datepicker-controls.flex.space-x-2.mt-2 button') as any).click();
 
-    fetch(ApiHairColor.GET_COLOR)
+    fetch(ApiHairColor.GET_ALL_COLOR)
       .then((response) => {
         if ([404, 500].includes(response.status)) {
           window.location.href = `/error/${response.status}`;
