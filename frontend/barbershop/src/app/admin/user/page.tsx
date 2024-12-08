@@ -15,12 +15,11 @@ export default function UserAdminPage() {
 
   const router = useRouter();
 
-  const [response, setReponse] = useState({});
+  const [response, setResponse] = useState({});
   const [errors, setErrors] = useState([]);
   const [modalErrors, setModalErrors] = useState([]);
 
   const isValidErrorRef: any = useRef();
-  const isCLickRemoveAvatarRef: any = useRef<any>(false);
 
   const [filterValue, setFilterValue] = useState({
     keyword: searchParams.get('keyword'),
@@ -82,7 +81,7 @@ export default function UserAdminPage() {
       })
       .then((json) => {
         if (json.data) {
-          setReponse(json);
+          setResponse(json);
           isValidErrorRef.current = false;
         }
         else if (json.status === 401) {

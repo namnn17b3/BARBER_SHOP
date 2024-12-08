@@ -16,7 +16,7 @@ export default function HairColorPage() {
 
   const router = useRouter();
 
-  const [response, setReponse] = useState({});
+  const [response, setResponse] = useState({});
   const [errors, setErrors] = useState([]);
   const [colors, setColors] = useState([]);
 
@@ -33,7 +33,7 @@ export default function HairColorPage() {
   useEffect(() => {
     if (!filterValue.color) return;
 
-    const url = `${ApiHairColor.GET_ALL}?${toQueryString(filterValue)}`;
+    const url = `${ApiHairColor.GET_LIST_COLOR_IMAGE}?${toQueryString(filterValue)}`;
     fetch(url)
       .then((response) => {
         if ([404, 500].includes(response.status)) {
@@ -44,7 +44,7 @@ export default function HairColorPage() {
       })
       .then((json) => {
         if (json.data) {
-          setReponse(json);
+          setResponse(json);
           isValidErrorRef.current = false;
         }
         else {
@@ -56,7 +56,7 @@ export default function HairColorPage() {
   }, [filterValue]);
 
   useEffect(() => {
-    const url = `${ApiHairColor.GET_COLOR}`;
+    const url = `${ApiHairColor.GET_ALL_COLOR}`;
     fetch(url)
       .then((response) => {
         if ([404, 500].includes(response.status)) {

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -103,6 +104,36 @@ public class GlobalExceptionHandler {
             fe.setResource(Utils.capitalize(fieldError.getObjectName()));
             errors.add(fe);
         }
+        return Map.of("errors", errors);
+    }
+
+    @ExceptionHandler({MaxUploadSizeExceededException.class})
+    @ResponseStatus(BAD_REQUEST)
+    public Map<String, Object> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e, WebRequest request) {
+        System.out.println("MaxUploadSizeExceededException");
+        List<FieldErrorsResponse.FieldError> errors = new ArrayList<>();
+
+        FieldErrorsResponse.FieldError fe = new FieldErrorsResponse.FieldError();
+        fe.setField("File up load");
+        fe.setMessage("Maximum upload size exceeded, limit: 10MB");
+        fe.setResource(Utils.capitalize("Request body"));
+        errors.add(fe);
+
+        return Map.of("errors", errors);
+    }
+
+    @ExceptionHandler({ImageFileTypeException.class})
+    @ResponseStatus(BAD_REQUEST)
+    public Map<String, Object> handleImageFileTypeException(ImageFileTypeException e, WebRequest request) {
+        System.out.println("ImageFileTypeException");
+        List<FieldErrorsResponse.FieldError> errors = new ArrayList<>();
+
+        FieldErrorsResponse.FieldError fe = new FieldErrorsResponse.FieldError();
+        fe.setField(e.getField());
+        fe.setMessage(e.getMessage()+" at " + e.getField() + " " + e.getResource());
+        fe.setResource(Utils.capitalize(e.getResource()));
+        errors.add(fe);
+
         return Map.of("errors", errors);
     }
 

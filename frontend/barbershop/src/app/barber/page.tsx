@@ -16,7 +16,7 @@ export default function BarberPage() {
 
   const router = useRouter();
 
-  const [response, setReponse] = useState({});
+  const [response, setResponse] = useState({});
   const [errors, setErrors] = useState([]);
 
   const isValidErrorRef: any = useRef();
@@ -48,7 +48,7 @@ export default function BarberPage() {
       })
       .then((json) => {
         if (json.data) {
-          setReponse(json);
+          setResponse(json);
           isValidErrorRef.current = false;
         }
         else {

@@ -1,8 +1,10 @@
 package barbershop.user_service.utils;
 
+import barbershop.user_service.exception.ImageFileTypeException;
 import lombok.extern.slf4j.Slf4j;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -164,5 +166,13 @@ public class Utils {
         s = Normalizer.normalize(s, Normalizer.Form.NFD);
         s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
         return s;
+    }
+
+    public static void checkImageFileType(MultipartFile multipartFile, String field, String resource) {
+        String contentType = multipartFile.getContentType();
+        if (contentType == null ||
+                !(contentType.equals("image/png") || contentType.equals("image/jpeg") || contentType.equals("image/jpg"))) {
+            throw new ImageFileTypeException("Only PNG, JPG, and JPEG files are allowed", field, resource);
+        }
     }
 }

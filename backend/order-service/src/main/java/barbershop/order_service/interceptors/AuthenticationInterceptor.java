@@ -36,7 +36,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         String authorizationHeader = request.getHeader("Authorization");
         System.out.println(">>>>>>>>>>> authorizationHeader: " + authorizationHeader);
 
-        if (request.getMethod().equals("OPTIONS")) {
+        if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
+            response.setStatus(HttpServletResponse.SC_OK);
             return true;
         }
 
