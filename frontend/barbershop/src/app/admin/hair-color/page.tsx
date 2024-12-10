@@ -2,7 +2,7 @@
 
 import { ApiHairColor } from "@/common/constant/api-url.constant";
 import { ColorMaper } from "@/common/constant/color.constant";
-import { capitalize, toQueryString } from "@/common/utils/utils";
+import { capitalize, clearModalInput, toQueryString } from "@/common/utils/utils";
 import AlertError from "@/components/alert/AlertError";
 import ListHairColorImageShow from "@/components/ListHairColorImageShow";
 import { Modal } from "@/components/modal/Modal";
@@ -120,6 +120,7 @@ export default function HairColorAdminPage() {
 
     methodRef.current = method;
     if (method === 'POST') {
+      clearModalInput(document.querySelector('#submit-modal'));
       isCLickRemoveAvatarRef.current = false;
       return;
     }
@@ -145,6 +146,7 @@ export default function HairColorAdminPage() {
         if (json.data) {
           (document.querySelector('#color-input') as any).value = json.data.color;
           (document.querySelector('#color-code-input') as any).value = json.data.colorCode;
+          (document.querySelector('#color-code-preview-input') as any).value = json.data.colorCode;
           (document.querySelector('#price-input') as any).value = json.data.price;
           (document.querySelector('#status-input') as any).value = json.data.active;
           setHairColor(json.data);
@@ -220,6 +222,7 @@ export default function HairColorAdminPage() {
     const btnDeleteColorImage = document.querySelector('#btn-delete-color-image');
     methodRef.current = method;
     if (method === 'POST') {
+      clearModalInput(document.querySelector('#submit-color-image-modal'));
       isCLickRemoveAvatarRef.current = false;
       btnDeleteColorImage?.classList.add('hidden');
       return;
@@ -450,7 +453,7 @@ export default function HairColorAdminPage() {
                     type="text"
                     disabled
                     id="color-code-preview-input"
-                    value="#2563eb"
+                    defaultValue="#2563eb"
                     className="shadow-sm ml-4 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   />
                 </div>
@@ -588,7 +591,7 @@ export default function HairColorAdminPage() {
 
                 <img
                   src=''
-                  className="mt-4 mx-auto max-h-40"
+                  className="mt-4 mx-auto max-h-40 preview-image"
                   id="preview"
                 />
               </div>
@@ -794,6 +797,9 @@ export default function HairColorAdminPage() {
                           Color code
                         </th>
                         <th scope="col" className="px-6 py-3">
+                          Price
+                        </th>
+                        <th scope="col" className="px-6 py-3">
                           Status
                         </th>
                         <th scope="col" className="px-6 py-3">
@@ -808,6 +814,7 @@ export default function HairColorAdminPage() {
                             <td className="px-6 py-4">{(+filterValue?.page - 1) * (+filterValue?.items) + idx + 1}</td>
                             <td className="px-6 py-4" style={{ color: hairColor?.colorCode || ColorMaper['NORMAL'] }}>{capitalize(hairColor?.color || '')}</td>
                             <td className="px-6 py-4">{capitalize(hairColor?.colorCode || '')}</td>
+                            <td className="px-6 py-4">{Number(hairColor?.price).toLocaleString('vi')} đ</td>
                             <td className="px-6 py-4">
                               {
                                 hairColor?.active === true ?

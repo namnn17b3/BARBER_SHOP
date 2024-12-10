@@ -1,3 +1,27 @@
+import {
+  AppResponseSuccessDto,
+  PaginationResponseDto,
+} from '@common/dto/response.dto';
+import {
+  objectMapper,
+  randomInteger,
+  toNonAccentVietnamese,
+} from '@common/utils/utils';
+import { faker } from '@faker-js/faker';
+import {
+  DeleteFileInfo,
+  DeleteFilesRequest,
+  FileRequest,
+  UploadFilesRequest,
+} from '@grpc/protos/s3/s3';
+import { FeedbackGrpcClientService } from '@grpc/services/feedback/feedback.grpc-client.service';
+import { OrderGrpcClientService } from '@grpc/services/order/order.grpc-client.service';
+import { S3GrpcClientService } from '@grpc/services/s3/s3.grpc-client.service';
+import {
+  GetListHairStyleRequestDto,
+  GetListImageUrlRequestDto,
+  SaveHairStyleRequestDto,
+} from '@hair-style/hair-style.dto';
 import { HairStyle } from '@hair-style/hair-style.model';
 import {
   Injectable,
@@ -6,25 +30,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { faker } from '@faker-js/faker';
-import { objectMapper, randomInteger } from '@common/utils/utils';
-import {
-  GetListHairStyleRequestDto,
-  GetListImageUrlRequestDto,
-} from '@hair-style/hair-style.dto';
-import { OrderGrpcClientService } from '@grpc/services/order/order.grpc-client.service';
-import { FeedbackGrpcClientService } from '@grpc/services/feedback/feedback.grpc-client.service';
-import {
-  AppResponseSuccessDto,
-  PaginationResponseDto,
-} from '@common/dto/response.dto';
 import * as dayjs from 'dayjs';
 import * as customParseFormat from 'dayjs/plugin/customParseFormat';
 import * as timezone from 'dayjs/plugin/timezone';
 import * as utc from 'dayjs/plugin/utc';
-import { TimeZone } from '@common/constant/timezone.constant';
-import { DateFormatType } from '@common/constant/date-format.constant';
+import { Model } from 'mongoose';
 
 dayjs.extend(customParseFormat);
 dayjs.extend(utc);
@@ -37,17 +47,33 @@ export class HairStyleService {
     private readonly configService: ConfigService,
     private readonly orderGrpcClientService: OrderGrpcClientService,
     private readonly feedbackGrpcClientService: FeedbackGrpcClientService,
+    private readonly s3GrpcClientService: S3GrpcClientService,
   ) {}
 
-  async getAll(getListHairStyleRequestDto: GetListHairStyleRequestDto) {
+  async getAll(
+    getListHairStyleRequestDto: GetListHairStyleRequestDto,
+    user: any,
+  ) {
     const { name, minPrice, maxPrice, sorting, page, items } =
       getListHairStyleRequestDto;
 
-    const query: any = { active: { $eq: true } };
+    let query: any = {};
+
+    if (user?.role?.toLowerCase() !== 'admin') {
+      query = { active: { $eq: true } };
+    } else if (
+      getListHairStyleRequestDto.active === true ||
+      getListHairStyleRequestDto.active === false
+    ) {
+      query = { active: { $eq: getListHairStyleRequestDto.active } };
+    }
+
     // Thêm điều kiện lọc theo name nếu có
     if (name) {
-      query.name = { $regex: name, $options: 'i' }; // Lọc theo tên không phân biệt hoa thường
-      // or query.name = { $regex: new RegExp(name, 'i') }; // Tìm kiếm tên không phân biệt hoa thường
+      // query.normalizedName = { $regex: toNonAccentVietnamese(name), $options: 'i' }; // Lọc theo tên không phân biệt hoa thường
+      query.normalizedName = {
+        $regex: new RegExp(toNonAccentVietnamese(name), 'i'),
+      }; // Tìm kiếm tên không phân biệt hoa thường
     }
 
     // Lọc theo minPrice và maxPrice nếu có
@@ -187,8 +213,14 @@ export class HairStyleService {
     ]);
   }
 
-  async getDetail(id: number) {
-    const hairStyle = await this.hairStyleModel.findOne({ id });
+  async getDetail(id: number, user: any) {
+    let hairStyle = null;
+
+    if (user?.role?.toLowerCase() !== 'admin') {
+      hairStyle = await this.hairStyleModel.findOne({ id, active: true });
+    } else {
+      hairStyle = await this.hairStyleModel.findOne({ id });
+    }
 
     if (!hairStyle) {
       throw new NotFoundException('HairStyle not found');
@@ -205,7 +237,16 @@ export class HairStyleService {
     )?.rating;
 
     const hairStyleFromObjectMapper: any = objectMapper(
-      ['id', 'name', 'description', 'price', 'active', 'booking', 'rating'],
+      [
+        'id',
+        'name',
+        'description',
+        'price',
+        'active',
+        'booking',
+        'discount',
+        'rating',
+      ],
       hairStyle,
     );
 
@@ -311,6 +352,7 @@ export class HairStyleService {
         const value = valueVND[randomInteger(0, 4)];
         await this.hairStyleModel.create({
           name: names[i - 1],
+          normalizedName: toNonAccentVietnamese(names[i - 1]),
           description: faker.lorem.paragraph(),
           price,
           active: true,
@@ -324,6 +366,7 @@ export class HairStyleService {
         const value = valuePercent[randomInteger(0, 4)];
         await this.hairStyleModel.create({
           name: names[i - 1],
+          normalizedName: toNonAccentVietnamese(names[i - 1]),
           description: faker.lorem.paragraph(),
           price,
           active: true,
@@ -336,6 +379,7 @@ export class HairStyleService {
       } else {
         await this.hairStyleModel.create({
           name: names[i - 1],
+          normalizedName: toNonAccentVietnamese(names[i - 1]),
           description: faker.lorem.paragraph(),
           price,
           active: true,
@@ -343,5 +387,230 @@ export class HairStyleService {
         });
       }
     }
+
+    // const documents = await this.hairStyleModel.find({
+    //   id: { $gte: 1, $lte: 25 },
+    // });
+    // for (const doc of documents) {
+    //   // Loại bỏ dấu tiếng Việt từ trường 'name'
+    //   const normalizedName = toNonAccentVietnamese(doc.name);
+
+    //   // Cập nhật tài liệu với trường 'normalizedName'
+    //   await this.hairStyleModel.updateOne(
+    //     { _id: doc._id }, // Điều kiện
+    //     { $set: { normalizedName } }, // Thêm trường mới
+    //   );
+    // }
+  }
+
+  private async saveHairStyle(
+    saveHairStyleRequestDto: SaveHairStyleRequestDto,
+    files: Array<Express.Multer.File>,
+    action: string,
+  ) {
+    const oldImgs = saveHairStyleRequestDto.imgs;
+
+    // Các ảnh bị click remove từ giao diện
+    let deleteFileInfos = Object.keys(saveHairStyleRequestDto.fileRequire)
+      ?.filter((item) => !saveHairStyleRequestDto.fileRequire[item])
+      ?.map(
+        (item) =>
+          ({
+            index: +item.split('img')[1],
+            url:
+              oldImgs?.find((img) => img.id === +item.split('img')[1])?.url ||
+              '',
+          }) as DeleteFileInfo,
+      );
+    if (files?.length) {
+      const folderName = this.configService.get('AWS_S3_PUBLIC_FOLDER');
+      const newImgs = (
+        await this.s3GrpcClientService.uploadFiles({
+          fileRequest: files.map(
+            (file: Express.Multer.File) =>
+              ({
+                index: +file.fieldname.split('img')[1],
+                folderName,
+                originalFileName: file.originalname,
+                data: file.buffer,
+              }) as FileRequest,
+          ),
+        } as UploadFilesRequest)
+      ).results.map((item) => ({
+        id: item.index,
+        url: item.url,
+      }));
+
+      // console.log('>>>> TEST 1', saveHairStyleRequestDto?.imgs);
+
+      // console.log(
+      //   '>>>> TEST 2',
+      //   saveHairStyleRequestDto?.imgs?.filter(
+      //     (item) =>
+      //       saveHairStyleRequestDto?.fileRequire?.[`img${item.id}`] &&
+      //       !newImgs.find((img) => img.id === item.id),
+      //   ),
+      // );
+
+      saveHairStyleRequestDto.imgs = [
+        ...newImgs,
+        // các ảnh có url giữ nguyên không cập nhật url mới (không bị ghi đè)
+        ...saveHairStyleRequestDto?.imgs?.filter(
+          (item) =>
+            saveHairStyleRequestDto?.fileRequire?.[`img${item.id}`] &&
+            !newImgs.find((img) => img.id === item.id),
+        ),
+      ];
+
+      saveHairStyleRequestDto?.imgs?.sort((a, b) => a.id - b.id);
+
+      // console.log('>>>> imgs', newImgs);
+      // console.log(
+      //   '>>>> saveHairStyleRequestDto.imgs',
+      //   saveHairStyleRequestDto.imgs,
+      // );
+
+      // Các ảnh bị ảnh mới upload ghi đè
+      deleteFileInfos = [
+        ...deleteFileInfos,
+        ...newImgs.map((item) => ({
+          index: item.id,
+          url: oldImgs.find((oi) => oi.id === item.id)?.url || '',
+        })),
+      ];
+    } else {
+      saveHairStyleRequestDto.imgs = [
+        // các ảnh có url giữ nguyên không cập nhật url mới (không bị ghi đè)
+        ...saveHairStyleRequestDto?.imgs?.filter(
+          (item) => saveHairStyleRequestDto?.fileRequire?.[`img${item.id}`],
+        ),
+      ];
+    }
+
+    // Xóa các ảnh bị click remove từ giao diện và xóa các ảnh bị ảnh mới upload ghi đè
+    await this.s3GrpcClientService.deleteFiles({
+      deleteFileInfos,
+    } as DeleteFilesRequest);
+
+    let hairStyle: any = null;
+    if (action === 'create') {
+      hairStyle = await this.hairStyleModel.create({
+        ...saveHairStyleRequestDto,
+        normalizedName: toNonAccentVietnamese(saveHairStyleRequestDto.name),
+      });
+    } else if (action === 'update') {
+      // const hairStyleParam = saveHairStyleRequestDto.isDiscount
+      //   ? { ...saveHairStyleRequestDto, imgs }
+      //   : {
+      //       $set: { ...saveHairStyleRequestDto, imgs },
+      //       $unset: { discount: '' },
+      //     };
+
+      if (saveHairStyleRequestDto.isDiscount) {
+        hairStyle = await this.hairStyleModel.findOneAndUpdate(
+          { id: saveHairStyleRequestDto.id },
+          {
+            ...saveHairStyleRequestDto,
+            normalizedName: toNonAccentVietnamese(saveHairStyleRequestDto.name),
+          },
+          // { new: true } kết quả sẽ là tài liệu sau khi được cập nhật
+          // { new: false } kết quả sẽ là tài liệu trước khi cập nhật
+          { new: true },
+        );
+      } else {
+        hairStyle = await this.hairStyleModel.findOneAndUpdate(
+          { id: saveHairStyleRequestDto.id },
+          {
+            $set: {
+              ...saveHairStyleRequestDto,
+              normalizedName: toNonAccentVietnamese(
+                saveHairStyleRequestDto.name,
+              ),
+            },
+          },
+          { new: true },
+        );
+        hairStyle = await this.hairStyleModel.findOneAndUpdate(
+          { id: saveHairStyleRequestDto.id },
+          { $unset: { discount: '' } },
+          { new: true },
+        );
+      }
+    }
+
+    return {
+      data: {
+        ...objectMapper(
+          ['id', 'name', 'description', 'price', 'active', 'discount'],
+          hairStyle,
+        ),
+        imgs: hairStyle.imgs.map((item) => objectMapper(['id', 'url'], item)),
+      },
+    } as AppResponseSuccessDto;
+  }
+
+  async createNewHairStyle(
+    saveHairStyleRequestDto: SaveHairStyleRequestDto,
+    files: Array<Express.Multer.File>,
+  ) {
+    return this.saveHairStyle(saveHairStyleRequestDto, files, 'create');
+  }
+
+  async updateHairStyle(
+    saveHairStyleRequestDto: SaveHairStyleRequestDto,
+    files: Array<Express.Multer.File>,
+  ) {
+    const hairStyle = await this.hairStyleModel.findOne({
+      id: saveHairStyleRequestDto.id,
+    });
+    if (!hairStyle) {
+      throw new NotFoundException('Hairstyle not found');
+    }
+
+    // console.log('>>>> files', files);
+    // console.log('>>>> fileRequire', saveHairStyleRequestDto.fileRequire);
+
+    // if (files?.length) {
+    // console.log('>>> deleteFileInfos', {
+    //   deleteFileInfos: Object.keys(saveHairStyleRequestDto.fileRequire)
+    //     ?.filter((item) => !saveHairStyleRequestDto.fileRequire[item])
+    //     ?.map(
+    //       (item) =>
+    //         ({
+    //           index: +item.split('img')[1],
+    //           url:
+    //             hairStyle?.imgs?.find(
+    //               (img) => img.id === +item.split('img')[1],
+    //             )?.url || '',
+    //         }) as DeleteFileInfo,
+    //     ),
+    // });
+    // await this.s3GrpcClientService.deleteFiles({
+    //   deleteFileInfos: Object.keys(saveHairStyleRequestDto.fileRequire)
+    //     ?.filter((item) => !saveHairStyleRequestDto.fileRequire[item])
+    //     ?.map(
+    //       (item) =>
+    //         ({
+    //           index: +item.split('img')[1],
+    //           url:
+    //             hairStyle?.imgs?.find(
+    //               (img) => img.id === +item.split('img')[1],
+    //             )?.url || '',
+    //         }) as DeleteFileInfo,
+    //     ),
+    // } as DeleteFilesRequest);
+    // }
+    return this.saveHairStyle(
+      {
+        ...saveHairStyleRequestDto,
+        imgs: hairStyle?.imgs?.map(
+          (item) => objectMapper(['id', 'url'], item) as any,
+        ),
+      },
+      files,
+      'update',
+    );
+
+    // return { data: {} };
   }
 }

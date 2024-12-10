@@ -241,3 +241,28 @@ export function drawLineChart(chartElement: any, data: any, labels: any, classCh
     chart.render();
   }
 }
+
+export function clearModalInput(parentElement: any) {
+  let nextElementSiblingColorInput: any = null;
+  parentElement?.querySelectorAll('input')?.forEach((item: any) => {
+    if (item.type === 'checkbox') return;
+    if (item.type === 'color') {
+      item.value = '#2563eb';
+      nextElementSiblingColorInput = item.nextElementSibling;
+      return;
+    }
+    item.value = '';
+  });
+  if (nextElementSiblingColorInput) {
+    nextElementSiblingColorInput.value = '#2563eb';
+  }
+  parentElement?.querySelectorAll('.preview-image')?.forEach((item: any) => {
+    item.src = '';
+  });
+  parentElement?.querySelectorAll('select')?.forEach((item: any) => {
+    item.firstElementChild.selected = true;
+  });
+  parentElement?.querySelectorAll('textarea')?.forEach((item: any) => {
+    item.value = '';
+  });
+}

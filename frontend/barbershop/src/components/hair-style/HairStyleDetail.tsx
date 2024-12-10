@@ -103,7 +103,7 @@ export default function HairStyleDetail(props: any) {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("Authorization", `Bearer ${window.localStorage.getItem('token')}`);
-    
+
     fetch(ApiOrder.PAYMENT, {
       method: 'POST',
       body: JSON.stringify({
@@ -219,7 +219,7 @@ export default function HairStyleDetail(props: any) {
                 </p>
                 <div className="flex items-center gap-2 mt-2 sm:mt-0">
                   <p className="text-sm font-medium leading-none text-gray-500 dark:text-gray-400">
-                  { `(${hairStyle?.rating || '0'})` }
+                    {`(${hairStyle?.rating || 'No rating'})`}
                   </p>
                   <div className="flex items-center gap-1">
                     <svg
@@ -233,11 +233,11 @@ export default function HairStyleDetail(props: any) {
                     >
                       <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
                     </svg>
-                  </div> | 
+                  </div> |
                   <span
                     className="text-sm font-medium leading-none text-gray-900 hover:no-underline dark:text-white"
                   >
-                    { `(${hairStyle?.booking || '0'}) booking` }
+                    {`(${hairStyle?.booking || 'No booking'})`}
                   </span>
                 </div>
               </div>
@@ -275,13 +275,6 @@ export default function HairStyleDetail(props: any) {
                       : 'No discount'
                   }
                 </span>
-                {
-                    hairStyle?.discount
-                    ? <span className="me-2 rounded bg-yellow-50 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-gray-800 dark:text-yellow-300">
-                      From {hairStyle?.discount?.effectDate} to {hairStyle?.discount?.expireDate}
-                    </span>
-                    : ''
-                }
                 {
                   hairStyle?.active
                     ? <span className="me-2 rounded bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-gray-800 dark:text-green-400">Active</span>

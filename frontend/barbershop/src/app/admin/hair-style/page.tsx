@@ -1,16 +1,16 @@
 'use client';
 
-import { ApiBarber } from "@/common/constant/api-url.constant";
-import { capitalize, clearModalInput, toQueryString } from "@/common/utils/utils";
+import { ApiHairStyle } from "@/common/constant/api-url.constant";
+import { clearModalInput, toQueryString } from "@/common/utils/utils";
 import AlertError from "@/components/alert/AlertError";
 import { Modal } from "@/components/modal/Modal";
 import NoResult from "@/components/NoResult";
 import Pagination from "@/components/Pagination";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react"
+import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 
-export default function BarberAdminPage() {
+export default function HairStyleAdminPage() {
   const searchParams = useSearchParams();
 
   const router = useRouter();
@@ -24,9 +24,9 @@ export default function BarberAdminPage() {
 
   const [filterValue, setFilterValue] = useState({
     name: searchParams.get('name'),
-    ageMin: searchParams.get('ageMin'),
-    ageMax: searchParams.get('ageMax'),
-    gender: searchParams.get('gender'),
+    priceMin: searchParams.get('ageMin'),
+    priceMax: searchParams.get('ageMax'),
+    sorting: searchParams.get('sorting'),
     active: searchParams.get('active')?.length ?
       searchParams.get('active') ? 'true' : 'false'
       : '',
@@ -35,17 +35,36 @@ export default function BarberAdminPage() {
   });
 
   const bindingQueryParams = () => {
-    const searchBarberNameInput: any = document.querySelector('#search-barber-name');
-    const searchBarberAgeMinInput: any = document.querySelector('#min-age-input');
-    const searchBarberAgeMaxInput: any = document.querySelector('#max-age-input');
+    const searchHairStyleNameInput: any = document.querySelector('#search-hair-style-name');
+    const searchHairStylePriceMinInput: any = document.querySelector('#min-price-input');
+    const searchHairStylePriceMaxInput: any = document.querySelector('#max-price-input');
 
-    searchBarberNameInput.value = filterValue.name || '';
-    searchBarberAgeMinInput.value = filterValue.ageMin || '18';
-    searchBarberAgeMaxInput.value = filterValue.ageMax || '40';
+    searchHairStyleNameInput.value = filterValue.name || '';
+    searchHairStylePriceMinInput.value = filterValue.priceMin || '100000';
+    searchHairStylePriceMaxInput.value = filterValue.priceMax || '300000';
 
-    (document.querySelector('#all-gender-input') as any).checked = true;
-    [...(document.querySelectorAll('input[name="gender"]') as any)].forEach(item => {
-      if (item.value.toLowerCase() === filterValue.gender?.toLowerCase()) {
+    const sorting = filterValue?.sorting?.split(',');
+    const rating = sorting?.[0]?.split(':')?.[1];
+    const booking = sorting?.[1]?.split(':')?.[1];
+    const priority = sorting?.[2]?.split(':')?.[1];
+
+    (document.querySelector('#rating-none-input') as any).checked = true;
+    [...(document.querySelectorAll('input[name="rating"]') as any)].forEach(item => {
+      if (item.value.toLowerCase() === rating?.toLowerCase()) {
+        item.checked = true;
+      }
+    });
+
+    (document.querySelector('#booking-none-input') as any).checked = true;
+    [...(document.querySelectorAll('input[name="booking"]') as any)].forEach(item => {
+      if (item.value.toLowerCase() === booking?.toLowerCase()) {
+        item.checked = true;
+      }
+    });
+
+    (document.querySelector('#priority-none-input') as any).checked = true;
+    [...(document.querySelectorAll('input[name="priority"]') as any)].forEach(item => {
+      if (item.value.toLowerCase() === priority?.toLowerCase()) {
         item.checked = true;
       }
     });
@@ -71,7 +90,7 @@ export default function BarberAdminPage() {
   }, []);
 
   useEffect(() => {
-    const url = `${ApiBarber.GET_ALL}?${toQueryString(filterValue)}`;
+    const url = `${ApiHairStyle.GET_ALL}?${toQueryString(filterValue)}`;
     fetch(url, {
       method: 'GET',
       headers: {
@@ -121,16 +140,32 @@ export default function BarberAdminPage() {
   }
 
   const handleFilter = () => {
-    const name = (document.querySelector('#search-barber-name') as any).value;
-    const ageMin = (document.querySelector('#min-age-input') as any).value;
-    const ageMax = (document.querySelector('#max-age-input') as any).value;
+    const name = (document.querySelector('#search-hair-style-name') as any).value;
+    const priceMin = (document.querySelector('#min-price-input') as any).value;
+    const priceMax = (document.querySelector('#max-price-input') as any).value;
 
-    let gender = '';
-    [...(document.querySelectorAll('input[name="gender"]') as any)].forEach(item => {
+    let rating = '';
+    [...(document.querySelectorAll('input[name="rating"]') as any)].forEach(item => {
       if (item.checked === true) {
-        gender = item.value;
+        rating = item.value;
       }
     });
+
+    let booking = '';
+    [...(document.querySelectorAll('input[name="booking"]') as any)].forEach(item => {
+      if (item.checked === true) {
+        booking = item.value;
+      }
+    });
+
+    let priority = '';
+    [...(document.querySelectorAll('input[name="priority"]') as any)].forEach(item => {
+      if (item.checked === true) {
+        priority = item.value;
+      }
+    });
+
+    const sorting = `rating:${rating},booking:${booking},priority:${priority}`;
 
     let active = '';
     [...(document.querySelectorAll('input[name="status"]') as any)].forEach(item => {
@@ -145,9 +180,9 @@ export default function BarberAdminPage() {
       ...filterValue,
       page: 1,
       name,
-      ageMin,
-      ageMax,
-      gender,
+      priceMin,
+      priceMax,
+      sorting,
       active,
     }
     router.push(`?${toQueryString(newFilterValue)}`);
@@ -155,7 +190,7 @@ export default function BarberAdminPage() {
   }
 
   const methodRef = useRef<any>('POST');
-  const barberIdRef = useRef<any>(0);
+  const hairStyleIdRef = useRef<any>(0);
 
   const handleOpenModal = (i: number, method: string) => {
     (document.querySelector('#toggle-submit-modal') as any)?.click();
@@ -164,16 +199,22 @@ export default function BarberAdminPage() {
 
     methodRef.current = method;
     if (method === 'POST') {
-      clearModalInput(document.querySelector('#submit-modal'));
+      const toggleDiscountInputGroup: any = document.querySelector('#toggle-discount-input-group');
+      const discountInputGroup: any = document.querySelector('#discount-input-group');
+      if (toggleDiscountInputGroup.checked) {
+        discountInputGroup.classList.add('hidden');
+        discountInputGroup.classList.remove('grid');
+        toggleDiscountInputGroup.checked = false;
+      }
       clearModalInput(document.querySelector('#submit-modal'));
       isCLickRemoveAvatarRef.current = false;
       return;
     }
 
-    let barber = (response as any)?.data?.[i];
-    barberIdRef.current = barber?.id;
+    let hairStyle = (response as any)?.data?.[i];
+    hairStyleIdRef.current = hairStyle?.id;
 
-    const url = `${ApiBarber.GET_DETAIL}/${barberIdRef.current}`;
+    const url = `${ApiHairStyle.GET_DETAIL}/${hairStyle?.id}`;
     fetch(url, {
       method: 'GET',
       headers: {
@@ -191,11 +232,29 @@ export default function BarberAdminPage() {
       .then((json) => {
         if (json.data) {
           (document.querySelector('#name-input') as any).value = json.data.name;
-          (document.querySelector('#age-input') as any).value = json.data.age;
-          (document.querySelector('#gender-input') as any).value = json.data.gender;
+          (document.querySelector('#price-input') as any).value = json.data.price;
           (document.querySelector('#status-input') as any).value = json.data.active;
           (document.querySelector('#description-input') as any).value = json.data.description;
-          (document.querySelector('#preview') as any).src = json.data.img;
+          (document.querySelector('#discount-value-input') as any).value = json.data?.discount?.value || '';
+          (document.querySelector('#discount-unit-input') as any).value = json.data?.discount?.unit || '';
+          const toggleDiscountInputGroup = document.querySelector('#toggle-discount-input-group') as any;
+          if (json.data.discount) {
+            toggleDiscountInputGroup.checked = true;
+          } else {
+            toggleDiscountInputGroup.checked = false;
+          }
+          const discountInputGroup: any = document.querySelector('#discount-input-group');
+          if (toggleDiscountInputGroup.checked) {
+            discountInputGroup.classList.remove('hidden');
+            discountInputGroup.classList.add('grid');
+          } else {
+            discountInputGroup.classList.add('hidden');
+            discountInputGroup.classList.remove('grid');
+          }
+          for (let i = 1; i <= 5; i++) {
+            (document.querySelector(`#preview-${i}`) as any).src = json.data.imgs.find((item: any) => item.id === i)?.url || '';
+            (document.querySelector(`#show-image-${i}`) as any).innerText = json.data.imgs.find((item: any) => item.id === i)?.url ? 'true' : 'false';
+          }
         }
         else if (json.status === 401) {
           window.sessionStorage.setItem('prePath', window.location.pathname);
@@ -212,22 +271,41 @@ export default function BarberAdminPage() {
   }
 
   const handleSubmit = () => {
-    const url = `${ApiBarber.ADMIN_SAVE_BARBER}${methodRef.current === 'PUT' ? `/${barberIdRef.current}` : ''}`;
+    const url = `${ApiHairStyle.ADMIN_SAVE_HAIR_STYLE}${methodRef.current === 'PUT' ? `/${hairStyleIdRef.current}` : ''}`;
 
     const name = (document.querySelector('#name-input') as any).value;
-    const age = (document.querySelector('#age-input') as any).value;
-    const gender = (document.querySelector('#gender-input') as any).value;
+    const price = (document.querySelector('#price-input') as any).value;
     const active = (document.querySelector('#status-input') as any).value;
     const description = (document.querySelector('#description-input') as any).value;
-    const fileUpload = (document.querySelector('#file-upload') as any);
+    const isDiscount = (document.querySelector('#toggle-discount-input-group') as any).checked;
+    const discountValue = (document.querySelector('#discount-value-input') as any).value;
+    const discountUnit = (document.querySelector('#discount-unit-input') as any).value;
+    const fileUploads = [];
+    for (let i = 1; i <= 5; i++) {
+      fileUploads.push(document.querySelector(`#file-upload-${i}`));
+    }
 
     const formdata = new FormData();
+    const fileRequire: any = {};
     formdata.append("name", name);
-    formdata.append("age", age);
+    formdata.append("price", price);
     formdata.append("description", description);
-    formdata.append("gender", gender);
     formdata.append("active", active);
-    formdata.append("img", fileUpload.files[0]);
+    formdata.append("isDiscount", isDiscount ? 'true' : 'false');
+    formdata.append("discount", JSON.stringify({
+      value: discountValue,
+      unit: discountUnit,
+    }));
+    for (let i = 1; i <= 5; i++) {
+      const fileUpload = fileUploads[i - 1];
+      formdata.append(`img${i}`, fileUpload.files[0]);
+      const showImage: any = document.querySelector(`#show-image-${i}`);
+      if (fileUpload.files[0]) {
+        showImage.innerText = 'true';
+      }
+      fileRequire[`img${i}`] = showImage.innerText === 'true' ? true : false;
+    }
+    formdata.append("fileRequire", JSON.stringify(fileRequire));
 
     fetch(url, {
       method: methodRef.current,
@@ -248,7 +326,7 @@ export default function BarberAdminPage() {
           Swal.fire({
             icon: 'success',
             title: 'Success',
-            text: methodRef.current === 'PUT' ? 'Update barber successfully' : 'Create barber successfully',
+            text: methodRef.current === 'PUT' ? 'Update hair style successfully' : 'Create hair style successfully',
           }).then((result) => {
             window.location.reload();
           });
@@ -275,14 +353,14 @@ export default function BarberAdminPage() {
         Toggle Model Edit
       </button>
 
-      <Modal id="submit-modal" title="Barber">
+      <Modal id="submit-modal" title="Hair style">
         <div>
           {
             modalErrors?.length ? <AlertError errors={modalErrors} /> : ''
           }
           <div>
             <div className="grid grid-cols-6 gap-6">
-              <div className="mb-6 col-span-6 sm:col-span-3">
+              <div className="col-span-6">
                 <label
                   htmlFor="name-input"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -294,41 +372,28 @@ export default function BarberAdminPage() {
                   name="name-input"
                   id="name-input"
                   className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Write barber name"
+                  placeholder="Write hair style name"
                   required
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
                 <label
-                  htmlFor="age-input"
+                  htmlFor="price-input"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Age
+                  Price
                 </label>
                 <input
                   type="number"
-                  name="age-input"
-                  id="age-input"
+                  name="price-input"
+                  id="price-input"
                   className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Write barber age"
-                  min={18}
-                  max={40}
-                  defaultValue={18}
+                  placeholder="Write price"
+                  min={100000}
+                  max={300000}
+                  defaultValue={100000}
                   required
                 />
-              </div>
-              <div className="col-span-6 sm:col-span-3">
-                <label
-                  htmlFor="gender-input"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Gender
-                </label>
-                <select id="gender-input" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option value="MALE" selected>Male</option>
-                  <option value="FEMALE">Female</option>
-                  <option value="OTHER">Other</option>
-                </select>
               </div>
               <div className="col-span-6 sm:col-span-3">
                 <label
@@ -342,6 +407,58 @@ export default function BarberAdminPage() {
                   <option value="false">Inactive</option>
                 </select>
               </div>
+
+              <label className="inline-flex items-center cursor-pointer">
+                <input id="toggle-discount-input-group" type="checkbox" defaultValue="false" className="sr-only peer" defaultChecked={false}
+                  onClick={() => {
+                    const toggleDiscountInputGroup: any = document.querySelector('#toggle-discount-input-group');
+                    const discountInputGroup: any = document.querySelector('#discount-input-group');
+                    if (toggleDiscountInputGroup.checked) {
+                      discountInputGroup.classList.remove('hidden');
+                      discountInputGroup.classList.add('grid');
+                    } else {
+                      discountInputGroup.classList.add('hidden');
+                      discountInputGroup.classList.remove('grid');
+                    }
+                  }}
+                />
+                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Discount</span>
+              </label>
+
+              <div id="discount-input-group" className="col-span-6 hidden grid-cols-6 gap-6">
+                <div className="col-span-6 sm:col-span-3">
+                  <label
+                    htmlFor="discount-value-input"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Value
+                  </label>
+                  <input
+                    type="number"
+                    name="discount-value-input"
+                    id="discount-value-input"
+                    className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="Write value"
+                    min={1}
+                    defaultValue={1}
+                    required
+                  />
+                </div>
+                <div className="col-span-6 sm:col-span-3">
+                  <label
+                    htmlFor="discount-unit-input"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Unit
+                  </label>
+                  <select id="discount-unit-input" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="%" selected>%</option>
+                    <option value="VNĐ">VNĐ</option>
+                  </select>
+                </div>
+              </div>
+
               <div className="col-span-6">
                 <label
                   htmlFor="description-input"
@@ -359,43 +476,49 @@ export default function BarberAdminPage() {
                 />
               </div>
             </div>
-            <div className="flex justify-center items-center mt-6">
-              <div className="w-[400px] relative border-2 border-gray-300 border-dashed rounded-lg p-6" id="dropzone">
-                <div className="text-center">
-                  <img className="mx-auto h-12 w-12" src="https://www.svgrepo.com/show/357902/image-upload.svg" alt="" />
+            {
+              [1, 2, 3, 4, 5].map(idx => (
+                <div key={idx} className="flex justify-center items-center mt-6">
+                  <div className="w-[400px] relative border-2 border-gray-300 border-dashed rounded-lg p-6" id={`dropzone-${idx}`}>
+                    <div className="text-center">
+                      <img className="mx-auto h-12 w-12" src="https://www.svgrepo.com/show/357902/image-upload.svg" alt="" />
 
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">
-                    <label htmlFor="file-upload" className="relative">
-                      <span>Drag and drop </span>
-                      <span className="text-indigo-600 hover:underline cursor-pointer">or browse</span>
-                      <span> to upload avatar</span>
-                      <input id="file-upload" name="file-upload" type="file" className="sr-only" />
-                    </label>
-                    <div
-                      style={{ color: '#dc3545' }}
-                      className="hover:underline cursor-pointer"
-                      onClick={() => {
-                        (document.querySelector('#file-upload') as any).value = '';
-                        (document.querySelector('#preview') as any).src = '';
-                        isCLickRemoveAvatarRef.current = true;
-                      }}
-                    >
-                      Remove avatar
+                      <h3 className="mt-2 text-sm font-medium text-gray-900">
+                        <label htmlFor={`file-upload-${idx}`} className="relative">
+                          <span>Drag and drop </span>
+                          <span className="text-indigo-600 hover:underline cursor-pointer">or browse</span>
+                          <span> to upload image {idx}</span>
+                          <input id={`file-upload-${idx}`} name="file-upload" type="file" className="sr-only" />
+                        </label>
+                        <div
+                          style={{ color: '#dc3545' }}
+                          className="hover:underline cursor-pointer"
+                          onClick={() => {
+                            (document.querySelector(`#file-upload-${idx}`) as any).value = '';
+                            (document.querySelector(`#preview-${idx}`) as any).src = '';
+                            (document.querySelector(`#show-image-${idx}`) as any).innerText = 'false';
+                            isCLickRemoveAvatarRef.current = true;
+                          }}
+                        >
+                          Remove image {idx}
+                        </div>
+                        <span className="hidden" id={`show-image-${idx}`}>false</span>
+                      </h3>
+                      <p className="mt-1 text-xs text-gray-500">
+                        PNG, JPG, JPEG up to 10MB
+                      </p>
                     </div>
-                  </h3>
-                  <p className="mt-1 text-xs text-gray-500">
-                    PNG, JPG, JPEG up to 10MB
-                  </p>
-                </div>
 
-                <img
-                  src=''
-                  // className={`mt-4 mx-auto max-h-40 ${authenState?.avatar ? '' : 'hidden'}`}
-                  className="mt-4 mx-auto max-h-40 preview-image"
-                  id="preview"
-                />
-              </div>
-            </div>
+                    <img
+                      src=''
+                      // className={`mt-4 mx-auto max-h-40 ${authenState?.avatar ? '' : 'hidden'}`}
+                      className="mt-4 mx-auto max-h-40 preview-image"
+                      id={`preview-${idx}`}
+                    />
+                  </div>
+                </div>
+              ))
+            }
           </div>
         </div>
 
@@ -479,12 +602,12 @@ export default function BarberAdminPage() {
             <li>
               <div className="flex items-center">
                 <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path></svg>
-                <span className="ml-1 text-gray-400 md:ml-2 dark:text-gray-500" aria-current="page">Barber</span>
+                <span className="ml-1 text-gray-400 md:ml-2 dark:text-gray-500" aria-current="page">Hair style</span>
               </div>
             </li>
           </ol>
         </nav>
-        <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Manage barber</h1>
+        <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Manage hair style</h1>
       </div>
 
       <div className="flex flex-col-reverse sm:flex-row-reverse flex-wrap space-y-4 sm:space-y-0 items-center justify-between py-4">
@@ -524,7 +647,7 @@ export default function BarberAdminPage() {
                 {/* Name */}
                 <div className="max-w-md mx-auto">
                   <label
-                    htmlFor="search-barber-name"
+                    htmlFor="search-hair-style-name"
                     className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
                   >
                     Search
@@ -535,29 +658,29 @@ export default function BarberAdminPage() {
                         <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"></path>
                       </svg>
                     </div>
-                    <input type="text" id="search-barber-name" className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search barber name" />
+                    <input type="text" id="search-hair-style-name" className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search hair style name" />
                   </div>
                 </div>
 
-                {/* Ages */}
+                {/* Price */}
                 <div className="mt-3">
                   <h6 className="text-base font-medium text-black dark:text-white">
-                    Age:
+                    Price:
                   </h6>
                   <div>
                     <div className="w-full">
                       <label
-                        htmlFor="min-age-input"
+                        htmlFor="min-price-input"
                         className="block mt-3 mb-3 text-sm font-medium text-gray-900 dark:text-white"
                       >
-                        Min
+                        Min (đ)
                       </label>
                       <input
                         type="number"
-                        id="min-age-input"
-                        defaultValue={18}
-                        min={1}
-                        max={40}
+                        id="min-price-input"
+                        defaultValue={100000}
+                        min={100000}
+                        max={300000}
                         className="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder=""
                         required
@@ -565,17 +688,17 @@ export default function BarberAdminPage() {
                     </div>
                     <div className="w-full">
                       <label
-                        htmlFor="max-age-input"
+                        htmlFor="max-price-input"
                         className="block mt-3 mb-3 text-sm font-medium text-gray-900 dark:text-white"
                       >
-                        Max
+                        Max (đ)
                       </label>
                       <input
                         type="number"
-                        id="max-age-input"
-                        defaultValue={40}
-                        min={1}
-                        max={40}
+                        id="max-price-input"
+                        defaultValue={300000}
+                        min={100000}
+                        max={300000}
                         className="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder=""
                         required
@@ -583,51 +706,112 @@ export default function BarberAdminPage() {
                     </div>
                   </div>
                 </div>
-                {/* Gender */}
+                {/* Rating */}
                 <div className="space-y-2">
                   <h6 className="mt-3 text-base font-medium text-black dark:text-white">
-                    Gender:
+                    Rating:
                   </h6>
                   <div className="flex items-center">
                     <input
-                      id="male-input"
+                      id="rating-asc-input"
                       type="radio"
-                      defaultValue="MALE"
-                      name="gender"
+                      defaultValue="asc"
+                      name="rating"
                       className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
-                    <label htmlFor="male-input" className="flex items-center ml-2">Male</label>
+                    <label htmlFor="rating-asc-input" className="flex items-center ml-2">Ascending</label>
                   </div>
                   <div className="flex items-center">
                     <input
-                      id="female-input"
+                      id="rating-desc-input"
                       type="radio"
-                      defaultValue="FEMALE"
-                      name="gender"
+                      defaultValue="desc"
+                      name="rating"
                       className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
-                    <label htmlFor="female-input" className="flex items-center ml-2">Female</label>
+                    <label htmlFor="rating-desc-input" className="flex items-center ml-2">Descending</label>
                   </div>
                   <div className="flex items-center">
                     <input
-                      id="other-input"
+                      id="rating-none-input"
                       type="radio"
-                      defaultValue="OTHER"
-                      name="gender"
+                      defaultValue="none"
+                      name="rating"
                       className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
-                    <label htmlFor="other-input" className="flex items-center ml-2">Other</label>
+                    <label htmlFor="rating-none-input" className="flex items-center ml-2">None</label>
+                  </div>
+                </div>
+                {/* Booking */}
+                <div className="space-y-2">
+                  <h6 className="mt-3 text-base font-medium text-black dark:text-white">
+                    Booking:
+                  </h6>
+                  <div className="flex items-center">
+                    <input
+                      id="booking-asc-input"
+                      type="radio"
+                      defaultValue="asc"
+                      name="booking"
+                      className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="booking-asc-input" className="flex items-center ml-2">Ascending</label>
                   </div>
                   <div className="flex items-center">
                     <input
-                      id="all-gender-input"
+                      id="booking-desc-input"
                       type="radio"
-                      defaultValue=""
-                      name="gender"
+                      defaultValue="desc"
+                      name="booking"
                       className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                      defaultChecked
                     />
-                    <label htmlFor="all-gender-input" className="flex items-center ml-2">All gender</label>
+                    <label htmlFor="booking-desc-input" className="flex items-center ml-2">Descending</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      id="booking-none-input"
+                      type="radio"
+                      defaultValue="none"
+                      name="booking"
+                      className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="booking-none-input" className="flex items-center ml-2">None</label>
+                  </div>
+                </div>
+                {/* Priority */}
+                <div className="space-y-2">
+                  <h6 className="mt-3 text-base font-medium text-black dark:text-white">
+                    Priority:
+                  </h6>
+                  <div className="flex items-center">
+                    <input
+                      id="priority-rating-input"
+                      type="radio"
+                      defaultValue="rating"
+                      name="priority"
+                      className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="priority-rating-input" className="flex items-center ml-2">Ascending</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      id="priority-booking-input"
+                      type="radio"
+                      defaultValue="booking"
+                      name="priority"
+                      className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="priority-booking-input" className="flex items-center ml-2">Descending</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      id="priority-none-input"
+                      type="radio"
+                      defaultValue="none"
+                      name="priority"
+                      className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="priority-none-input" className="flex items-center ml-2">None</label>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -685,7 +869,7 @@ export default function BarberAdminPage() {
             <svg className="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path clipRule="evenodd" fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"></path>
             </svg>
-            Add barber
+            Add hair style
           </button>
         </div>
       </div>
@@ -706,7 +890,13 @@ export default function BarberAdminPage() {
                           Name
                         </th>
                         <th scope="col" className="px-6 py-3">
-                          Gender
+                          Price
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          Booking
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                          Rating
                         </th>
                         <th scope="col" className="px-6 py-3">
                           Status
@@ -718,29 +908,42 @@ export default function BarberAdminPage() {
                     </thead>
                     <tbody>
                       {
-                        (response as any)?.data?.map((barber: any, idx: number) => (
+                        (response as any)?.data?.map((hairStyle: any, idx: number) => (
                           <tr key={idx} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                             <td className="px-6 py-4">{(+filterValue?.page - 1) * (+filterValue?.items) + idx + 1}</td>
-                            <td className="flex items-center px-6 p-4 whitespace-nowrap">
-                              <img className="w-10 h-10 rounded-full" src={barber?.img} alt="" />
-                              <div className="ml-6 text-sm font-normal text-gray-500 dark:text-gray-400">
-                                {barber?.name}
+                            <th scope="row" className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                              <div className="flex items-center mr-3">
+                                <img src={hairStyle?.img?.url} alt="iMac Front Image" className="h-8 w-auto mr-3" />
+                                {hairStyle?.name}
                               </div>
-                            </td>
-                            <td className="px-6 py-4">{capitalize(barber?.gender || '')}</td>
+                            </th>
+                            <td className="px-6 py-4">{hairStyle?.price}</td>
+                            <td className="px-6 py-4">{hairStyle?.booking || 'No booking'}</td>
                             <td className="px-6 py-4">
                               {
-                                barber?.active === true ?
+                                hairStyle?.rating ?
+                                  <div className="flex items-center">
+                                    <svg aria-hidden="true" className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                    </svg>
+                                    <span className="text-gray-500 dark:text-gray-400 ml-1">{hairStyle?.rating}</span>
+                                  </div>
+                                  : 'No rating'
+                              }
+                            </td>
+                            <td className="px-6 py-4">
+                              {
+                                hairStyle?.active === true ?
                                   <div className="flex items-center">
                                     <div className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></div> Active
                                   </div> :
-                                  barber?.active === false ?
+                                  hairStyle?.active === false ?
                                     <div className="flex items-center">
                                       <div className="h-2.5 w-2.5 rounded-full bg-red-500 mr-2"></div> Inactive
                                     </div> : ''
                               }
                             </td>
-                            <td className="px-6 py-4" id={`action-${idx}`} data-block-time-id={barber?.id}></td>
+                            <td className="px-6 py-4" id={`action-${idx}`} data-block-time-id={hairStyle?.id}></td>
                           </tr>
                         ))
                       }
@@ -763,7 +966,7 @@ export default function BarberAdminPage() {
             }
           </>
       }
-      <script src="/js/drag-and-rop-image-upload.js" defer></script>
+      <script src="/js/drag-and-rop-list-image-upload.js" defer></script>
     </>
   );
 }

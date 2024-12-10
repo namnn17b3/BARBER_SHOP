@@ -96,10 +96,10 @@ export default function HairStyleItem(props: any) {
             </svg>
           </div>
           <p className="text-sm font-medium text-gray-900 dark:text-white">
-            { `(${rating})` || `No rating` } | 
+            { rating ? `(${rating})` : `No rating` } | 
           </p>
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            { `(${booking}) booking` || `No booking` }
+            { booking ? `(${booking}) booking` : `No booking` }
           </p>
         </div>
         <ul className="mt-2 flex items-center gap-4">
