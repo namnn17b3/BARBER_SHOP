@@ -55,7 +55,7 @@ export default function BlockTimeAdminPage() {
     startDateInput.value = startDateString || defaultRange();
     endDateInput.value = endDateString || defaultRange();
     rangeCheckboxInput.checked = startDateString && endDateString ? true : false;
-    
+
     if (!rangeCheckboxInput.checked) {
       sortByElement.innerText = 'All';
     }
@@ -175,15 +175,18 @@ export default function BlockTimeAdminPage() {
 
   const methodRef = useRef<any>('POST');
   const blockTimeIdRef = useRef<any>(0);
-  
+
   const handleOpenModal = (i: number, method: string) => {
     (document.querySelector('#toggle-submit-modal') as any)?.click();
     (document.body.lastElementChild as any).setAttribute('style', 'z-index:400');
-    
+
     methodRef.current = method;
     if (method === 'POST') {
-      (document.querySelector('.today-btn') as any).click();
       (document.querySelector('.label-time-input') as any).click();
+      const successEvent = new CustomEvent('clickAddNewBlockTime', {
+        detail: { status: 'success', blockTime: { date: defaultRange() } },
+      });
+      document.dispatchEvent(successEvent);
       return;
     }
 
@@ -228,7 +231,7 @@ export default function BlockTimeAdminPage() {
       .catch((error) => console.log(error));
 
   }
-  
+
   const handleSubmit = () => {
     const url = `${ApiBlockTime.ADMIN_SAVE_BLOCK_TIME}${methodRef.current === 'PUT' ? `/${blockTimeIdRef.current}` : ''}`;
     const date = dayjs(new Date(+(document.querySelector('.focused') as any).getAttribute('data-date'))).format(DateFormatType.YYYY_MM_DD);
@@ -451,7 +454,7 @@ export default function BlockTimeAdminPage() {
                   aria-labelledby={`table-row-dropdown-button-${idx}`}
                 >
                   <li
-                  onClick={() => handleOpenModal(idx - 1, 'PUT')}
+                    onClick={() => handleOpenModal(idx - 1, 'PUT')}
                   >
                     <button
                       type="button"

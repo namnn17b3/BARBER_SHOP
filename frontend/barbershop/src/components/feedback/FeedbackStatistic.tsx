@@ -103,7 +103,7 @@ export default function FeedbackStatistic(props: any) {
             </svg>
           </div>
           <p className="text-sm font-medium leading-none text-gray-500 dark:text-gray-400">
-            ({averageStar})
+            ({+averageStar ? averageStar : 'No rating'})
           </p>
           <span
             className="text-sm font-medium leading-none text-gray-900 hover:no-underline dark:text-white"
@@ -127,7 +127,7 @@ export default function FeedbackStatistic(props: any) {
         <div className="my-6 gap-8 sm:flex sm:items-start md:my-8">
           <div className="shrink-0 space-y-4">
             <p className="text-2xl font-semibold leading-none text-gray-900 dark:text-white">
-              {averageStar} out of 5
+              {+averageStar ? `${averageStar} out of 5` : 'No rating'}
             </p>
             <div className="mb-2 me-2 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
               <div className="inline-flex w-full items-center mt-1 gap-1">

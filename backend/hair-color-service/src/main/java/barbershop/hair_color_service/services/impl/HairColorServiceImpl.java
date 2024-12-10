@@ -128,6 +128,7 @@ public class HairColorServiceImpl implements HairColorService {
         for (int i = startIdx; i < endIdx; i++) {
             Map<String, Object> map = ls.get(i);
             map.put("active", hairColors.get(i).isActive());
+            map.put("price", hairColors.get(i).getPrice());
             lsReturned.add(map);
         }
 
@@ -177,6 +178,7 @@ public class HairColorServiceImpl implements HairColorService {
                 "id", hairColor.getId(),
                 "color", hairColor.getColor(),
                 "colorCode", hairColor.getColorCode(),
+                "price", hairColor.getPrice(),
                 "active", hairColor.isActive()
             )
         );

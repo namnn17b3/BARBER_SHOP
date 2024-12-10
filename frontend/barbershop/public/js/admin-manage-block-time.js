@@ -24,3 +24,9 @@ document.addEventListener('apiGetDetailBlockTimeStatus', (event) => {
     updateDateTimePicker(event?.detail?.blockTime);
   }
 });
+
+document.addEventListener('clickAddNewBlockTime', (event) => {
+  if (event?.detail?.status === 'success') {
+    updateDateTimePicker(event?.detail?.blockTime);
+  }
+});

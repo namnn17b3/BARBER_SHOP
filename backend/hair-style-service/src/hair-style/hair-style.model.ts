@@ -4,6 +4,7 @@ export const HairStyleSchema = new Schema(
   {
     id: Number,
     name: String,
+    normalizedName: String,
     description: String,
     price: Number,
     active: Boolean,
@@ -27,6 +28,7 @@ export const HairStyleSchema = new Schema(
 export interface HairStyle extends Document {
   id: Number;
   name: String;
+  normalizedName: String;
   description: String;
   price: Number;
   active: Boolean;

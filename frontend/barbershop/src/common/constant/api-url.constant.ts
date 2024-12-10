@@ -25,6 +25,7 @@ export const ApiHairStyle = {
   GET_ALL: `${BASE_URL}/hair-styles`,
   GET_DETAIL: `${BASE_URL}/hair-styles`,
   GET_IMAGE_URLS: `${BASE_URL}/hair-styles/image-url`,
+  ADMIN_SAVE_HAIR_STYLE: `${BASE_URL}/hair-styles/admin`,
 }
 
 export const ApiUser = {
