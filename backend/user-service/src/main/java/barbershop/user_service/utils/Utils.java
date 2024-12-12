@@ -169,6 +169,12 @@ public class Utils {
     }
 
     public static void checkImageFileType(MultipartFile multipartFile, String field, String resource) {
+        if (multipartFile == null) {
+            throw new ImageFileTypeException("Only PNG, JPG, and JPEG files are allowed", field, resource);
+        }
+        if (multipartFile.getSize() == 0) {
+            return;
+        }
         String contentType = multipartFile.getContentType();
         if (contentType == null ||
                 !(contentType.equals("image/png") || contentType.equals("image/jpeg") || contentType.equals("image/jpg"))) {

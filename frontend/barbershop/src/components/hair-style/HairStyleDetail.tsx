@@ -59,6 +59,7 @@ export default function HairStyleDetail(props: any) {
 
   const hanldeClickNextStep = () => {
     dateInputRef.current = dayjs(new Date(+(document.querySelector('.focused') as any).getAttribute('data-date'))).format(DateFormatType.YYYY_MM_DD);
+    hairColorIdRef.current = +([...(document.querySelectorAll('input[name="hair-color-input"]') as any)].find(item => item.checked)?.value);
     console.log(`order info: ${dateInputRef.current} ${timeInputRef.current} ${hairColorIdRef.current} ${hairStyleIdRef.current} ${paymentTypeInputRef.current}`);
     const toggleOrderInfoModalBtn = (document.querySelector('#toggle-order-info-modal') as any);
     paymentTypeInputRef
@@ -98,6 +99,7 @@ export default function HairStyleDetail(props: any) {
 
   const hanlePaymentClick = () => {
     paymentTypeInputRef.current = (document.querySelector('#payment-type') as any).innerText;
+    hairColorIdRef.current = +([...(document.querySelectorAll('input[name="hair-color-input"]') as any)].find(item => item.checked)?.value);
     console.log(`payment: ${dateInputRef.current} ${timeInputRef.current} ${hairColorIdRef.current} ${hairStyleIdRef.current} ${paymentTypeInputRef.current}`);
 
     const myHeaders = new Headers();
