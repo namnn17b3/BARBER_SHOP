@@ -110,7 +110,7 @@ export default function HistoryOrderPage() {
   const [order, setOrder] = useState<any>(null);
   const [feedback, setFeedback] = useState<any>(null);
   const orderIdRef = useRef<any>();
-  
+
   const hanldClickViewOrderDetail = (orderId: number) => {
     fetch(`${ApiOrder.GET_ORDER_DETAIL}/${orderId}`, {
       method: 'GET',
@@ -348,7 +348,7 @@ export default function HistoryOrderPage() {
                   >
                     <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
                   </svg>
-                    <span>Most recent</span>
+                  <span>Most recent</span>
                   <svg
                     className="w-2.5 h-2.5 ms-2.5"
                     aria-hidden="true"
@@ -484,7 +484,7 @@ export default function HistoryOrderPage() {
                       {
                         (response as any)?.data?.map((order: any, idx: number) => (
                           <tr key={idx} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                            <td className="px-6 py-4">{ (+filterValue?.page - 1) * (+filterValue?.items) + idx + 1 }</td>
+                            <td className="px-6 py-4">{(+filterValue?.page - 1) * (+filterValue?.items) + idx + 1}</td>
                             <td className="px-6 py-4">{`BBSOD${order?.id}`}</td>
                             <th
                               scope="row"
@@ -495,11 +495,11 @@ export default function HistoryOrderPage() {
                             <td className="px-6 py-4" style={{ color: order?.hairColor?.colorCode || ColorMaper['NORMAL'] }}>{order?.hairColor?.color ? capitalize(order?.hairColor?.color) : 'Normal'}</td>
                             <td className="px-6 py-4">{order?.orderTime}</td>
                             <td className="px-6 py-4">{order?.paymentType}</td>
-                            <td className="px-6 py-4">{`${Number(order?.amount)} đ`}</td>
+                            <td className="px-6 py-4">{`${Number(order?.amount).toLocaleString('vi')} đ`}</td>
                             <td className="px-6 py-4">
                               <span
                                 className="font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer"
-                                onClick={async() => {
+                                onClick={async () => {
                                   hanldClickViewOrderDetail(order?.id);
                                   await sleep(500);
                                   (document.querySelector('#toggle-order-detail-modal') as any)?.click();
