@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "apexcharts": "^4.0.0",
+    "crisp-sdk-web": "^1.0.25",
     "dayjs": "^1.11.13",
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",

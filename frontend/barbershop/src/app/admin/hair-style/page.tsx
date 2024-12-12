@@ -355,6 +355,9 @@ export default function HairStyleAdminPage() {
 
       <Modal id="submit-modal" title="Hair style">
         <div>
+          <div className="flex justify-center items-center p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+            <span><span className="font-medium">NOTE:</span> Hair style has obvious face.</span>
+          </div>
           {
             modalErrors?.length ? <AlertError errors={modalErrors} /> : ''
           }

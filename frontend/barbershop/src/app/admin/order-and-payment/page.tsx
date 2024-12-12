@@ -779,7 +779,7 @@ export default function OrderAndPaymentPage() {
                             <td className="px-6 py-4" style={{ color: order?.hairColor?.colorCode || ColorMaper['NORMAL'] }}>{order?.hairColor?.color ? capitalize(order?.hairColor?.color) : 'Normal'}</td>
                             <td className="px-6 py-4">{order?.orderTime}</td>
                             <td className="px-6 py-4">{order?.paymentType}</td>
-                            <td className="px-6 py-4">{`${Number(order?.amount)} đ`}</td>
+                            <td className="px-6 py-4">{`${Number(order?.amount).toLocaleString('vi')} đ`}</td>
                             <td className="px-6 py-4" id={`action-${idx}`} data-order-id={order?.id}></td>
                           </tr>
                         ))
