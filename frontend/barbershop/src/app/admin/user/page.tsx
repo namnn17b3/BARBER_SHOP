@@ -152,7 +152,7 @@ export default function UserAdminPage() {
   const handlePreview = (i: number) => {
     (document.querySelector('#toggle-submit-modal') as any)?.click();
     (document.body.lastElementChild as any).setAttribute('style', 'z-index:400');
-    
+
     let user = (response as any)?.data?.[i];
 
     const url = `${ApiUser.GET_DETAIL_USER_FOR_ADMIN}/${user?.id}`;
@@ -247,7 +247,7 @@ export default function UserAdminPage() {
         Toggle Model Edit
       </button>
 
-      <Modal id="submit-modal" title="Barber">
+      <Modal id="submit-modal" title="User">
         <div>
           {
             modalErrors?.length ? <AlertError errors={modalErrors} /> : ''
@@ -350,7 +350,6 @@ export default function UserAdminPage() {
                   <h3 className="mt-2 text-sm font-medium text-gray-900">
                     <label htmlFor="file-upload" className="relative">
                       <span className="text-indigo-600 hover:underline">Avatar</span>
-                      <input id="file-upload" name="file-upload" type="file" className="sr-only" />
                     </label>
                   </h3>
                 </div>

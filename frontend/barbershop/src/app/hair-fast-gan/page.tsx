@@ -25,14 +25,20 @@ export default function HairFastGanPage() {
 
   const resultImageElementRef = useRef<any>();
 
-  
+  const labelError = {
+    'image 0': 'Your face',
+    'image 1': 'Hair style',
+    'image 2': 'Hair color',
+  };
+
+
   const handleYourFaceInputChange = (e: any) => {
     const noneImageSource = `${window.location.origin}/img/fb-no-img.png`;
     URL.revokeObjectURL(preYourFaceImageFileRef.current || null);
     preYourFaceImageFileRef.current = e.target.files[0];
     yourFaceImageRef.current.src = preYourFaceImageFileRef.current ? URL.createObjectURL(preYourFaceImageFileRef.current) : noneImageSource;
   }
-  
+
   const handleSwapHair = () => {
     const noneImageSource = `${window.location.origin}/img/fb-no-img.png`;
     if (!preYourFaceImageFileRef.current || hairColorImageElementRef.current.src === noneImageSource || hairStyleImageElementRef.current.src === noneImageSource) {
@@ -64,17 +70,22 @@ export default function HairFastGanPage() {
     })
       .then((response) => {
         if (response.status !== 200 && response.status !== 201) {
-          Swal.close();
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Something went wrong!",
-          });
-          return;
+          return response.json();
         }
         return response.blob();
       })
       .then((result) => {
+        if (result.error) {
+          Object.entries(labelError).forEach((et) => {
+            result.error = result.error.replaceAll(et[0], et[1]);
+          });
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: result.error,
+          });
+          return;
+        }
         const imageUrl = URL.createObjectURL(result as any);
         resultImageElementRef.current.src = imageUrl;
         Swal.close();
@@ -96,10 +107,10 @@ export default function HairFastGanPage() {
     if (downloadUrl && downloadUrl !== noneImageSource) {
       const link = document.createElement('a');
       link.href = downloadUrl;
-      
+
       link.setAttribute('download', 'result.png');
       document.body.appendChild(link);
-      
+
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(downloadUrl);
@@ -138,6 +149,9 @@ export default function HairFastGanPage() {
 
       <div className="bg-gray-100">
         <div className="container mx-auto p-4">
+          <div className="flex justify-center items-center p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+            <span><span className="font-medium">NOTE:</span> Your face, hair style, hair color have face obvious.</span>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <label htmlFor="you-face-input">
               <input

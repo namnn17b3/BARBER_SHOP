@@ -10,8 +10,14 @@ import { useAuthen } from "@/hooks/user.authen";
 import { usePathname } from 'next/navigation'
 import React from "react";
 import { useEffect, useState } from "react";
+import { Crisp } from "crisp-sdk-web";
+import { Role } from '@/common/enums/role.enum';
 
 export default function Header() {
+  Crisp.configure((process.env.NEXT_PUBLIC_WEBSITE_ID as string), {
+    autoload: false
+  });
+
   const pathname = usePathname();
   const [user, setUser] = useState(0);
 
@@ -39,14 +45,24 @@ export default function Header() {
             '/authen/register',
             '/authen/forgot-password',
             '/authen/reset-password',
-            ].includes(pathname) &&
+          ].includes(pathname) &&
             pathForUserLogin.includes(pathname)) {
             window.location.href = `/authen/login`;
           }
           return;
         }
-        authenDispatch({ type: 'ME',  payload: json.data});
+        authenDispatch({ type: 'ME', payload: json.data });
         setUser(json.data);
+        if (json.data.role.toUpperCase() === Role.USER) {
+          Crisp.setTokenId(`user_${json.data.id}`);
+          Crisp.user.setEmail(json.data.email);
+          Crisp.user.setNickname(json.data.username);
+          Crisp.session.setData({
+            user_id: `user_${json.data.id}`,
+            plan: 'free',
+          });
+          Crisp.load();
+        }
       })
       .catch((error) => {
         setUser(1);
@@ -72,7 +88,7 @@ export default function Header() {
         </a>
         <div className="flex text-white md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse" style={{ backgroundColor: '#b97a57' }}>
           <AvatarShortOption user={user as any} />
-          <a href="/authen/login" onClick={savePrePath} style={{ display: user !== 1 ? 'none' : 'block'}}>
+          <a href="/authen/login" onClick={savePrePath} style={{ display: user !== 1 ? 'none' : 'block' }}>
             <button
               type="button"
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
