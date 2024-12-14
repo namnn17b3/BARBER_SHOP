@@ -1,0 +1,4 @@
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '12345678';
+CREATE USER 'root'@'%' IDENTIFIED BY '12345678';
+GRANT ALL PRIVILEGES ON *.* To 'root'@'%';
+FLUSH PRIVILEGES;

@@ -256,9 +256,7 @@ export class HairStyleService {
         imgs: hairStyle.imgs.map((img: any) =>
           objectMapper(['id', 'url'], img),
         ),
-        discount: hairStyleFromObjectMapper?.discount && {
-          ...objectMapper(['value', 'unit'], hairStyle.discount),
-        },
+        discount: objectMapper(['value', 'unit'], hairStyle.discount),
       },
     } as AppResponseSuccessDto;
   }

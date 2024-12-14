@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 export async function middleware(request: NextRequest) {
   try {
-    const BASE_API_URL = process.env.NEXT_PUBLIC_URL_API;
+    const BASE_API_URL = process.env.NEXT_PUBLIC_URL_API_GATEWAY;
     const authenPages = [
       '/authen/login',
       '/authen/register',
