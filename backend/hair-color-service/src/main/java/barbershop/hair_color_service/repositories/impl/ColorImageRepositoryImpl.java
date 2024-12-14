@@ -59,6 +59,10 @@ public class ColorImageRepositoryImpl implements ColorImageRepositoryCustom {
         Query query = entityManager.createNativeQuery(sql.toString());
         query.setParameter("color", paginationRequest.getColor());
 
+        if (query.getResultList().size() == 0) {
+            return 0;
+        }
+
         return Integer.parseInt(query.getResultList().get(0).toString());
     }
 }

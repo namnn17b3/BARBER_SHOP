@@ -18,4 +18,5 @@ public interface OrderService {
     BaseResponse getStatisticQuantity(StatisticQuantityRequest statisticQuantityRequest) throws Exception;
     BaseResponse getListOrderForAdmin(GetListOrderForAdminRequest getListOrderForAdminRequest) throws Exception;
     BaseResponse makeCutted(String orderId) throws Exception;
+    BaseResponse getScheduleRecently(Map<String, Object> user) throws Exception;
 }

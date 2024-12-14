@@ -23,6 +23,7 @@ export function AvatarShortOption(props: any) {
       .then(json => {
         authenDispatch({ type: 'LOGOUT', payload: null })
         deleteCookie('token');
+        sessionStorage.removeItem('loginSuccess');
         window.localStorage.removeItem('token');
         window.location.href = '/';
       })
@@ -40,7 +41,7 @@ export function AvatarShortOption(props: any) {
         className="w-10 h-10 rounded-full cursor-pointer"
         src={user?.avatar || "/img/fb-no-img.png"}
         alt="User dropdown"
-        style={{ display: `${ user !== 0 && user !== 1 ? 'block' : 'none' }` }}
+        style={{ display: `${user !== 0 && user !== 1 ? 'block' : 'none'}` }}
       />
       {/* Dropdown menu */}
       <div

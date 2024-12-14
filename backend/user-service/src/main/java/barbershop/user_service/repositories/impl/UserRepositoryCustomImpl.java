@@ -66,6 +66,10 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         query.setParameter("month", month);
         query.setParameter("year", year);
 
+        if (query.getResultList().size() == 0) {
+            return 0;
+        }
+
         return Integer.parseInt(query.getResultList().get(0).toString());
     }
 
@@ -163,6 +167,10 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
             } else if (getListUserForAdminRequest.getActive().equals("false")) {
                 query.setParameter("active", false);
             }
+        }
+
+        if (query.getResultList().size() == 0) {
+            return 0;
         }
 
         return Integer.parseInt(query.getResultList().get(0).toString());
