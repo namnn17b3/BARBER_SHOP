@@ -1,6 +1,283 @@
 version: '3.9'
 
 services:
+  # database
+  mysql:
+    container_name: mysql
+    image: mysql:8.0.32
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_PASSWORD: 12345678
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "3336:3306"
+    expose:
+      - 3306
+    networks:
+      - kong-net
+    volumes:
+      - ./deploy/database/mysql:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: 12345678
+      TZ: 'GMT+7'
+      PGTZ: 'GMT+7'
+    ports:
+      - "5463:5432"
+    expose:
+      - 5432
+    networks:
+      - kong-net
+    volumes:
+      - ./deploy/database/pgdata:/var/lib/postgresql/data
+  
+  # services with mysql
+  hair-color-service:
+    image: barbershop-hair-color-service:latest
+    container_name: barbershop-hair-color-service
+    restart: unless-stopped
+    ports:
+      - "8883:8883"
+      - "28883:28883"
+    expose:
+      - 8883
+      - 28883
+    depends_on:
+      - mysql
+      - postgres
+      - kafka
+      - redis
+      - user-service
+      - s3-service
+      - kong-gateway
+    networks:
+      - kong-net
+
+  barber-service:
+    image: barbershop-barber-service:latest
+    container_name: barbershop-barber-service
+    restart: unless-stopped
+    ports:
+      - "8881:8881"
+      - "28881:28881"
+    expose:
+      - 8881
+      - 28881
+    depends_on:
+      - mysql
+      - postgres
+      - kafka
+      - redis
+      - user-service
+      - s3-service
+      - kong-gateway
+    networks:
+      - kong-net
+
+  order-service:
+    image: barbershop-order-service:latest
+    container_name: barbershop-order-service
+    restart: unless-stopped
+    ports:
+      - "8886:8886"
+      - "28886:28886"
+    expose:
+      - 8886
+      - 28886
+    depends_on:
+      - mysql
+      - postgres
+      - kafka
+      - redis
+      - user-service
+      - block-time-service
+      - barber-service
+      # - payment-service
+      - hair-color-service
+      # - hair-style-service
+      - kong-gateway
+    networks:
+      - kong-net
+  
+  block-time-service:
+    image: barbershop-block-time-service:latest
+    container_name: barbershop-block-time-service
+    restart: unless-stopped
+    ports:
+      - "8887:8887"
+      - "28887:28887"
+    expose:
+      - 8887
+      - 28887
+    depends_on:
+      - mysql
+      - postgres
+      - kafka
+      - redis
+      - user-service
+      - kong-gateway
+    networks:
+      - kong-net
+
+  # services with postgres
+  user-service:
+    image: barbershop-user-service:latest
+    container_name: barbershop-user-service
+    restart: unless-stopped
+    ports:
+      - "8880:8880"
+      - "28880:28880"
+    expose:
+      - 8880
+      - 28880
+    depends_on:
+      - mysql
+      - postgres
+      - kafka
+      - redis
+      - s3-service
+      - kong-gateway
+    networks:
+      - kong-net
+
+  feedback-service:
+    image: barbershop-feedback-service:latest
+    container_name: barbershop-feedback-service
+    restart: unless-stopped
+    ports:
+      - "8884:8884"
+      - "28884:28884"
+    expose:
+      - 8884
+      - 28884
+    depends_on:
+      - mysql
+      - postgres
+      - kafka
+      - redis
+      - order-service
+      - user-service
+      - kong-gateway
+    networks:
+      - kong-net
+
+  payment-service:
+    image: barbershop-payment-service:latest
+    container_name: barbershop-payment-service
+    restart: unless-stopped
+    ports:
+      - "8885:8885"
+      - "28885:28885"
+    expose:
+      - 8885
+      - 28885
+    depends_on:
+      - mysql
+      - postgres
+      - kafka
+      - redis
+      - user-service
+      - hair-style-service
+      - kong-gateway
+    networks:
+      - kong-net
+  
+  # services with mongodb
+  hair-style-service:
+    image: barbershop-hair-style-service:latest
+    container_name: barbershop-hair-style-service
+    restart: unless-stopped
+    ports:
+      - "8882:8882"
+      - "28882:28882"
+    expose:
+      - 8882
+      - 28882
+    depends_on:
+      - mysql
+      - postgres
+      - kafka
+      - redis
+      - user-service
+      - s3-service
+      - order-service
+      - feedback-service
+      - kong-gateway
+    networks:
+      - kong-net
+  
+  #util services
+  s3-service:
+    image: barbershop-s3-service:latest
+    container_name: barbershop-s3-service
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+      - "28888:28888"
+    depends_on:
+      - mysql
+      - postgres
+      - kafka
+      - redis
+      - kong-gateway
+    expose:
+      - 8888
+      - 28888
+    networks:
+      - kong-net
+  
+  notification-service:
+    image: barbershop-notification-service:latest
+    container_name: barbershop-notification-service
+    restart: unless-stopped
+    ports:
+      - "8889:8889"
+      - "28889:28889"
+    expose:
+      - 8889
+      - 28889
+    depends_on:
+      - mysql
+      - postgres
+      - kafka
+      - redis
+      - kong-gateway
+    networks:
+      - kong-net
+
+  # front end nextjs
+  front-end:
+    image: barbershop-front-end:latest
+    container_name: barbershop-front-end
+    restart: unless-stopped
+    ports:
+      - "3300:3300"
+    expose:
+      - 3000
+    depends_on:
+      - kong-gateway
+      - redis
+      - user-service
+      - hair-color-service
+      - hair-style-service
+      - barber-service
+      - order-service
+      - feedback-service
+      - payment-service
+      - block-time-service
+      - notification-service
+      - s3-service
+      - kafka
+    networks:
+      - kong-net
+
   redis:
     image: redis:6.0.7
     container_name: redis
@@ -10,6 +287,8 @@ services:
     command: "--requirepass 12345678 --user barbershop on >barbershop ~* allcommands --user default off nopass nocommands"
     ports:
       - 6389:6379
+    expose:
+      - 6379
     networks:
       - kong-net
 
@@ -95,12 +374,18 @@ services:
     depends_on:
       - kong-database
     command: kong start
-  
+    expose:
+      - 8000
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    expose:
+      - 2181
     networks:
       - kong-net
 
@@ -108,10 +393,13 @@ services:
     image: confluentinc/cp-kafka:7.3.2
     ports:
       - "9093:9093"
+    expose:
+      - 9093
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9093
+      # KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9093
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
