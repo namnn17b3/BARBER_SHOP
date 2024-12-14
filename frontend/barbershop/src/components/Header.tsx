@@ -57,6 +57,8 @@ export default function Header() {
           Crisp.setTokenId(`user_${json.data.id}`);
           Crisp.user.setEmail(json.data.email);
           Crisp.user.setNickname(json.data.username);
+          if (json.data?.phone) Crisp.user.setPhone(json.data.phone);
+          if (json.data?.avatar) Crisp.user.setAvatar(json.data.avatar);
           Crisp.session.setData({
             user_id: `user_${json.data.id}`,
             plan: 'free',
