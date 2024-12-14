@@ -141,6 +141,10 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
             query.setParameter("codeOrHairStyle", "%"+getListOrderByUserRequest.getCodeOrHairStyle()+"%");
         }
 
+        if (query.getResultList().size() == 0) {
+            return 0;
+        }
+
         return Integer.parseInt(query.getResultList().get(0).toString());
     }
 
@@ -157,6 +161,10 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
         Query query = entityManager.createNativeQuery(sql);
         query.setParameter("month", month);
         query.setParameter("year", year);
+
+        if (query.getResultList().size() == 0) {
+            return 0;
+        }
 
         return Integer.parseInt(query.getResultList().get(0).toString());
     }
@@ -178,5 +186,23 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
         query.setParameter("endDate", endDate);
 
         return query.getResultList();
+    }
+
+    @Override
+    public String getScheduleRecently(int userId) {
+        String sql = "select cast(orders.schedule as char) as schedule\n" +
+                "from orders\n" +
+                "where orders.user_id = :userId and DATE(NOW()) = DATE(orders.schedule) and NOW() <= orders.schedule\n" +
+                "order by orders.schedule desc\n" +
+                "limit 1";
+
+        Query query = entityManager.createNativeQuery(sql);
+        query.setParameter("userId", userId);
+
+        if (query.getResultList().size() == 0) {
+            return null;
+        }
+
+        return query.getResultList().get(0).toString();
     }
 }

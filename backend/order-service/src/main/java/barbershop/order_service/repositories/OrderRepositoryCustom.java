@@ -14,4 +14,5 @@ public interface OrderRepositoryCustom {
     int countOrderByUser(int id, GetListOrderByUserRequest getListOrderByUserRequest);
     int statisticQuantity(int month, int year);
     List<Order> getListOrderForAdmin(GetListOrderForAdminRequest getListOrderForAdminRequest);
+    String getScheduleRecently(int userId);
 }

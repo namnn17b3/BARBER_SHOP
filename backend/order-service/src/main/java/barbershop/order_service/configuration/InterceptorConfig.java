@@ -22,6 +22,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns(
                         "/api/orders/payment",
                         "/api/orders",
+                        "/api/orders/schedule-recently",
                         "/api/orders/find-order-info",
                         "/api/orders/{orderId}"
                 )  // Áp dụng cho tất cả các endpoint bắt đầu bằng /api

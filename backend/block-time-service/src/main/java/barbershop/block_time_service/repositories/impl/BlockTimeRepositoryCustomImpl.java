@@ -68,6 +68,10 @@ public class BlockTimeRepositoryCustomImpl implements BlockTimeRepositoryCustom 
             query.setParameter("endDate", endDate);
         }
 
+        if (query.getResultList().size() == 0) {
+            return 0;
+        }
+
         return Integer.parseInt(query.getResultList().get(0).toString());
     }
 }

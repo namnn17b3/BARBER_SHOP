@@ -34,6 +34,15 @@ public class OrderController {
         return new ResponseEntity<>(orderService.findOrderInfo(findOrderInfoRequest), HttpStatus.OK);
     }
 
+    @GetMapping("/schedule-recently")
+    public ResponseEntity<BaseResponse> getScheduleRecently(
+            HttpServletRequest request) throws Exception {
+        return new ResponseEntity<>(
+                orderService.getScheduleRecently((Map<String, Object>) request.getAttribute("user")),
+                HttpStatus.OK
+        );
+    }
+
     @PostMapping("/payment")
     public ResponseEntity<BaseResponse> payment(@RequestBody PaymentRequest paymentRequest) throws Exception {
         return new ResponseEntity<>(orderService.payment(paymentRequest), HttpStatus.OK);

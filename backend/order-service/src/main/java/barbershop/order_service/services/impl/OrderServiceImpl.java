@@ -767,4 +767,10 @@ public class OrderServiceImpl implements OrderService {
 
         return new BaseResponse(Map.of("message", "Mark cutted successfully"));
     }
+
+    @Override
+    public BaseResponse getScheduleRecently(Map<String, Object> user) throws Exception {
+        String schedule = orderRepository.getScheduleRecently((int) user.get("id"));
+        return new BaseResponse(Map.of("schedule", schedule));
+    }
 }
