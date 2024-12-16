@@ -9,4 +9,5 @@ module.exports = {
     runtime: 'experimental-edge', // Chỉ cho biết dự án sử dụng experimental features
     missingSuspenseWithCSRBailout: false,
   },
+  reactStrictMode: false,
 };
