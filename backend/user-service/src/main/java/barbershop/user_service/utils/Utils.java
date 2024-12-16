@@ -168,9 +168,12 @@ public class Utils {
         return s;
     }
 
-    public static void checkImageFileType(MultipartFile multipartFile, String field, String resource) {
-        if (multipartFile == null) {
+    public static void checkImageFileType(MultipartFile multipartFile, String field, String resource, boolean isUpdate) {
+        if (multipartFile == null && !isUpdate) {
             throw new ImageFileTypeException("Only PNG, JPG, and JPEG files are allowed", field, resource);
+        }
+        if (multipartFile == null) {
+            return;
         }
         if (multipartFile.getSize() == 0) {
             return;

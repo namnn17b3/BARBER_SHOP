@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public AppBaseResponse updateProfile(UpdateProfileRequest updateProfileRequest) throws Exception {
-        Utils.checkImageFileType(updateProfileRequest.getAvatar(), "Avatar", "Request body");
+        Utils.checkImageFileType(updateProfileRequest.getAvatar(), "Avatar", "Request body", true);
         User user = User.builder()
                 .username(updateProfileRequest.getUsername())
                 .phone(updateProfileRequest.getPhone())

@@ -130,7 +130,7 @@ public class AuthenticationServiceImpl extends AuthenticationService {
             throw new HttpException("Email already in use", HttpStatus.UNAUTHORIZED.value());
         }
 
-        Utils.checkImageFileType(registerRequest.getAvatar(), "Avatar", "Request body");
+        Utils.checkImageFileType(registerRequest.getAvatar(), "Avatar", "Request body", false);
 
         User user = new User();
         user.setUsername(registerRequest.getUsername());
