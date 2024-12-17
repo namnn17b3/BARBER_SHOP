@@ -35,4 +35,7 @@ public class Order extends BaseEntity {
 
     @Column(name="schedule", nullable = false)
     private Date schedule;
+
+    @Column(name="status", nullable = false)
+    private String status;
 }

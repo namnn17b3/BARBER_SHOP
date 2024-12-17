@@ -12,5 +12,6 @@ import java.util.Map;
 public class GetListOrderByUserRequest extends PaginationRequest {
     private String sortBy;
     private String codeOrHairStyle;
+    private String status;
     private Map<String, Object> user;
 }

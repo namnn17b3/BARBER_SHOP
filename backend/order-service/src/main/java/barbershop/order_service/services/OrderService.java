@@ -19,4 +19,5 @@ public interface OrderService {
     BaseResponse getListOrderForAdmin(GetListOrderForAdminRequest getListOrderForAdminRequest) throws Exception;
     BaseResponse makeCutted(String orderId) throws Exception;
     BaseResponse getScheduleRecently(Map<String, Object> user) throws Exception;
+    BaseResponse cancelOrder(String orderId, Map<String, Object> user) throws Exception;
 }

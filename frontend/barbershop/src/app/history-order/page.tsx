@@ -27,12 +27,14 @@ export default function HistoryOrderPage() {
     sortBy: searchParams.get('sortBy') || 'desc',
     page: searchParams.get('page') || 1,
     codeOrHairStyle: searchParams.get('codeOrHairStyle') || undefined,
+    status: searchParams.get('status') || undefined,
     items: 9,
   });
 
   const bindingSortbyAndKeyword = () => {
     const sortByElement: any = document.querySelector('#dropdownRadioButton span');
     const sortByInputs: any = document.querySelectorAll('input[name="sort-by"]');
+    const orderStatusInput: any = document.querySelector('#order-status-input');
     sortByInputs.forEach((item: any) => {
       if (item.value === filterValue.sortBy) {
         item.checked = true;
@@ -45,6 +47,7 @@ export default function HistoryOrderPage() {
       });
     });
 
+    orderStatusInput.value = filterValue.status || 'all';
     (document.querySelector('#code-or-hair-style') as any).value = filterValue.codeOrHairStyle || '';
   }
 
@@ -82,6 +85,7 @@ export default function HistoryOrderPage() {
 
   const handleFilter = () => {
     const codeOrHairStyle = (document.querySelector('#code-or-hair-style') as any).value;
+    const status = (document.querySelector('#order-status-input') as any).value;
     let sortBy = 'desc';
     (document.querySelectorAll('input[name="sort-by"]') as any).forEach((item: any) => {
       if (item.checked) {
@@ -94,6 +98,7 @@ export default function HistoryOrderPage() {
       page: 1,
       codeOrHairStyle: codeOrHairStyle?.trim() || null,
       sortBy,
+      status: status !== 'all' ? status : '',
     }
     router.push(`?${toQueryString(newFilterValue)}`);
     setFilterValue(newFilterValue as any);
@@ -141,6 +146,57 @@ export default function HistoryOrderPage() {
         }
       })
       .catch((error) => console.log(error));
+  }
+
+  const handleCancelOrderUtil = (orderId: number) => {
+    fetch(`${ApiOrder.CANCEL_ORDER}/${orderId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify({}),
+    })
+      .then((response) => {
+        if ([404, 500].includes(response.status)) {
+          window.location.href = `/error/${response.status}`;
+          return;
+        }
+        return response.json();
+      })
+      .then((json) => {
+        if (json.data) {
+          setResponse(json);
+          isValidErrorRef.current = false;
+        }
+        else if (json.status === 401) {
+          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.location.href = `/authen/login`;
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: json.errors.map((e: any) => e.message).join(', '),
+          });
+        }
+      })
+      .catch((error) => console.log(error));
+  }
+
+  const handleCancelOrder = (orderId: number) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, cancel it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleCancelOrderUtil(orderId);
+      }
+    });
   }
 
   const hanldeClickReview = (orderId: number) => {
@@ -325,6 +381,7 @@ export default function HistoryOrderPage() {
         hanldeClickReview={hanldeClickReview}
         handleClickSubmit={handleClickSubmit}
         hanleClickDelete={hanleClickDelete}
+        handleCancelOrder={handleCancelOrder}
       />
 
       <h2 className="mb-4 text-3xl font-extrabold text-center leading-none tracking-tight text-gray-900 md:text-4xl dark:text-white">History order</h2>
@@ -332,7 +389,7 @@ export default function HistoryOrderPage() {
         isValidErrorRef.current ? <AlertError errors={errors} /> :
           <>
             <div className="mx-8 flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between py-4">
-              <div>
+              <div className="flex">
                 <button
                   id="dropdownRadioButton"
                   data-dropdown-toggle="dropdownRadio"
@@ -413,6 +470,14 @@ export default function HistoryOrderPage() {
                       </div>
                     </li>
                   </ul>
+                </div>
+
+                <div className="max-w-sm ml-4" title="Select order status">
+                  <select id="order-status-input" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="all" selected>All</option>
+                    <option value="success">Success</option>
+                    <option value="canceled">Canceled</option>
+                  </select>
                 </div>
               </div>
               <div className="flex relative">

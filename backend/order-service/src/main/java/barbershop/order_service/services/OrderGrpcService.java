@@ -118,7 +118,7 @@ public class OrderGrpcService extends OrderServiceGrpc.OrderServiceImplBase {
         int userId = request.getUserId();
         int orderId = request.getOrderId();
 
-        barbershop.order_service.entities.Order order = orderRepository.findByUserIdAndId(userId, orderId);
+        barbershop.order_service.entities.Order order = orderRepository.findByUserIdAndId(userId, orderId).orElse(null);
 
         responseObserver.onNext(
                 CheckOrderMatchWithUserResponse.newBuilder()

@@ -43,6 +43,16 @@ public class OrderController {
         );
     }
 
+    @PutMapping("/cancel-order/{orderId}")
+    public ResponseEntity<BaseResponse> cancelOrder(
+            @PathVariable(value = "orderId", required = true) String orderId,
+            @RequestBody Map<String, Object> body) throws Exception {
+        return new ResponseEntity<>(
+                orderService.cancelOrder(orderId, (Map<String, Object>) body.get("user")),
+                HttpStatus.OK
+        );
+    }
+
     @PostMapping("/payment")
     public ResponseEntity<BaseResponse> payment(@RequestBody PaymentRequest paymentRequest) throws Exception {
         return new ResponseEntity<>(orderService.payment(paymentRequest), HttpStatus.OK);
