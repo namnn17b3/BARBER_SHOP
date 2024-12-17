@@ -11,6 +11,7 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
     hanldeClickReview,
     handleClickSubmit,
     hanleClickDelete,
+    handleCancelOrder,
     isAdmin,
   } = props;
 
@@ -46,6 +47,12 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
       <Modal title="Order Detail" id="order-detail-modal">
         <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-5">
           <div className="mx-auto max-w-2xl px-4 2xl:px-0">
+            {
+              !order?.cutted && !isAdmin &&
+              <div className="flex justify-center items-center p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+                <span><span className="font-medium">NOTE:</span> You can only cancel order within 1 hour of placing your order</span>
+              </div>
+            }
             <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 mb-8">
               <div className="h-56 w-full">
                 <a>
@@ -203,7 +210,7 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
                 <dt className="font-normal mb-1 sm:mb-0 text-gray-500 dark:text-gray-400">
                   Status:
                 </dt>
-                <dd className="font-medium text-gray-900 dark:text-white sm:text-end" style={{ color: '#28a745'}}>
+                <dd className="font-medium text-gray-900 dark:text-white sm:text-end" style={{ color: order?.status.toUpperCase() === 'SUCCESS' ? '#28a745' : '#dc3545' }}>
                   {order?.status}
                 </dd>
               </dl>
@@ -244,7 +251,7 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
         <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
           <button
             type="button"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className={`mr-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ${order?.cutted && order?.status.toUpperCase() !== 'CANCELED' && !isAdmin ? '' : 'hidden'}`}
             data-modal-hide="order-detail-modal"
             onClick={async () => {
               hanldeClickReview(order?.id);
@@ -255,9 +262,16 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
             Review
           </button>
           <button
+            type="button"
+            className={`mr-3 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark dark:hover:bg-red-700 dark:focus:ring-red-900 ${!order?.cutted && order?.status.toUpperCase() !== 'CANCELED' && !isAdmin ? '' : 'hidden'}`}
+            onClick={() => { handleCancelOrder(order?.id) }}
+          >
+            Cancel order
+          </button>
+          <button
             data-modal-hide="order-detail-modal"
             type="button"
-            className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+            className="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
           >
             Cancel
           </button>
@@ -268,10 +282,10 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
         <section className="bg-white dark:bg-gray-900 py-8 lg:py-8 antialiased">
           <div className="max-w-2xl mx-auto px-4">
             {
-              isAdmin ? '' : 
-              <div className="p-4 mb-8 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
-                <span className="font-medium">Note!</span> You can only rate the service within 3 days of your use.
-              </div>
+              isAdmin ? '' :
+                <div className="p-4 mb-8 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+                  <span className="font-medium">Note!</span> You can only rate the service within 3 days of your use.
+                </div>
             }
 
             <div className="flex justify-between items-center mb-2">
@@ -279,7 +293,7 @@ export default function OrderDetailAndFeedbackModalGroup(props: any) {
                 {isAdmin ? "Comment and rating" : "Enter your comment"}
               </h2>
             </div>
-            
+
             <div className="flex items-center mb-4">
               {
                 [1, 2, 3, 4, 5].map((star) => (

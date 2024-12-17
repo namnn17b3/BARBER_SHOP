@@ -20,9 +20,8 @@ message SaveNewPaymentRequest {
   int32 orderId = 3;
   string orderUUID = 4;
   string payOnlineType = 5;
-  string paymentStatus = 6;
-  int32 hairStyleId = 7;
-  int32 userId = 8;
+  int32 hairStyleId = 6;
+  int32 userId = 7;
 }
 
 message SaveNewPaymentResponse {
@@ -33,12 +32,11 @@ message SaveNewPaymentResponse {
 message Payment {
   int32 id = 1;
   int32 orderId = 2;
-  string status = 3;
-  string type = 4;
-  string bankCode = 5;
-  string payTime = 6;
-  string bankTranNo = 7;
-  int32 amount = 8;
+  string type = 3;
+  string bankCode = 4;
+  string payTime = 5;
+  string bankTranNo = 6;
+  int32 amount = 7;
 }
 
 message GetListPaymentByOrderIdsRequest {

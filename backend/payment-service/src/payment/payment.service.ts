@@ -16,7 +16,6 @@ import {
   StatisticItemsRequestDto,
   StatisticRevenuesRequestDto,
 } from '@payment/payment.dto';
-import { PaymentStatus } from '@payment/payment.enum';
 import { PaymentRepository } from '@payment/payment.repository';
 import * as dayjs from 'dayjs';
 import * as customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -40,7 +39,6 @@ export class PaymentService {
     externalRequestDto: any,
     paymentRequestDto: PaymentRequestDto,
     payOnlineType: PayOnlineType,
-    paymentStatus: PaymentStatus,
   ) {
     let payTime = null;
     let bankCode = 'SGB';
@@ -69,7 +67,6 @@ export class PaymentService {
       orderId: paymentRequestDto.orderId,
       hairStyleId: paymentRequestDto.hairStyleId,
       userId: paymentRequestDto.userId,
-      status: paymentStatus,
       bankCode,
       bankTranNo,
       type: payOnlineType,
@@ -94,7 +91,6 @@ export class PaymentService {
       payments: payments.map((payment) => ({
         id: payment.id,
         orderId: payment.orderId,
-        status: payment.status.toString(),
         type: payment.type.toString(),
         bankCode: payment.bankCode,
         payTime: payment.payTime.toISOString(),

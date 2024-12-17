@@ -31,13 +31,13 @@ export default function HeaderAdmin(props: any) {
             '/authen/register',
             '/authen/forgot-password',
             '/authen/reset-password',
-            ].includes(pathname) &&
+          ].includes(pathname) &&
             pathForUserLogin.includes(pathname)) {
             window.location.href = `/authen/login`;
           }
           return;
         }
-        authenDispatch({ type: 'ME',  payload: json.data});
+        authenDispatch({ type: 'ME', payload: json.data });
         setUser(json.data);
       })
       .catch((error) => {
@@ -58,6 +58,7 @@ export default function HeaderAdmin(props: any) {
       .then(json => {
         authenDispatch({ type: 'LOGOUT', payload: null })
         deleteCookie('token');
+        sessionStorage.removeItem('loginSuccess');
         window.localStorage.removeItem('token');
         window.location.href = '/';
       })

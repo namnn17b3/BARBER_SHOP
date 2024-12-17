@@ -41,6 +41,7 @@ export default function OrderAndPaymentPage() {
     page: searchParams.get('page') || 1,
     keyword: searchParams.get('keyword') || undefined,
     range: searchParams.get('range') || `${defaultRange()},${defaultRange()}`,
+    status: searchParams.get('status') || undefined,
     items: 9,
   });
 
@@ -49,6 +50,15 @@ export default function OrderAndPaymentPage() {
     const sortByInputs: any = document.querySelectorAll('input[name="sort-by"]');
     const startDateInput: any = document.querySelector('#start-date');
     const endDateInput: any = document.querySelector('#end-date');
+
+    let status = '';
+    [...(document.querySelectorAll('input[name="status"]') as any)].forEach((item: any) => {
+      if (item.value === filterValue.status) {
+        item.checked = true;
+        status = item.value;
+      }
+    });
+    status = status !== '' ? status : 'All';
 
     sortByInputs.forEach((item: any) => {
       if (item.value === filterValue.sortBy) {
@@ -61,8 +71,8 @@ export default function OrderAndPaymentPage() {
         startDateInput.value = startDateString;
         endDateInput.value = endDateString;
         sortByElement.innerText = startDateString !== endDateString
-          ? `from ${startDateString} to ${endDateString}: ${item.nextSibling.innerText}`
-          : `${startDateString}: ${item.nextSibling.innerText}`;
+          ? `from ${startDateString} to ${endDateString}: ${item.nextSibling.innerText} - ${status}`
+          : `${startDateString}: ${item.nextSibling.innerText} - ${status}`;
       }
     });
     (document.querySelector('#keyword') as any).value = filterValue.keyword || '';
@@ -107,14 +117,24 @@ export default function OrderAndPaymentPage() {
     const endDateInput: any = document.querySelector('#end-date');
 
     const keyword = (document.querySelector('#keyword') as any).value;
+
+    let status = '';
+    [...(document.querySelectorAll('input[name="status"]') as any)].forEach((item: any) => {
+      if (item.checked) {
+        status = item.value;
+      }
+    });
+
+    const statusView = status !== '' ? status : 'All';
+
     let sortBy = 'desc';
     sortByInputs.forEach((item: any) => {
       if (item.checked) {
         sortBy = item.value;
         if (startDateInput.value && endDateInput.value) {
           sortByElement.innerText = startDateInput.value !== endDateInput.value
-            ? `from ${startDateInput.value} to ${endDateInput.value}: ${item.nextSibling.innerText}`
-            : `${startDateInput.value}: ${item.nextSibling.innerText}`;
+            ? `from ${startDateInput.value} to ${endDateInput.value}: ${item.nextSibling.innerText} - ${statusView}`
+            : `${startDateInput.value}: ${item.nextSibling.innerText} - ${statusView}`;
         }
       }
     });
@@ -124,6 +144,7 @@ export default function OrderAndPaymentPage() {
       page: 1,
       keyword: keyword?.trim() || null,
       sortBy,
+      status,
       range: `${startDateInput.value},${endDateInput.value}`,
     }
     router.push(`?${toQueryString(newFilterValue)}`);
@@ -428,7 +449,7 @@ export default function OrderAndPaymentPage() {
         const markCuttedElement = document.querySelector(`#mark-cutted-${i + 1}`);
         if (order?.cutted) {
           markCuttedElement?.classList.add('hidden');
-        } else {
+        } else if (order?.status?.toUpperCase() !== 'CANCELED') {
           markCuttedElement?.classList.remove('hidden');
         }
         dropdownParent.appendChild(fc);
@@ -680,6 +701,59 @@ export default function OrderAndPaymentPage() {
                     className="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
                   >
                     Longest
+                  </label>
+                </div>
+              </li>
+              <span className="text-gray-900 rounded dark:text-gray-300">Status:</span>
+              <li>
+                <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                  <input
+                    id="filter-radio-example-11"
+                    type="radio"
+                    name="status"
+                    value="success"
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  />
+                  <label
+                    htmlFor="filter-radio-example-11"
+                    className="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
+                  >
+                    Success
+                  </label>
+                </div>
+              </li>
+              <li>
+                <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                  <input
+                    id="filter-radio-example-21"
+                    type="radio"
+                    name="status"
+                    value="canceled"
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  />
+                  <label
+                    htmlFor="filter-radio-example-21"
+                    className="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
+                  >
+                    Canceled
+                  </label>
+                </div>
+              </li>
+              <li>
+                <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                  <input
+                    id="filter-radio-example-31"
+                    type="radio"
+                    name="status"
+                    value=""
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    defaultChecked
+                  />
+                  <label
+                    htmlFor="filter-radio-example-31"
+                    className="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
+                  >
+                    All
                   </label>
                 </div>
               </li>

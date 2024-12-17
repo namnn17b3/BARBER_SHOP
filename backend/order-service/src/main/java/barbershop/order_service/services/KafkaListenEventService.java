@@ -53,6 +53,7 @@ public class KafkaListenEventService {
             .cutted((boolean) orderMap.get("cutted"))
             .barber(objectMapper.writeValueAsString(orderMap.get("barber")))
             .hairStyle(objectMapper.writeValueAsString(orderMap.get("hairStyle")))
+            .status(checksumEventRequest.getPaymentStatus())
             .hairColor(orderMap.get("hairColor") == null ? "null" : objectMapper.writeValueAsString(orderMap.get("hairColor")))
         .build();
 
@@ -65,13 +66,13 @@ public class KafkaListenEventService {
                         .setOrderUUID(checksumEventRequest.getOrderUUID())
                         .setExternalRequest(checksumEventRequest.getExternalRequest())
                         .setPayOnlineType(checksumEventRequest.getPayOnlineType())
-                        .setPaymentStatus(checksumEventRequest.getPaymentStatus())
                         .setHairStyleId((int) ((Map<String, Object>) orderMap.get("hairStyle")).get("id"))
                         .setUserId((int) ((Map<String, Object>) orderMap.get("user")).get("id"))
                 .build());
 
         orderMap.put("bankCode", saveNewPaymentResponse.getBankCode());
         orderMap.put("bankTranNo", saveNewPaymentResponse.getBankTranNo());
+        orderMap.put("status", Utils.capitalize(checksumEventRequest.getPaymentStatus()));
 
         kafkaTemplate.send("send-email-thank-for-order", objectMapper.writeValueAsString(orderMap));
     }

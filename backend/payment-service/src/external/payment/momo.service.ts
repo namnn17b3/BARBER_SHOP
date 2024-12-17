@@ -7,7 +7,6 @@ import { PayOnlineType } from '@common/enum/pay-online-type.enum';
 import { StatusEnum } from '@common/enum/status.enum';
 import { PaymentExternalService } from '@external/payment/payment-external.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { PaymentStatus } from '@payment/payment.enum';
 import { PaymentService } from '@payment/payment.service';
 import * as querystring from 'qs';
 import * as sortObject from 'sort-object';
@@ -63,7 +62,7 @@ export class MoMoService implements PaymentExternalService {
       externalRequest: JSON.stringify(externalRequestDto),
       amount: paymentRequestDto.amount,
       payOnlineType: PayOnlineType.MOMO,
-      paymentStatus: PaymentStatus.SUCCESS,
+      paymentStatus: 'SUCCESS',
       checksum,
     });
 

@@ -14,5 +14,6 @@ public class GetListOrderForAdminRequest extends PaginationRequest {
     private String sortBy;
     private String keyword;
     private String range;
+    private String status;
     private Map<String, Object> user;
 }

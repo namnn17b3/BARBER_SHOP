@@ -290,7 +290,6 @@ public class OrderServiceImpl implements OrderService {
         orderMap.put("hairColor", hairColorMap);
         orderMap.put("orderTime", Utils.toDateStringWithFormatAndTimezone(new Date(), "yyyy-MM-dd HH:mm:ss", TimeZone.ASIA_HCM.value()));
         orderMap.put("amount", amount);
-        orderMap.put("status", "Success");
         orderMap.put("paymentType", paymentRequest.getPaymentType());
 
         String orderUUID = UUID.randomUUID().toString();
@@ -318,6 +317,25 @@ public class OrderServiceImpl implements OrderService {
                         FieldErrorsResponse.FieldError.builder()
                                 .field("sort by")
                                 .message("Sort by must be most recent or longest")
+                                .resource("GetListOrderByUserRequest")
+                                .build()
+                );
+                throw FieldErrorsResponse
+                        .builder()
+                        .errors(listFieldErrors)
+                        .build();
+            }
+        }
+
+        if (getListOrderByUserRequest.getStatus() != null) {
+            String regex = "^(success|canceled)$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(getListOrderByUserRequest.getStatus());
+            if (!matcher.matches()) {
+                listFieldErrors.add(
+                        FieldErrorsResponse.FieldError.builder()
+                                .field("status")
+                                .message("Status must be most success or cancel")
                                 .resource("GetListOrderByUserRequest")
                                 .build()
                 );
@@ -429,7 +447,12 @@ public class OrderServiceImpl implements OrderService {
                     .build();
         }
 
-        Order order = orderRepository.findById(orderId).orElse(null);
+        Order order = null;
+        if (user.get("role").toString().equalsIgnoreCase("ADMIN")) {
+            order = orderRepository.findById(orderId).orElse(null);
+        } else {
+            order = orderRepository.findByUserIdAndId((int) user.get("id"), orderId).orElse(null);
+        }
         if (order == null) {
             throw new ResourceNotFoundException("Order not found");
         }
@@ -458,7 +481,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderMap.put("id", order.getId());
         orderMap.put("amount", payment.getAmount());
-        orderMap.put("status", payment.getStatus());
+        orderMap.put("status", Utils.capitalize(order.getStatus()));
         orderMap.put("paymentType", payment.getType());
         orderMap.put("bankCode", payment.getBankCode());
         orderMap.put("bankTranNo", payment.getBankTranNo());
@@ -527,6 +550,25 @@ public class OrderServiceImpl implements OrderService {
                         FieldErrorsResponse.FieldError.builder()
                                 .field("sort by")
                                 .message("Sort by must be most recent or longest")
+                                .resource("GetListOrderForAdminRequest")
+                                .build()
+                );
+                throw FieldErrorsResponse
+                        .builder()
+                        .errors(listFieldErrors)
+                        .build();
+            }
+        }
+
+        if (getListOrderForAdminRequest.getStatus() != null) {
+            String regex = "^(success|canceled)$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(getListOrderForAdminRequest.getStatus());
+            if (!matcher.matches()) {
+                listFieldErrors.add(
+                        FieldErrorsResponse.FieldError.builder()
+                                .field("status")
+                                .message("Status must be most recent or longest")
                                 .resource("GetListOrderForAdminRequest")
                                 .build()
                 );
@@ -632,7 +674,12 @@ public class OrderServiceImpl implements OrderService {
 
         List<Order> orders = orderRepository.getListOrderForAdmin(getListOrderForAdminRequest);
         List<User> users = new ArrayList<>();
-        orders = this.filterListOrderForAdminByKeyword(orders, users, orderId, getListOrderForAdminRequest.getKeyword());
+        orders = this.filterListOrderForAdminByKeyword(
+                orders,
+                users,
+                orderId,
+                getListOrderForAdminRequest.getKeyword()
+        );
 
         int page = Integer.parseInt(getListOrderForAdminRequest.getPage());
         int items = Integer.parseInt(getListOrderForAdminRequest.getItems());
@@ -670,6 +717,7 @@ public class OrderServiceImpl implements OrderService {
             orderMap.put("orderTime", Utils.toDateStringWithFormatAndTimezone(order.getOrderTime(), "yyyy-MM-dd HH:mm:ss", TimeZone.ASIA_HCM.value()));
             orderMap.put("paymentType", paymentGrpc.getType());
             orderMap.put("amount", paymentGrpc.getAmount());
+            orderMap.put("status", Utils.capitalize(order.getStatus()));
             orderMap.put("cutted", order.isCutted());
 
             orderMapList.add(orderMap);
@@ -748,6 +796,20 @@ public class OrderServiceImpl implements OrderService {
             throw new ResourceNotFoundException("Order not found");
         }
 
+        if (order.getStatus().equalsIgnoreCase("CANCELED")) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("order id")
+                            .message("Order status was cancel")
+                            .resource("Path variable")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
         if (order.isCutted()) {
             listFieldErrors.add(
                     FieldErrorsResponse.FieldError.builder()
@@ -771,6 +833,83 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public BaseResponse getScheduleRecently(Map<String, Object> user) throws Exception {
         String schedule = orderRepository.getScheduleRecently((int) user.get("id"));
-        return new BaseResponse(Map.of("schedule", schedule));
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("schedule", schedule);
+        return new BaseResponse(data);
+    }
+
+    @Override
+    public BaseResponse cancelOrder(String orderId, Map<String, Object> user) throws Exception {
+        List<FieldErrorsResponse.FieldError> listFieldErrors = new ArrayList<>();
+
+        int id = 0;
+        try {
+            id = Integer.parseInt(orderId);
+        } catch (Exception exception) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("order id")
+                            .message("Invalid integer format")
+                            .resource("Path variable")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        Order order = orderRepository.findByUserIdAndId((int) user.get("id"), id).orElse(null);
+        if (order == null) {
+            throw new ResourceNotFoundException("Order not found");
+        }
+
+        if (order.isCutted()) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("order id")
+                            .message("User used service")
+                            .resource("Path variable")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        long time = new Date().getTime() - order.getOrderTime().getTime();
+        if (!(time >= 0 && time <= 60 * 60 * 1000)) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("order id")
+                            .message("You can only cancel order within 1 hour of placing your order")
+                            .resource("Path variable")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        if (order.getStatus().equalsIgnoreCase("CANCELED")) {
+            listFieldErrors.add(
+                    FieldErrorsResponse.FieldError.builder()
+                            .field("order id")
+                            .message("Order status was cancel")
+                            .resource("Path variable")
+                            .build()
+            );
+            throw FieldErrorsResponse
+                    .builder()
+                    .errors(listFieldErrors)
+                    .build();
+        }
+
+        order.setStatus("CANCEL");
+        orderRepository.save(order);
+
+        return new BaseResponse(Map.of("message", "Cancel order successfully"));
     }
 }

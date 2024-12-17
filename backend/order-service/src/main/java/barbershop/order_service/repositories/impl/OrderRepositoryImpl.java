@@ -86,6 +86,10 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 "from orders\n" +
                 "where user_id = :userId\n");
 
+        if (getListOrderByUserRequest.getStatus() != null) {
+            sql.append("and status = :status\n");
+        }
+
         if (getListOrderByUserRequest.getCodeOrHairStyle() != null) {
             sql.append("and (id = :id or json_unquote(json_extract(hair_style, '$.name')) like :codeOrHairStyle)\n");
         }
@@ -108,6 +112,10 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
         Query query = entityManager.createNativeQuery(sql.toString(), Order.class);
         query.setParameter("userId", (int) getListOrderByUserRequest.getUser().get("id"));
 
+        if (getListOrderByUserRequest.getStatus() != null) {
+            query.setParameter("status", getListOrderByUserRequest.getStatus().toUpperCase());
+        }
+
         if (getListOrderByUserRequest.getCodeOrHairStyle() != null) {
             query.setParameter("id", id);
             query.setParameter("codeOrHairStyle", "%"+getListOrderByUserRequest.getCodeOrHairStyle()+"%");
@@ -129,12 +137,20 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 "from orders\n" +
                 "where user_id = :userId\n");
 
+        if (getListOrderByUserRequest.getStatus() != null) {
+            sql.append("and status = :status\n");
+        }
+
         if (getListOrderByUserRequest.getCodeOrHairStyle() != null) {
             sql.append("and (id = :id or json_unquote(json_extract(hair_style, '$.name')) like :codeOrHairStyle)\n");
         }
 
         Query query = entityManager.createNativeQuery(sql.toString());
         query.setParameter("userId", (int) getListOrderByUserRequest.getUser().get("id"));
+
+        if (getListOrderByUserRequest.getStatus() != null) {
+            query.setParameter("status", getListOrderByUserRequest.getStatus().toUpperCase());
+        }
 
         if (getListOrderByUserRequest.getCodeOrHairStyle() != null) {
             query.setParameter("id", id);
@@ -171,11 +187,16 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
 
     @Override
     public List<Order> getListOrderForAdmin(GetListOrderForAdminRequest getListOrderForAdminRequest) {
+        System.out.println("getListOrderForAdminRequest: " + getListOrderForAdminRequest);
         String startDate = getListOrderForAdminRequest.getRange().split(",")[0].trim();
         String endDate = getListOrderForAdminRequest.getRange().split(",")[1].trim();
         String sql = "select * from orders\n" +
-                "where date(:startDate) <= date(order_time) and date(order_time) <= date(:endDate)\n" +
-                "order by order_time ";
+                "where date(:startDate) <= date(order_time) and date(order_time) <= date(:endDate)\n";
+        
+        if (getListOrderForAdminRequest.getStatus() != null) {
+            sql += "and status = :status\n";
+        }
+        sql += "order by order_time ";
         if (getListOrderForAdminRequest.getSortBy() != null) {
             sql += getListOrderForAdminRequest.getSortBy();
         } else {
@@ -185,6 +206,10 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
         query.setParameter("startDate", startDate);
         query.setParameter("endDate", endDate);
 
+        if (getListOrderForAdminRequest.getStatus() != null) {
+            query.setParameter("status", getListOrderForAdminRequest.getStatus().toUpperCase());
+        }
+
         return query.getResultList();
     }
 
@@ -192,7 +217,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
     public String getScheduleRecently(int userId) {
         String sql = "select cast(orders.schedule as char) as schedule\n" +
                 "from orders\n" +
-                "where orders.user_id = :userId and DATE(NOW()) = DATE(orders.schedule) and NOW() <= orders.schedule\n" +
+                "where orders.user_id = :userId and orders.status = 'SUCCESS' and DATE(NOW()) = DATE(orders.schedule) and NOW() <= orders.schedule\n" +
                 "order by orders.schedule desc\n" +
                 "limit 1";
 

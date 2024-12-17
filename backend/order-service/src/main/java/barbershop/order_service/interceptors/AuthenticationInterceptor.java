@@ -82,7 +82,12 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         }
 
         ChangeHttpServletRequestJsonBodyWrapper requestWrapper = new ChangeHttpServletRequestJsonBodyWrapper(request);
-        Map<String, Object> map = objectMapper.readValue(requestWrapper.getRequestBody(), LinkedHashMap.class);
+        Map<String, Object> map = null;
+        if (requestWrapper.getRequestBody() == null || requestWrapper.getRequestBody().isEmpty()) {
+            map = new LinkedHashMap<>();
+        } else {
+            map = objectMapper.readValue(requestWrapper.getRequestBody(), LinkedHashMap.class);
+        }
         map.put("user", userMap);
         String newJsonBody = objectMapper.writeValueAsString(map);
         System.out.println(">>>>>>>>>>> newJsonBody: " + newJsonBody);

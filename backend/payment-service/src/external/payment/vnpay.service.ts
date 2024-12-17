@@ -15,7 +15,6 @@ import * as sortObject from 'sort-object';
 import * as crypto from 'crypto';
 import * as dayjs from 'dayjs';
 import { PayOnlineType } from '@common/enum/pay-online-type.enum';
-import { PaymentStatus } from '@payment/payment.enum';
 import { ClientKafka } from '@nestjs/microservices';
 import { PaymentRequestDto } from '@common/dto/payment-request.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -67,7 +66,7 @@ export class VNPAYService implements PaymentExternalService {
       externalRequest: JSON.stringify(externalRequestDto),
       amount: paymentRequestDto.amount,
       payOnlineType: PayOnlineType.VNPAY,
-      paymentStatus: PaymentStatus.SUCCESS,
+      paymentStatus: 'SUCCESS',
       checksum,
     });
 

@@ -24,6 +24,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
                         "/api/orders",
                         "/api/orders/schedule-recently",
                         "/api/orders/find-order-info",
+                        "/api/orders/cancel-order/{orderId}",
                         "/api/orders/{orderId}"
                 )  // Áp dụng cho tất cả các endpoint bắt đầu bằng /api
                 .excludePathPatterns("/api/public/**");  // Bỏ qua các endpoint công khai

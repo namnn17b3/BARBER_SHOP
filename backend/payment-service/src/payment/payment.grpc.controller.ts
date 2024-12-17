@@ -3,7 +3,7 @@ import { MoMoService } from '@external/payment/momo.service';
 import { VNPAYService } from '@external/payment/vnpay.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Controller, Inject } from '@nestjs/common';
-import { PaymentStatus, PaymentType } from '@payment/payment.enum';
+import { PaymentType } from '@payment/payment.enum';
 import { PaymentService } from '@payment/payment.service';
 import {
   GetListPaymentByOrderIdsRequest,
@@ -63,12 +63,10 @@ export class PaymentGrpcController implements PaymentServiceController {
       userId: request.userId,
     };
     const payOnlineType = request.payOnlineType;
-    const paymentStatus = request.paymentStatus;
     const { bankCode, bankTranNo } = await this.paymentService.saveNewPayment(
       externalRequestDto,
       paymentRequestDto,
       payOnlineType === 'VNPAY' ? PayOnlineType.VNPAY : PayOnlineType.MOMO,
-      paymentStatus === 'SUCCESS' ? PaymentStatus.SUCCESS : PaymentStatus.FAIL,
     );
 
     await this.cacheManager.del(request.orderUUID.toString());

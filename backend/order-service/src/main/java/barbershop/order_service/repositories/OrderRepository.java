@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer>, OrderRepositoryCustom {
@@ -19,5 +20,5 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, OrderRep
     List<Order> findAllByUserId(@Param("userId") Integer userId);
 
     @Query("select order from Order order where order.id = :orderId and order.userId = :userId")
-    Order findByUserIdAndId(@Param("userId") Integer userId, @Param("orderId") Integer orderId);
+    Optional<Order> findByUserIdAndId(@Param("userId") Integer userId, @Param("orderId") Integer orderId);
 }
