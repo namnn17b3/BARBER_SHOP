@@ -54,7 +54,7 @@ export default function FilterHairColorItem(props: any) {
               {colors.map((c: any, idx: number) => (
                 <div key={idx} className="flex items-center">
                   <input
-                    id="red-color-input"
+                    id={`${c.color}-color-input`}
                     type="radio"
                     name="color"
                     className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -62,7 +62,7 @@ export default function FilterHairColorItem(props: any) {
                     onClick={() => { colorRef.current = c.color; }}
                     defaultValue={c.color}
                   />
-                  <label htmlFor="red-color-input" className="flex items-center ml-2" style={{ color: c.colorCode }}>{capitalize(c.color)}</label>
+                  <label htmlFor={`${c.color}-color-input`} className="flex items-center ml-2" style={{ color: c.colorCode }}>{capitalize(c.color)}</label>
                 </div>
               ))}
             </div>
