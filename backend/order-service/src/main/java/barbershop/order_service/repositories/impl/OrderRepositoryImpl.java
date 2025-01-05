@@ -1,5 +1,6 @@
 package barbershop.order_service.repositories.impl;
 
+import barbershop.order_service.Utils.Utils;
 import barbershop.order_service.dtos.request.GetListOrderByUserRequest;
 import barbershop.order_service.dtos.request.admin.GetListOrderForAdminRequest;
 import barbershop.order_service.entities.Order;
@@ -91,7 +92,9 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
         }
 
         if (getListOrderByUserRequest.getCodeOrHairStyle() != null) {
-            sql.append("and (id = :id or json_unquote(json_extract(hair_style, '$.name')) like :codeOrHairStyle)\n");
+            sql.append("and (id = :id\n" +
+                    "or lower(json_unquote(json_extract(hair_style, '$.name'))) like :codeOrHairStyle1 COLLATE utf8mb4_unicode_ci\n" +
+                    "or lower(json_unquote(json_extract(hair_style, '$.name'))) like :codeOrHairStyle2 COLLATE utf8mb4_unicode_ci)\n");
         }
 
         if (getListOrderByUserRequest.getSortBy() != null) {
@@ -118,7 +121,8 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
 
         if (getListOrderByUserRequest.getCodeOrHairStyle() != null) {
             query.setParameter("id", id);
-            query.setParameter("codeOrHairStyle", "%"+getListOrderByUserRequest.getCodeOrHairStyle()+"%");
+            query.setParameter("codeOrHairStyle1", "%"+Utils.stripAccents(getListOrderByUserRequest.getCodeOrHairStyle()).toLowerCase()+"%");
+            query.setParameter("codeOrHairStyle2", "%"+getListOrderByUserRequest.getCodeOrHairStyle().toLowerCase().replaceAll("d", "đ")+"%");
         }
 
         if (getListOrderByUserRequest.getWithPagination().equals("true")) {
@@ -142,7 +146,9 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
         }
 
         if (getListOrderByUserRequest.getCodeOrHairStyle() != null) {
-            sql.append("and (id = :id or json_unquote(json_extract(hair_style, '$.name')) like :codeOrHairStyle)\n");
+            sql.append("and (id = :id\n" +
+                    "or lower(json_unquote(json_extract(hair_style, '$.name'))) like :codeOrHairStyle1 COLLATE utf8mb4_unicode_ci\n" +
+                    "or lower(json_unquote(json_extract(hair_style, '$.name'))) like :codeOrHairStyle2 COLLATE utf8mb4_unicode_ci)\n");
         }
 
         Query query = entityManager.createNativeQuery(sql.toString());
@@ -154,7 +160,8 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
 
         if (getListOrderByUserRequest.getCodeOrHairStyle() != null) {
             query.setParameter("id", id);
-            query.setParameter("codeOrHairStyle", "%"+getListOrderByUserRequest.getCodeOrHairStyle()+"%");
+            query.setParameter("codeOrHairStyle1", "%"+Utils.stripAccents(getListOrderByUserRequest.getCodeOrHairStyle()).toLowerCase()+"%");
+            query.setParameter("codeOrHairStyle2", "%"+getListOrderByUserRequest.getCodeOrHairStyle().toLowerCase().replaceAll("d", "đ")+"%");
         }
 
         if (query.getResultList().size() == 0) {

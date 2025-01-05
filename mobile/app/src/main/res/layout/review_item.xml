@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="15dp"
+    android:paddingEnd="15dp"
+    android:paddingTop="15dp"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:cardCornerRadius="5dp"
+        android:id="@+id/cv_1"
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/fb_no_img"
+            android:id="@+id/review_user_img"
+            />
+    </androidx.cardview.widget.CardView>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/cv_1"
+        android:id="@+id/rl_1"
+        android:layout_marginLeft="10dp"
+        >
+        
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:numStars="5"
+            android:rating="4"
+            android:stepSize="1"
+            android:progressTint="#faca15"
+            android:id="@+id/review_star"
+            android:isIndicator="true"
+            style="?android:attr/ratingBarStyleSmall"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Test 123"
+            android:textColor="#111827"
+            android:id="@+id/review_user_name"
+            android:layout_below="@id/review_star"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Normal"
+            android:textColor="#111827"
+            android:layout_below="@id/review_user_name"
+            android:id="@+id/review_hair_color"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2024-08-02 08:43:14"
+            android:layout_below="@id/review_hair_color"
+            android:textColor="#6b7280"
+            android:id="@+id/review_date_time"
+            />
+    </RelativeLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Kiểu tóc đẹp, tôi rất hài lòng! Thợ cắt tóc đỉnh của đỉnh, tôi sẽ đến đây thường xuyên để cắt tóc"
+        android:textColor="#6b7280"
+        android:layout_below="@id/rl_1"
+        android:layout_marginTop="10dp"
+        android:gravity="start"
+        android:id="@+id/review_comment"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#d1d5db"
+        android:layout_marginTop="10dp"
+        android:id="@+id/hr_view"
+        android:layout_below="@id/review_comment"
+        />
+</RelativeLayout>

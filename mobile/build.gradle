@@ -1,0 +1,22 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// ./gradlew app:dependencies
+// ./gradlew build --refresh-dependencies
+// ./gradlew lintGradle
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io'}
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.0.2'
+//        classpath 'com.google.gms:google-services:4.3.13'
+        // Các classpath khác nếu cần
+    }
+}
+
+plugins {
+    id 'com.android.application' version '8.0.2' apply false
+    id 'com.android.library' version '8.0.2' apply false
+}

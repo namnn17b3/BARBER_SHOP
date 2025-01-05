@@ -25,7 +25,7 @@ export default function Header() {
   const pathForUserLogin = (process.env.NEXT_PUBLIC_URL_FOR_USER_LOGIN as any).split(',');
 
   const savePrePath = () => {
-    window.sessionStorage.setItem('prePath', window.location.pathname);
+    window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
   }
 
   useEffect(() => {

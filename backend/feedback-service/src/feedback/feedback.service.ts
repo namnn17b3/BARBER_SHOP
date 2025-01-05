@@ -92,11 +92,13 @@ export class FeedbackService {
         'time',
         startDate ? new Date(startDate) : undefined,
         Operators.Gteq,
+        'time_start',
       )
       .filterByField(
         'time',
         endDate ? new Date(endDate) : undefined,
         Operators.Lteq,
+        'time_end',
       )
       .filterByField('star', minStar, Operators.Gteq, 'minStar')
       .filterByField('star', maxStar, Operators.Lteq, 'maxStar')

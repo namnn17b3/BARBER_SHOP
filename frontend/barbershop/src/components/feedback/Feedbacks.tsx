@@ -12,13 +12,12 @@ import * as customParseFormat from 'dayjs/plugin/customParseFormat';
 import * as timezone from 'dayjs/plugin/timezone';
 import * as utc from 'dayjs/plugin/utc';
 import { DateFormatType } from "@/common/constant/date-format.constant";
-import { TimeZone } from "@/common/constant/timezone.constant";
 import AlertError from "@/components/alert/AlertError";
 import Pagination from "@/components/Pagination";
 import NoResult from "@/components/NoResult";
 import FeedbackItem from "@/components/feedback/FeedbackItem";
-import { useAuthen } from "@/hooks/user.authen";
 import React from "react";
+import Swal from "sweetalert2";
 
 dayjs.extend(customParseFormat as any);
 dayjs.extend(utc as any);
@@ -33,8 +32,6 @@ export default function Feedbacks(props: any) {
 
   const [response, setResponse] = useState({});
   const [errors, setErrors] = useState([]);
-
-  const { authenState } = useAuthen();
 
   const isValidErrorRef: any = useRef();
 
@@ -75,6 +72,23 @@ export default function Feedbacks(props: any) {
           window.location.href = `/error/${response.status}`;
           return;
         }
+        if (response.status === 401) {
+          Swal.fire({
+            title: "Session was expired!",
+            text: "Please login again",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Login now!"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = `/authen/login`;
+              window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
+            }
+          });
+          return;
+        }
         return response.json();
       })
       .then((json) => {
@@ -93,8 +107,8 @@ export default function Feedbacks(props: any) {
   const handleFilter = () => {
     const minStar = minStarInputRef.current.value;
     const maxStar = maxStarInputRef.current.value;
-    const startDate = dayjs(startDateInputRef.current.value, DateFormatType.YYYY_MM_DD, true).isValid() ? dayjs.tz(startDateInputRef.current.value, DateFormatType.YYYY_MM_DD, TimeZone.ASIA_HCM).toDate().toISOString() : null;
-    const endDate = dayjs(endDateInputRef.current.value, DateFormatType.YYYY_MM_DD, true).isValid() ? dayjs.tz(endDateInputRef.current.value, DateFormatType.YYYY_MM_DD, TimeZone.ASIA_HCM).toDate().toISOString() : null;
+    const startDate = dayjs(startDateInputRef.current.value, DateFormatType.YYYY_MM_DD, true).isValid() ? startDateInputRef.current.value : null;
+    const endDate = dayjs(endDateInputRef.current.value, DateFormatType.YYYY_MM_DD, true).isValid() ? endDateInputRef.current.value : null;
     let sorting = '';
     sorting = sorting + (ascendingRatingInputRef.current.checked ? 'star:asc,' : descendingRatingInputRef.current.checked ? 'star:desc,' : 'star:none,');
     sorting = sorting + (ascendingDateInputRef.current.checked ? 'time:asc,' : descendingDateInputRef.current.checked ? 'time:desc,' : 'time:none,');

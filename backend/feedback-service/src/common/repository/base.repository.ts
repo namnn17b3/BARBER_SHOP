@@ -67,14 +67,18 @@ export abstract class BaseRepository<
   ) {
     if (value !== undefined) {
       parameterName = parameterName || `${field}_value`;
+      const express =
+        field === 'time'
+          ? `date(${field}) ${operator} date(:${parameterName})`
+          : `${field} ${operator} :${parameterName}`;
       switch (whereOperator) {
         case WhereOperator.And:
-          this.queryBuilder.andWhere(`${field} ${operator} :${parameterName}`, {
+          this.queryBuilder.andWhere(express, {
             [parameterName]: value,
           });
           break;
         case WhereOperator.Or:
-          this.queryBuilder.orWhere(`${field} ${operator} :${parameterName}`, {
+          this.queryBuilder.orWhere(express, {
             [parameterName]: value,
           });
           break;

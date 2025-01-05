@@ -220,7 +220,8 @@ export default function HairStylePage() {
         if (json.data) {
           window.location.href = json.data.paymentUrl;
         } else if (json.status === 401) {
-          console.log(json);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
+          window.location.href = `/authen/login`;
         } else {
           Swal.fire({
             icon: 'error',
@@ -267,35 +268,35 @@ export default function HairStylePage() {
         </div>
         {
           isValidErrorRef.current ? <AlertError errors={errors} /> :
-          <>
-            <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
-              {(response as any)?.data?.map((hairStyle: any) => 
-                <HairStyleItem
-                  key={hairStyle.id}
-                  id={hairStyle.id}
-                  img={hairStyle.img}
-                  name={hairStyle.name}
-                  price={hairStyle.price}
-                  discount={hairStyle.discount}
-                  booking={hairStyle.booking}
-                  rating={hairStyle.rating}
-                  authenState={authenState}
-                  hairStyleIdRef={hairStyleIdRef}
-                />
-              )}
-            </div>
-            {!!(response as any)?.data?.length && <Pagination
-              page={+filterValue.page}
-              items={9}
-              nodes={5}
-              totalRecords={(response as any).meta.totalRecords}
-              handlePageChange={handlePageChange}
-              qsObject={filterValue}
-            />}
-            {
-              (response as any)?.data?.length == 0 ? <NoResult /> : ''
-            }
-          </>
+            <>
+              <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
+                {(response as any)?.data?.map((hairStyle: any) =>
+                  <HairStyleItem
+                    key={hairStyle.id}
+                    id={hairStyle.id}
+                    img={hairStyle.img}
+                    name={hairStyle.name}
+                    price={hairStyle.price}
+                    discount={hairStyle.discount}
+                    booking={hairStyle.booking}
+                    rating={hairStyle.rating}
+                    authenState={authenState}
+                    hairStyleIdRef={hairStyleIdRef}
+                  />
+                )}
+              </div>
+              {!!(response as any)?.data?.length && <Pagination
+                page={+filterValue.page}
+                items={9}
+                nodes={5}
+                totalRecords={(response as any).meta.totalRecords}
+                handlePageChange={handlePageChange}
+                qsObject={filterValue}
+              />}
+              {
+                (response as any)?.data?.length == 0 ? <NoResult /> : ''
+              }
+            </>
         }
       </div>
     </>

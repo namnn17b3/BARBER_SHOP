@@ -92,7 +92,7 @@ export default function BarberAdminPage() {
           isValidErrorRef.current = false;
         }
         else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           setErrors(json.errors);
@@ -198,7 +198,7 @@ export default function BarberAdminPage() {
           (document.querySelector('#preview') as any).src = json.data.img;
         }
         else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           Swal.fire({
@@ -254,7 +254,7 @@ export default function BarberAdminPage() {
           });
         }
         else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           setModalErrors(json.errors);
@@ -668,7 +668,7 @@ export default function BarberAdminPage() {
                 </div>
               </div>
               <button
-                type="submit"
+                type="button"
                 className="w-full mt-3 px-5 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-700 dark:hover:bg-primary-800 dark:focus:ring-primary-800"
                 onClick={() => handleFilter()}
               >

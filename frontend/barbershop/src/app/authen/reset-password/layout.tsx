@@ -17,7 +17,7 @@ export default function BarberLayout({
       <Head>
         <title>{title}</title>
       </Head>
-      <main>
+      <main style={{ marginTop: '70px' }}>
         {children}
       </main>
     </>

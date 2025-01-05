@@ -71,7 +71,7 @@ export default function HairColorAdminPage() {
           isValidErrorRef.current = false;
         }
         else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           setErrors(json.errors);
@@ -152,7 +152,7 @@ export default function HairColorAdminPage() {
           setHairColor(json.data);
         }
         else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           Swal.fire({
@@ -204,7 +204,7 @@ export default function HairColorAdminPage() {
           });
         }
         else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           setModalErrors(json.errors);
@@ -249,7 +249,7 @@ export default function HairColorAdminPage() {
           (document.querySelector('#preview') as any).src = json.data.url;
         }
         else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           Swal.fire({
@@ -298,7 +298,7 @@ export default function HairColorAdminPage() {
           });
         }
         else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           setModalErrors(json.errors);
@@ -330,7 +330,7 @@ export default function HairColorAdminPage() {
         }
         if (response.status === 401) {
           window.location.href = `/authen/login`;
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           return;
         }
         return response.json();

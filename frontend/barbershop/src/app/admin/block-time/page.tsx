@@ -110,7 +110,7 @@ export default function BlockTimeAdminPage() {
           isValidErrorRef.current = false;
         }
         else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           setErrors(json.errors);
@@ -218,7 +218,7 @@ export default function BlockTimeAdminPage() {
           document.dispatchEvent(successEvent);
         }
         else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           Swal.fire({
@@ -263,7 +263,7 @@ export default function BlockTimeAdminPage() {
           });
         }
         else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           Swal.fire({
@@ -303,7 +303,7 @@ export default function BlockTimeAdminPage() {
           });
         }
         else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           Swal.fire({
@@ -658,7 +658,7 @@ export default function BlockTimeAdminPage() {
             <div className="p-2 flex justify-center items-center">
               <button
                 onClick={handleFilter}
-                type="submit"
+                type="button"
                 className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
               >
                 Filter

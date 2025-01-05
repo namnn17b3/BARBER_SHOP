@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -74,10 +75,10 @@ public class Utils {
             ZonedDateTime currentDateTimeWithZone = ZonedDateTime.now(zoneId);
 
             // Tính số ngày giữa thời gian nhập và thời gian hiện tại
-            long daysDifference = ChronoUnit.DAYS.between(currentDateTimeWithZone, inputDateTimeWithZone);
+            long daysDifference = ChronoUnit.MILLIS.between(currentDateTimeWithZone, inputDateTimeWithZone);
 
             // Kiểm tra xem số ngày có nằm trong khoảng từ 0 đến 6
-            return daysDifference >= minUnit && daysDifference <= maxUnit;
+            return daysDifference >= minUnit * 24*60*60*1000 && daysDifference <= maxUnit * 24*60*60*1000;
         } catch (Exception e) {
             log.error("ERROR", e);
             return false;
@@ -120,5 +121,11 @@ public class Utils {
 
         // Trả về chuỗi định dạng yyyy-MM của tháng trước đó
         return monthPrevious.format(formatter);
+    }
+
+    public static String stripAccents(String s) {
+        s = Normalizer.normalize(s, Normalizer.Form.NFD);
+        s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return s;
     }
 }

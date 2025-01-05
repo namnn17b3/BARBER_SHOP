@@ -143,7 +143,7 @@ export default function FilterBarberItem(props: any) {
                   name="gender"
                   className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   ref={genderMaleInputRef}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
                 <label htmlFor="male-input" className="flex items-center ml-2">Male</label>
               </div>
@@ -155,7 +155,7 @@ export default function FilterBarberItem(props: any) {
                   name="gender"
                   className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   ref={gendeFemaleInputRef}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
                 <label htmlFor="female-input" className="flex items-center ml-2">Female</label>
               </div>
@@ -167,7 +167,7 @@ export default function FilterBarberItem(props: any) {
                   name="gender"
                   className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   defaultChecked
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
                 <label htmlFor="all-gender-input" className="flex items-center ml-2">All</label>
               </div>
@@ -175,7 +175,7 @@ export default function FilterBarberItem(props: any) {
           </div>
           <div className="bottom-0 left-0 flex justify-center w-full pb-4 mt-6 space-x-4 md:px-4 md:absolute">
             <button
-              type="submit"
+              type="button"
               className="w-full px-5 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-700 dark:hover:bg-primary-800 dark:focus:ring-primary-800"
               onClick={() => handleFilter()}
             >

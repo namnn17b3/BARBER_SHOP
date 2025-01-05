@@ -73,7 +73,7 @@ export default function HistoryOrderPage() {
           isValidErrorRef.current = false;
         }
         else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           setErrors(json.errors);
@@ -135,7 +135,7 @@ export default function HistoryOrderPage() {
         if (json.data) {
           setOrder(json.data);
         } else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           Swal.fire({
@@ -166,11 +166,17 @@ export default function HistoryOrderPage() {
       })
       .then((json) => {
         if (json.data) {
-          setResponse(json);
           isValidErrorRef.current = false;
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Canceled order successfully!',
+          }).then((result) => {
+            window.location.reload();
+          });
         }
         else if (json.status === 401) {
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           window.location.href = `/authen/login`;
         } else {
           Swal.fire({
@@ -214,7 +220,7 @@ export default function HistoryOrderPage() {
         }
         if (response.status === 401) {
           window.location.href = `/authen/login`;
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           return;
         }
         return response.json();
@@ -282,7 +288,7 @@ export default function HistoryOrderPage() {
         }
         if (response.status === 401) {
           window.location.href = `/authen/login`;
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           return;
         }
         return response.json();
@@ -347,7 +353,7 @@ export default function HistoryOrderPage() {
         }
         if (response.status === 401) {
           window.location.href = `/authen/login`;
-          window.sessionStorage.setItem('prePath', window.location.pathname);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
           return;
         }
         return response.json();

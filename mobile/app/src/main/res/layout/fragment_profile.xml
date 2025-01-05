@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_nav_header"
+    tools:context=".MainActivity"
+    android:layout_marginBottom="80dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#374151"
+        android:alpha="0.6"/>
+
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:id="@+id/toolbar"
+        android:elevation="4dp"
+        android:background="@color/brown"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/brown"
+            android:scaleType="fitStart"
+            android:textColor="@color/white"
+            style="?android:attr/borderlessButtonStyle"
+            android:drawableEnd="@drawable/baseline_arrow_back_ios_24"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:text="Profile" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/swipe_refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_margin="20dp"
+                android:paddingBottom="50dp"
+                >
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="28dp"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="28dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Your profile"
+                            android:textColor="#111827"
+                            android:textSize="30sp"
+                            android:textStyle="bold"/>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Email Address"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
+
+                        <EditText
+                            android:focusable="false"
+                            android:cursorVisible="false"
+                            android:longClickable="false"
+                            android:inputType="none"
+                            android:layout_width="match_parent"
+                            android:id="@+id/email_edt"
+                            android:layout_height="wrap_content"/>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Username"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
+
+                        <EditText
+                            android:id="@+id/username_edt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"/>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Phone"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
+
+                        <EditText
+                            android:id="@+id/phone_edt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberSigned"/>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Address"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
+
+                        <EditText
+                            android:id="@+id/address_edt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"/>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Gender"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
+
+                        <RadioGroup
+                            android:id="@+id/gender_radio_group"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginLeft="15dp"
+                            android:checkedButton="@id/gender_male_radio_btn"
+                            >
+                            <RadioButton
+                                android:id="@+id/gender_male_radio_btn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Male"
+                                android:textSize="18sp"
+                                app:buttonTint="@color/primary"
+                                />
+
+                            <RadioButton
+                                android:id="@+id/gender_female_radio_btn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Female"
+                                android:textSize="18sp"
+                                app:buttonTint="@color/primary"
+                                />
+                        </RadioGroup>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Up load avatar or "
+                                android:alpha="0.7"
+                                android:textStyle="bold"/>
+                            <TextView
+                                android:foreground="?android:attr/selectableItemBackground"
+                                android:id="@+id/remove_avatar_txt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/remove_avatar"
+                                android:alpha="0.7"
+                                android:textColor="#dc3545"
+                                android:textStyle="bold"/>
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="PNG, JPG, JPEG up to 10MB"
+                            android:alpha="0.7"
+                            android:layout_marginTop="5dp"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:gravity="center"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:orientation="horizontal">
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/avatar_card_view"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_gravity="center"
+                                    android:id="@+id/avatar_img"
+                                    android:layout_width="150dp"
+                                    android:src="@drawable/fb_no_img"
+                                    android:layout_height="200dp" />
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="10dp"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:text="Submit"
+                            android:id="@+id/btn_submit1"
+                            android:backgroundTint="@color/primary"
+                            app:cornerRadius="32dp"/>
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_marginTop="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="28dp"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="28dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Change password"
+                            android:textColor="#111827"
+                            android:textSize="30sp"
+                            android:textStyle="bold"/>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Old password"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
+
+                        <EditText
+                            android:inputType="textPassword"
+                            android:layout_width="match_parent"
+                            android:id="@+id/old_password_edt"
+                            android:layout_height="wrap_content"/>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="New password"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
+
+                        <EditText
+                            android:inputType="textPassword"
+                            android:layout_width="match_parent"
+                            android:id="@+id/new_password_edt"
+                            android:layout_height="wrap_content"/>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Confirm password"
+                            android:alpha="0.7"
+                            android:textStyle="bold"/>
+
+                        <EditText
+                            android:inputType="textPassword"
+                            android:layout_width="match_parent"
+                            android:id="@+id/confirm_password_edt"
+                            android:layout_height="wrap_content"/>
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="10dp"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:text="Submit"
+                            android:id="@+id/btn_submit2"
+                            android:backgroundTint="@color/primary"
+                            app:cornerRadius="32dp"/>
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </ScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</RelativeLayout>
+
+
+
+
+
+
+
+
+
+
+

@@ -287,15 +287,16 @@ public class AuthenticationServiceImpl extends AuthenticationService {
         String payloadBase64Encode = Base64.getEncoder().encodeToString(payload.getBytes(StandardCharsets.UTF_8));
         String signature = Hash.hmacSha256(headerBase64Encode + "." + payloadBase64Encode, forgotPasswordSecret);
         String token = headerBase64Encode + "." + payloadBase64Encode + "." + signature;
+        String tokenEncoded = Utils.encodeURIComponent(token);
 
-        String url = serverProtocol+"://"+serverDomain+"/authen/reset-password?token="+Utils.encodeURIComponent(token);
+        String url = serverProtocol+"://"+serverDomain+"/authen/reset-password?token="+tokenEncoded;
 
         this.redisService.setValue("fp_"+user.getEmail(), token, Long.parseLong(forgotPasswordExpire), TimeUnit.MILLISECONDS);
         this.kafkaTemplate.send("send-email-reset-password",
                 this.objectMapper.writeValueAsString(Map.of("email", user.getEmail(), "url", url)));
 
         // return new AppBaseResponse(url);
-       return new AppBaseResponse(Map.of("message", "Success"));
+       return new AppBaseResponse(Map.of("message", "success"));
     }
 
     @Override

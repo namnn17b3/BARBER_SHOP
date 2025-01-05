@@ -299,7 +299,7 @@ export default function FilterFeedback(props: any) {
           </div>
           <div className="bottom-0 left-0 flex justify-center w-full pb-4 mt-6 space-x-4 md:px-4 md:absolute">
             <button
-              type="submit"
+              type="button"
               className="w-full px-5 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-700 dark:hover:bg-primary-800 dark:focus:ring-primary-800"
               onClick={handleFilter}
             >

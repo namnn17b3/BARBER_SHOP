@@ -128,7 +128,8 @@ export default function HairStyleDetail(props: any) {
         if (json.data) {
           window.location.href = json.data.paymentUrl;
         } else if (json.status === 401) {
-          console.log(json);
+          window.sessionStorage.setItem('prePath', `${window.location.pathname}${window.location.search.toString()}`);
+          window.location.href = `/authen/login`;
         } else {
           Swal.fire({
             icon: 'error',

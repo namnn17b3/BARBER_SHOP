@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/home"
+        android:title="Home"
+        android:icon="@drawable/baseline_home_24" />
+
+    <item
+        android:id="@+id/hair_style"
+        android:title="Hair style"
+        android:icon="@drawable/baseline_whatshot_24"
+        />
+
+    <item
+        android:id="@+id/hair_color"
+        android:title="Hair color"
+        android:icon="@drawable/baseline_color_lens_24" />
+
+    <item
+        android:id="@+id/barber"
+        android:title="Barber"
+        android:icon="@drawable/baseline_content_cut_24" />
+
+    <item
+        android:id="@+id/login_or_info"
+        android:title="Login"
+        android:icon="@drawable/baseline_login_24" />
+</menu>

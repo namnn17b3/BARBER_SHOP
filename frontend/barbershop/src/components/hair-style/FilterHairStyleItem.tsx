@@ -150,7 +150,7 @@ export default function FilterHairStyleItem(props: any) {
                   name="rating"
                   className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   ref={ascendingRatingInputRef}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
                 <label htmlFor="ascending-rating-input" className="flex items-center ml-2">Ascending</label>
               </div>
@@ -162,7 +162,7 @@ export default function FilterHairStyleItem(props: any) {
                   name="rating"
                   className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   ref={descendingRatingInputRef}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
                 <label htmlFor="descending-rating-input" className="flex items-center ml-2">Descending</label>
               </div>
@@ -175,7 +175,7 @@ export default function FilterHairStyleItem(props: any) {
                   className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   defaultChecked
                   ref={noneRatingInputRef}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
                 <label htmlFor="none-rating-input" className="flex items-center ml-2">None</label>
               </div>
@@ -194,7 +194,7 @@ export default function FilterHairStyleItem(props: any) {
                   name="booking"
                   className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   ref={ascendingBookingInputRef}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
                 <label htmlFor="ascending-booking-input" className="flex items-center ml-2">Ascending</label>
               </div>
@@ -206,7 +206,7 @@ export default function FilterHairStyleItem(props: any) {
                   name="booking"
                   className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   ref={descendingBookingInputRef}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
                 <label htmlFor="descending-booking-input" className="flex items-center ml-2">Descending</label>
               </div>
@@ -219,7 +219,7 @@ export default function FilterHairStyleItem(props: any) {
                   className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   defaultChecked
                   ref={noneBookingInputRef}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
                 <label htmlFor="none-booking-input" className="flex items-center ml-2">None</label>
               </div>
@@ -238,7 +238,7 @@ export default function FilterHairStyleItem(props: any) {
                   name="priority"
                   className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   ref={ratingPriorityInputRef}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
                 <label htmlFor="priority-rating-input" className="flex items-center ml-2">Rating</label>
               </div>
@@ -250,7 +250,7 @@ export default function FilterHairStyleItem(props: any) {
                   name="priority"
                   className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   ref={bookingPriorityInputRef}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
                 <label htmlFor="priority-booking-input" className="flex items-center ml-2">Booking</label>
               </div>
@@ -263,7 +263,7 @@ export default function FilterHairStyleItem(props: any) {
                   className="w-4 h-4 bg-gray-100 border-gray-300 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   defaultChecked
                   ref={nonePriorityInputRef}
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
                 <label htmlFor="priority-none-input" className="flex items-center ml-2">None</label>
               </div>
@@ -271,7 +271,7 @@ export default function FilterHairStyleItem(props: any) {
           </div>
           <div className="bottom-0 left-0 flex justify-center w-full pb-4 mt-6 space-x-4 md:px-4 md:absolute">
             <button
-              type="submit"
+              type="button"
               className="w-full px-5 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-700 dark:hover:bg-primary-800 dark:focus:ring-primary-800"
               onClick={() => handleFilter()}
             >

@@ -907,7 +907,7 @@ public class OrderServiceImpl implements OrderService {
                     .build();
         }
 
-        order.setStatus("CANCEL");
+        order.setStatus("CANCELED");
         orderRepository.save(order);
 
         return new BaseResponse(Map.of("message", "Cancel order successfully"));
