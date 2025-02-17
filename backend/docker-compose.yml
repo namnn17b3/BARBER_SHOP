@@ -146,6 +146,9 @@ services:
       - kong-gateway
     networks:
       - kong-net
+    environment:
+      - DOMAIN=localhost
+      - PROTOCOL=http
 
   feedback-service:
     image: barbershop-feedback-service:latest
